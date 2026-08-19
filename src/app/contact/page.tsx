@@ -1,0 +1,1 @@
+export default function ContactPage() { return <div className="w-full max-w-7xl mx-auto px-8 py-24"><h1 className="text-4xl font-bold mb-8">Contact Us</h1><p>Placeholder for contact form.</p></div>; }
