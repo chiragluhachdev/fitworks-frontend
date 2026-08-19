@@ -11,7 +11,8 @@ import {
   FileCheck, 
   CreditCard,
   Award,
-  Trash2
+  Trash2,
+  AlertCircle
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
@@ -59,7 +60,11 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
     },
   });
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [createdSlug, setCreatedSlug] = useState("rahul-sharma");
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setErrorMessage(null);
     const { name, value, type } = e.target;
     const isCheckbox = type === "checkbox";
     const val = isCheckbox ? (e.target as HTMLInputElement).checked : value;
@@ -135,20 +140,137 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
     }
   };
 
+  // STEP VALIDATION (Mandatory Fields Check)
+  const validateCurrentStep = (): boolean => {
+    setErrorMessage(null);
+
+    if (step === 1) {
+      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+        const msg = "Please enter a valid email address";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (!formData.password || formData.password.length < 6) {
+        const msg = "Password must be at least 6 characters long";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (!formData.personal.fullName || formData.personal.fullName.trim().length < 2) {
+        const msg = "Please enter your full name";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (!formData.personal.dateOfBirth) {
+        const msg = "Please select your date of birth";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (!formData.personal.gender) {
+        const msg = "Please select your gender";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (!formData.personal.city || formData.personal.city.trim().length < 2) {
+        const msg = "Please enter your city";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (!formData.personal.location || formData.personal.location.trim().length < 2) {
+        const msg = "Please enter your specific area / locality";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+    }
+
+    if (step === 2) {
+      if (!formData.professional.professionalTitle || formData.professional.professionalTitle.trim().length < 2) {
+        const msg = "Please enter your professional title (e.g. Senior Yoga Instructor, Personal Trainer)";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (formData.professional.yearsOfExperience === "" || Number(formData.professional.yearsOfExperience) < 0) {
+        const msg = "Please enter your years of experience";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (!formData.professional.specializations || formData.professional.specializations.trim().length < 2) {
+        const msg = "Please enter at least one specialization (e.g. Weight Loss, Strength)";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (!formData.professional.education || formData.professional.education.trim().length < 2) {
+        const msg = "Please enter your education or fitness certification name";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (!formData.professional.bio || formData.professional.bio.trim().length < 10) {
+        const msg = "Please write a short bio (minimum 10 characters)";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+    }
+
+    if (step === 3) {
+      if (!formData.workPreferences.expectedMonthlySalary || formData.workPreferences.expectedMonthlySalary.trim().length < 2) {
+        const msg = "Please enter your expected monthly salary range";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (!formData.workPreferences.employmentType) {
+        const msg = "Please select your preferred employment type";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      if (!formData.workPreferences.availability) {
+        const msg = "Please select your joining availability";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleNext = () => {
-    if (step < totalSteps) setStep(step + 1);
-    else handleSubmit();
+    if (!validateCurrentStep()) {
+      return;
+    }
+    if (step < totalSteps) {
+      setStep(step + 1);
+    } else {
+      handleSubmit();
+    }
   };
 
   const handlePrev = () => {
+    setErrorMessage(null);
     if (step === 1) onBack();
     else setStep((s) => Math.max(s - 1, 1));
   };
 
-  const [createdSlug, setCreatedSlug] = useState("rahul-sharma");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   const handleSubmit = async () => {
+    // Re-verify all steps
+    if (!formData.email || !formData.password || !formData.personal.fullName) {
+      setStep(1);
+      toast.error("Please complete Step 1: Account & Personal Details");
+      return;
+    }
+
     setLoading(true);
     setErrorMessage(null);
     try {
@@ -170,7 +292,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
         workPreferences: {
           ...formData.workPreferences,
           employmentType: [formData.workPreferences.employmentType],
-          preferredLocations: [formData.personal.city],
+          preferredLocations: [formData.personal.city || "Mumbai"],
         },
         verificationDocuments,
       };
@@ -184,6 +306,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
       const data = await res.json();
       if (!res.ok || !data.success) {
         setErrorMessage(data.message || "Registration failed. Please try again.");
+        toast.error(data.message || "Registration failed");
         setLoading(false);
         return;
       }
@@ -195,9 +318,11 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
 
       setCreatedSlug(data.trainer?.slug || "rahul-sharma");
       setIsSuccess(true);
+      toast.success("Trainer account registered successfully!");
     } catch (err: any) {
       console.error("Trainer registration error:", err);
       setErrorMessage("Network error connecting to server.");
+      toast.error("Network error connecting to server.");
     } finally {
       setLoading(false);
     }
@@ -212,7 +337,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
         <h2 className="text-3xl font-bold text-gray-900 mb-3">Registration Successful!</h2>
         <p className="text-gray-500 mb-8 max-w-sm">Your trainer profile has been created with your submitted documents and is currently pending review. You can now access your dashboard.</p>
         <Link href={`/trainer/${createdSlug}/dashboard`} className="w-full max-w-[240px]">
-          <Button className="w-full bg-[#d91a24] hover:bg-[#cc1616] text-white py-6 rounded-xl font-bold">
+          <Button className="w-full bg-[#d91a24] hover:bg-[#cc1616] text-white py-6 rounded-xl font-bold cursor-pointer">
             Go to Dashboard
           </Button>
         </Link>
@@ -230,11 +355,11 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Trainer Registration</h2>
-            <p className="text-sm text-gray-500 mt-1.5">
-              {step === 1 && "Account & Personal Info"}
-              {step === 2 && "Professional Experience"}
-              {step === 3 && "Work Preferences"}
-              {step === 4 && "Verification Documents"}
+            <p className="text-sm text-gray-500 mt-1.5 font-medium">
+              {step === 1 && "Step 1: Account & Personal Info (Mandatory)"}
+              {step === 2 && "Step 2: Professional Experience (Mandatory)"}
+              {step === 3 && "Step 3: Work Preferences (Mandatory)"}
+              {step === 4 && "Step 4: Verification Documents (Cloudinary)"}
             </p>
           </div>
           <div className="flex gap-2 mb-1">
@@ -245,8 +370,9 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
         </div>
 
         {errorMessage && (
-          <div className="p-3.5 mb-4 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-semibold">
-            {errorMessage}
+          <div className="p-3.5 mb-4 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-semibold flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-[#d91a24] shrink-0" />
+            <span>{errorMessage}</span>
           </div>
         )}
 
@@ -257,28 +383,28 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700 ml-1">Email Address</label>
-                  <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="trainer@example.com" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <label className="text-xs font-bold text-gray-700 ml-1">Email Address <span className="text-red-500">*</span></label>
+                  <input type="email" name="email" required value={formData.email} onChange={handleChange} placeholder="trainer@example.com" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700 ml-1">Password</label>
-                  <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Create password" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <label className="text-xs font-bold text-gray-700 ml-1">Password <span className="text-red-500">*</span></label>
+                  <input type="password" name="password" required value={formData.password} onChange={handleChange} placeholder="Create password (min 6 chars)" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
                 </div>
               </div>
               <hr className="border-gray-100 my-2" />
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700 ml-1">Full Name</label>
-                <input type="text" name="personal.fullName" value={formData.personal.fullName} onChange={handleChange} placeholder="E.g. Rahul Sharma" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <label className="text-xs font-bold text-gray-700 ml-1">Full Name <span className="text-red-500">*</span></label>
+                <input type="text" name="personal.fullName" required value={formData.personal.fullName} onChange={handleChange} placeholder="E.g. Rahul Sharma" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700 ml-1">Date of Birth</label>
-                  <input type="date" name="personal.dateOfBirth" value={formData.personal.dateOfBirth} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <label className="text-xs font-bold text-gray-700 ml-1">Date of Birth <span className="text-red-500">*</span></label>
+                  <input type="date" name="personal.dateOfBirth" required value={formData.personal.dateOfBirth} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700 ml-1">Gender</label>
-                  <select name="personal.gender" value={formData.personal.gender} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
-                    <option value="">Select...</option>
+                  <label className="text-xs font-bold text-gray-700 ml-1">Gender <span className="text-red-500">*</span></label>
+                  <select name="personal.gender" required value={formData.personal.gender} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
+                    <option value="">Select Gender...</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
@@ -287,12 +413,12 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700 ml-1">City</label>
-                  <input type="text" name="personal.city" value={formData.personal.city} onChange={handleChange} placeholder="E.g. Mumbai" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <label className="text-xs font-bold text-gray-700 ml-1">City <span className="text-red-500">*</span></label>
+                  <input type="text" name="personal.city" required value={formData.personal.city} onChange={handleChange} placeholder="E.g. Mumbai" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700 ml-1">Specific Location/Area</label>
-                  <input type="text" name="personal.location" value={formData.personal.location} onChange={handleChange} placeholder="E.g. Andheri West" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <label className="text-xs font-bold text-gray-700 ml-1">Specific Location / Area <span className="text-red-500">*</span></label>
+                  <input type="text" name="personal.location" required value={formData.personal.location} onChange={handleChange} placeholder="E.g. Andheri West" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
                 </div>
               </div>
             </div>
@@ -303,29 +429,29 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700 ml-1">Professional Title</label>
-                  <input type="text" name="professional.professionalTitle" value={formData.professional.professionalTitle} onChange={handleChange} placeholder="E.g. Senior Yoga Instructor" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <label className="text-xs font-bold text-gray-700 ml-1">Professional Title <span className="text-red-500">*</span></label>
+                  <input type="text" name="professional.professionalTitle" required value={formData.professional.professionalTitle} onChange={handleChange} placeholder="E.g. Senior Yoga Instructor, Personal Trainer" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700 ml-1">Years of Experience</label>
-                  <input type="number" name="professional.yearsOfExperience" value={formData.professional.yearsOfExperience} onChange={handleChange} min="0" placeholder="0" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <label className="text-xs font-bold text-gray-700 ml-1">Years of Experience <span className="text-red-500">*</span></label>
+                  <input type="number" name="professional.yearsOfExperience" required value={formData.professional.yearsOfExperience} onChange={handleChange} min="0" placeholder="0" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700 ml-1">Specializations (Comma separated)</label>
-                <input type="text" name="professional.specializations" value={formData.professional.specializations} onChange={handleChange} placeholder="E.g. Weight Loss, Strength Training, CrossFit" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <label className="text-xs font-bold text-gray-700 ml-1">Specializations (Comma separated) <span className="text-red-500">*</span></label>
+                <input type="text" name="professional.specializations" required value={formData.professional.specializations} onChange={handleChange} placeholder="E.g. Weight Loss, Strength Training, CrossFit, HIIT" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700 ml-1">Skills (Comma separated)</label>
+                <label className="text-xs font-bold text-gray-700 ml-1">Skills (Comma separated)</label>
                 <input type="text" name="professional.skills" value={formData.professional.skills} onChange={handleChange} placeholder="E.g. Nutrition planning, CPR, Client Management" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700 ml-1">Education/Highest Degree</label>
-                <input type="text" name="professional.education" value={formData.professional.education} onChange={handleChange} placeholder="E.g. BSc Sports Science" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <label className="text-xs font-bold text-gray-700 ml-1">Education / Fitness Certification <span className="text-red-500">*</span></label>
+                <input type="text" name="professional.education" required value={formData.professional.education} onChange={handleChange} placeholder="E.g. ACE Certified, ISSA, BSc Sports Science, K11" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700 ml-1">Bio / About You</label>
-                <textarea name="professional.bio" value={formData.professional.bio} onChange={handleChange} rows={3} placeholder="Tell gyms about your background and coaching style..." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 resize-none" />
+                <label className="text-xs font-bold text-gray-700 ml-1">Bio / About You <span className="text-red-500">*</span></label>
+                <textarea name="professional.bio" required value={formData.professional.bio} onChange={handleChange} rows={3} placeholder="Tell partner gyms about your coaching philosophy and client achievements..." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 resize-none" />
               </div>
             </div>
           )}
@@ -335,12 +461,12 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700 ml-1">Expected Monthly Salary</label>
-                  <input type="text" name="workPreferences.expectedMonthlySalary" value={formData.workPreferences.expectedMonthlySalary} onChange={handleChange} placeholder="E.g. ₹20,000 - ₹30,000" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <label className="text-xs font-bold text-gray-700 ml-1">Expected Monthly Salary <span className="text-red-500">*</span></label>
+                  <input type="text" name="workPreferences.expectedMonthlySalary" required value={formData.workPreferences.expectedMonthlySalary} onChange={handleChange} placeholder="E.g. ₹25,000 - ₹35,000" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700 ml-1">Employment Type</label>
-                  <select name="workPreferences.employmentType" value={formData.workPreferences.employmentType} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
+                  <label className="text-xs font-bold text-gray-700 ml-1">Employment Type <span className="text-red-500">*</span></label>
+                  <select name="workPreferences.employmentType" required value={formData.workPreferences.employmentType} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
                     <option value="Full-time">Full-time</option>
                     <option value="Part-time">Part-time</option>
                     <option value="Freelance">Freelance</option>
@@ -348,8 +474,8 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700 ml-1">Availability</label>
-                <select name="workPreferences.availability" value={formData.workPreferences.availability} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
+                <label className="text-xs font-bold text-gray-700 ml-1">Availability <span className="text-red-500">*</span></label>
+                <select name="workPreferences.availability" required value={formData.workPreferences.availability} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
                   <option value="Immediate">Immediate</option>
                   <option value="In 1 week">In 1 week</option>
                   <option value="In 1 month">In 1 month</option>
@@ -357,24 +483,24 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
               </div>
               <label className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
                 <input type="checkbox" name="workPreferences.willingToRelocate" checked={formData.workPreferences.willingToRelocate} onChange={handleChange} className="w-5 h-5 text-[#d91a24] border-gray-300 rounded focus:ring-[#d91a24]" />
-                <span className="text-sm font-medium text-gray-700">I am willing to relocate for the right job</span>
+                <span className="text-sm font-medium text-gray-700">I am willing to relocate for the right gym opportunity</span>
               </label>
             </div>
           )}
 
-          {/* STEP 4: Verification Documents (Fully Functional Cloudinary Upload) */}
+          {/* STEP 4: Verification Documents (Cloudinary Upload) */}
           {step === 4 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="p-4 rounded-xl bg-blue-50 border border-blue-100">
-                <p className="text-xs sm:text-sm text-blue-800 font-medium">
-                  To maintain platform quality, all trainers must provide documents for verification. Your profile will be marked as &quot;Verified&quot; once approved.
+                <p className="text-xs sm:text-sm text-blue-800 font-medium leading-relaxed">
+                  Upload your documents now for faster verification. You can also upload or update them anytime from your dashboard after signup.
                 </p>
               </div>
               
               {/* Certifications Upload Box */}
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-900 ml-1 flex items-center gap-1.5">
-                  <Award className="w-4 h-4 text-[#d91a24]" /> Certifications Upload
+                  <Award className="w-4 h-4 text-[#d91a24]" /> Coaching Certificate (Optional / Recommended)
                 </label>
                 
                 {certDoc ? (
@@ -385,14 +511,14 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                       </div>
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-gray-900 block truncate">{certDoc.name}</span>
-                        <span className="text-[11px] font-semibold text-emerald-700">Certificate uploaded & attached</span>
+                        <span className="text-[11px] font-semibold text-emerald-700">Certificate uploaded &amp; attached</span>
                       </div>
                     </div>
 
                     <button
                       type="button"
                       onClick={() => setCertDoc(null)}
-                      className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 shrink-0 p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                      className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 shrink-0 p-1.5 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Remove
                     </button>
@@ -415,7 +541,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                       <>
                         <UploadCloud className="w-9 h-9 text-gray-400 group-hover:text-[#d91a24] mx-auto mb-2 transition-colors" />
                         <p className="text-xs md:text-sm font-bold text-gray-800 mb-0.5 group-hover:text-[#d91a24]">
-                          Click to upload certificates
+                          Click to upload certificate
                         </p>
                         <p className="text-[11px] text-gray-400">PDF, JPG, or PNG (Max 10MB)</p>
                       </>
@@ -438,14 +564,14 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                       </div>
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-gray-900 block truncate">{govIdDoc.name}</span>
-                        <span className="text-[11px] font-semibold text-emerald-700">Identity proof uploaded & attached</span>
+                        <span className="text-[11px] font-semibold text-emerald-700">Identity proof uploaded &amp; attached</span>
                       </div>
                     </div>
 
                     <button
                       type="button"
                       onClick={() => setGovIdDoc(null)}
-                      className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 shrink-0 p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                      className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 shrink-0 p-1.5 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Remove
                     </button>
