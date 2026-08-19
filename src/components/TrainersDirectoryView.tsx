@@ -22,6 +22,11 @@ interface Trainer {
   workPreferences: {
     expectedMonthlySalary: string;
   };
+  verificationStatus?: string;
+  payment?: {
+    isPaid?: boolean;
+    status?: string;
+  };
 }
 
 export default function TrainersDirectoryView() {
@@ -160,9 +165,22 @@ export default function TrainersDirectoryView() {
                     <div>
                       <h3 className="font-bold text-lg text-gray-900 flex items-center gap-1.5">
                         {trainer.personal.fullName}
-                        <ShieldCheck className="w-4 h-4 text-[#d91a24]" />
+                        {(trainer.payment?.isPaid || trainer.verificationStatus === "verified") ? (
+                          <span title="Verified Trainer" className="inline-flex items-center text-emerald-600">
+                            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                          </span>
+                        ) : (
+                          <ShieldCheck className="w-4 h-4 text-gray-300" />
+                        )}
                       </h3>
-                      <p className="text-sm font-medium text-[#d91a24]">{trainer.professional.professionalTitle}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <p className="text-xs font-semibold text-[#d91a24]">{trainer.professional.professionalTitle}</p>
+                        {(trainer.payment?.isPaid || trainer.verificationStatus === "verified") && (
+                          <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.2 rounded border border-emerald-200/60">
+                            Verified
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-md text-xs font-bold text-amber-700 border border-amber-100">

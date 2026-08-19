@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
+import CashfreePaymentModal from "@/components/CashfreePaymentModal";
 
 interface RegisterTrainerFlowProps {
   onBack: () => void;
@@ -328,19 +329,83 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
     }
   };
 
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   if (isSuccess) {
     return (
-      <div className="w-full flex flex-col h-full items-center justify-center p-6 md:p-12 text-center">
-        <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6">
-          <CheckCircle2 className="w-10 h-10 text-green-500" />
+      <div className="w-full flex flex-col h-full items-center justify-center p-6 md:p-10 text-center animate-in fade-in zoom-in-95 duration-300">
+        
+        {/* Success Icon */}
+        <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 border border-emerald-100 shadow-sm">
+          <CheckCircle2 className="w-8 h-8" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">Registration Successful!</h2>
-        <p className="text-gray-500 mb-8 max-w-sm">Your trainer profile has been created with your submitted documents and is currently pending review. You can now access your dashboard.</p>
-        <Link href={`/trainer/${createdSlug}/dashboard`} className="w-full max-w-[240px]">
-          <Button className="w-full bg-[#d91a24] hover:bg-[#cc1616] text-white py-6 rounded-xl font-bold cursor-pointer">
-            Go to Dashboard
+
+        <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-2">
+          Profile Created Successfully!
+        </h2>
+        <p className="text-gray-500 text-xs md:text-sm mb-6 max-w-md">
+          Welcome to FitWorks. Stand out to gym owners and get recommended to partner gyms by activating your verified candidate badge.
+        </p>
+
+        {/* ₹99 Activation Card */}
+        <div className="w-full max-w-md bg-gradient-to-br from-red-50/70 to-orange-50/50 border border-red-200/80 rounded-2xl p-5 mb-6 text-left shadow-xs">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-[#d91a24] text-white flex items-center justify-center font-bold text-xs">
+                ✓
+              </div>
+              <span className="text-xs font-black uppercase tracking-wider text-gray-900">
+                Verified Trainer Listing
+              </span>
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-xl font-black text-[#d91a24]">₹99</span>
+              <span className="text-[11px] text-gray-400 line-through">₹499</span>
+            </div>
+          </div>
+
+          <ul className="space-y-1.5 text-xs text-gray-600 mb-4 font-medium">
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+              Verified checkmark badge on public marketplace
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+              Priority placement for partner gyms (HOPE &amp; ANYDAY)
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+              Fast-track credential review within 24 hours
+            </li>
+          </ul>
+
+          <Button
+            onClick={() => setShowPaymentModal(true)}
+            className="w-full bg-[#d91a24] hover:bg-[#c2141d] active:scale-[0.99] text-white py-5 rounded-xl font-bold text-sm shadow-md shadow-red-500/20 flex items-center justify-center gap-2 cursor-pointer transition-all"
+          >
+            Pay ₹99 &amp; Activate Verified Badge
           </Button>
+        </div>
+
+        {/* Skip Option */}
+        <Link 
+          href={`/trainer/${createdSlug}/dashboard`} 
+          className="text-xs font-semibold text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          Skip for now &amp; Go to Dashboard →
         </Link>
+
+        {/* Payment Modal */}
+        <CashfreePaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          trainerSlug={createdSlug}
+          trainerName={formData.personal.fullName}
+          trainerEmail={formData.email}
+          trainerPhone="9876543210"
+          skipHref={`/trainer/${createdSlug}/dashboard`}
+        />
+
       </div>
     );
   }

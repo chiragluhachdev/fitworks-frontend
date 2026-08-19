@@ -17,38 +17,63 @@ import {
   ShieldCheck,
   Loader2
 } from "lucide-react";
+import CashfreePaymentModal from "@/components/CashfreePaymentModal";
+import { useSearchParams } from "next/navigation";
+import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 
 export default function TrainerDashboardPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const trainerSlug = (params?.trainerSlug as string) || "rahul-sharma";
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  const fetchDashboard = async () => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const token = localStorage.getItem("fitworks_token");
+      const res = await fetch(`${apiUrl}/trainers/${trainerSlug}/dashboard`, {
+        headers: {
+          Authorization: `Bearer ${token || ""}`,
+        },
+      });
+      const json = await res.json();
+      if (json.success) {
+        setData(json.data);
+      }
+    } catch (err) {
+      console.error("Fetch Trainer Dashboard Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-        const token = localStorage.getItem("fitworks_token");
-        const res = await fetch(`${apiUrl}/trainers/${trainerSlug}/dashboard`, {
-          headers: {
-            Authorization: `Bearer ${token || ""}`,
-          },
-        });
-        const json = await res.json();
-        if (json.success) {
-          setData(json.data);
-        }
-      } catch (err) {
-        console.error("Fetch Trainer Dashboard Error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDashboard();
-  }, [trainerSlug]);
+
+    // Check if returning from Cashfree payment
+    const orderId = searchParams.get("order_id");
+    const paymentStatus = searchParams.get("payment_status");
+
+    if (orderId && paymentStatus === "success") {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      fetch(`${apiUrl}/payments/verify-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, trainerSlug }),
+      })
+        .then((r) => r.json())
+        .then((vData) => {
+          if (vData.isPaid) {
+            toast.success("Payment verified! Your profile badge is now verified.");
+            fetchDashboard();
+          }
+        });
+    }
+  }, [trainerSlug, searchParams]);
 
   if (loading) {
     return (
@@ -60,65 +85,88 @@ export default function TrainerDashboardPage() {
   }
 
   const { trainer, stats, applications = [], connections = [], recommendedJobs = [] } = data || {};
+  const isPaid = trainer?.payment?.isPaid;
 
   const statCards = [
     { title: "Profile Views", value: stats?.profileViews || 48, icon: Eye, color: "text-blue-600", bg: "bg-blue-50" },
     { title: "Active Applications", value: stats?.activeApplications || applications.length, icon: Briefcase, color: "text-purple-600", bg: "bg-purple-50" },
     { title: "New Invitations", value: stats?.newConnections || connections.filter((c: any) => c.status === "pending").length, icon: UserPlus, color: "text-green-600", bg: "bg-green-50" },
-    { title: "Verification", value: stats?.verificationStatus === "verified" ? "Verified" : "Pending", icon: ShieldCheck, color: "text-[#d91a24]", bg: "bg-red-50" },
+    { title: "Verified Badge", value: isPaid ? "Active" : "Unpaid (₹99)", icon: ShieldCheck, color: isPaid ? "text-emerald-600" : "text-[#d91a24]", bg: isPaid ? "bg-emerald-50" : "bg-red-50" },
   ];
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-300">
       
-      {/* Verification Status Banner */}
-      {trainer?.verificationStatus === "pending" ? (
-        <div className="bg-amber-50/80 border border-amber-200/80 rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
-              <Clock className="w-5 h-5" />
+      {/* ₹99 Verified Badge Activation Banner if not paid */}
+      {!isPaid && (
+        <div className="bg-gradient-to-r from-red-600 to-[#b8141d] rounded-3xl p-5 md:p-6 text-white shadow-lg shadow-red-500/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-start md:items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-md text-white flex items-center justify-center font-bold shrink-0">
+              <ShieldCheck className="w-6 h-6 text-amber-300" />
             </div>
             <div>
-              <h3 className="font-bold text-amber-900 text-sm">Your profile is currently under review</h3>
-              <p className="text-xs text-amber-700 mt-0.5">Our verification team will review your credentials within 24 hours.</p>
+              <div className="flex items-center gap-2">
+                <h3 className="font-extrabold text-white text-base">
+                  Activate Verified Trainer Badge (₹99 One-Time)
+                </h3>
+                <span className="text-[10px] font-bold bg-amber-400 text-gray-950 px-2 py-0.5 rounded-full uppercase">
+                  Recommended
+                </span>
+              </div>
+              <p className="text-xs text-white/85 mt-0.5">
+                Stand out on the public directory, get highlighted to partner gyms (HOPE &amp; ANYDAY), and unlock priority applications.
+              </p>
             </div>
           </div>
-          <Link href={`/trainer/${trainerSlug}/verification`}>
-            <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold">
-              Check Documents
-            </Button>
-          </Link>
-        </div>
-      ) : (
-        <div className="bg-green-50/80 border border-green-200/80 rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-green-100 text-green-700 flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-green-900">Verified Fitness Professional</p>
-              <p className="text-[11px] text-green-700">Your profile is active and fully discoverable by partner gyms across India.</p>
-            </div>
-          </div>
+          <Button
+            onClick={() => setShowPaymentModal(true)}
+            className="bg-white hover:bg-gray-100 text-[#d91a24] font-extrabold text-xs px-6 py-5 rounded-xl shrink-0 shadow-sm cursor-pointer"
+          >
+            Activate Badge (₹99)
+          </Button>
         </div>
       )}
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm">
         <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">
-            Hello, {trainer?.personal?.fullName || "Trainer"}!
-          </h1>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">
+              Hello, {trainer?.personal?.fullName || "Trainer"}!
+            </h1>
+            {isPaid ? (
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 rounded-full">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Verified Profile
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200/80 px-2.5 py-0.5 rounded-full">
+                Standard Profile
+              </span>
+            )}
+          </div>
           <p className="text-sm text-gray-500 mt-1">Here is a live summary of your applications and incoming connection requests.</p>
         </div>
         <div className="flex items-center gap-3">
           <Link href={`/trainer/${trainerSlug}/jobs`}>
-            <Button className="bg-[#d91a24] hover:bg-[#cc1616] text-white h-11 px-5 text-sm font-semibold rounded-xl shadow-sm flex items-center gap-1.5">
+            <Button className="bg-[#d91a24] hover:bg-[#cc1616] text-white h-11 px-5 text-sm font-semibold rounded-xl shadow-sm flex items-center gap-1.5 cursor-pointer">
               <Search className="w-4 h-4" /> Browse Jobs
             </Button>
           </Link>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      <CashfreePaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        trainerSlug={trainerSlug}
+        trainerName={trainer?.personal?.fullName}
+        trainerEmail={trainer?.userId?.email}
+        onSuccess={() => {
+          setShowPaymentModal(false);
+          fetchDashboard();
+        }}
+      />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
