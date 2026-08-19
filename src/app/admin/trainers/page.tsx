@@ -18,7 +18,8 @@ import {
   IndianRupee,
   Eye,
   Check,
-  ExternalLink
+  ExternalLink,
+  AlertTriangle
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -28,6 +29,9 @@ export default function AdminTrainers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [selectedTrainer, setSelectedTrainer] = useState<any | null>(null);
+  
+  // Rejection confirmation dialog state
+  const [rejectingTrainer, setRejectingTrainer] = useState<any | null>(null);
 
   const fetchTrainers = async () => {
     try {
@@ -69,6 +73,7 @@ export default function AdminTrainers() {
         if (selectedTrainer && selectedTrainer._id === id) {
           setSelectedTrainer((prev: any) => ({ ...prev, verificationStatus: status }));
         }
+        setRejectingTrainer(null);
         fetchTrainers(); // Refresh
       } else {
         toast.error("Failed to update status");
@@ -265,7 +270,7 @@ export default function AdminTrainers() {
                       )}
                       {trainer.verificationStatus !== "rejected" && (
                         <button 
-                          onClick={() => handleVerify(trainer._id, "rejected")}
+                          onClick={() => setRejectingTrainer(trainer)}
                           className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
                         >
                           Reject
@@ -459,7 +464,7 @@ export default function AdminTrainers() {
                 )}
                 {selectedTrainer.verificationStatus !== "rejected" && (
                   <button
-                    onClick={() => handleVerify(selectedTrainer._id, "rejected")}
+                    onClick={() => setRejectingTrainer(selectedTrainer)}
                     className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold px-4 py-2.5 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5"
                   >
                     <XCircle className="w-4 h-4" />
@@ -469,6 +474,41 @@ export default function AdminTrainers() {
               </div>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* REJECTION CONFIRMATION POPUP */}
+      {rejectingTrainer && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-gray-100 p-6 text-center space-y-4">
+            <div className="w-14 h-14 rounded-2xl bg-red-50 text-red-600 border border-red-100 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-7 h-7" />
+            </div>
+
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Confirm Rejection</h3>
+              <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
+                Are you sure you want to reject the verification application for{" "}
+                <span className="font-bold text-gray-900">{rejectingTrainer.personal?.fullName}</span>? This will deny their verified status badge.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => setRejectingTrainer(null)}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleVerify(rejectingTrainer._id, "rejected")}
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 shadow-sm shadow-red-500/20 transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <XCircle className="w-4 h-4" />
+                Yes, Reject Verification
+              </button>
+            </div>
           </div>
         </div>
       )}
