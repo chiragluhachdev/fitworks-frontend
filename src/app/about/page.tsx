@@ -1,4 +1,20 @@
+import type { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "About FitWorks — Our Mission & Story",
+  description:
+    "Learn about FitWorks, India's premier fitness hiring marketplace dedicated to elevating career opportunities for fitness professionals and gyms.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About FitWorks — Our Mission & Story | FitWorks",
+    description:
+      "FitWorks is India's premier network connecting top-tier fitness professionals with world-class gyms, studios, and private clients.",
+    url: "https://fitworks.in/about",
+  },
+};
 
 export default function AboutPage() {
   return (
@@ -12,7 +28,7 @@ export default function AboutPage() {
           </h1>
           <div className="space-y-4 text-sm md:text-base leading-relaxed">
             <p>
-              FitWorks is India's premier network connecting top-tier fitness professionals with world-class gyms, studios, and private clients. 
+              FitWorks is India&apos;s premier network connecting top-tier fitness professionals with world-class gyms, studios, and private clients. 
             </p>
             <p>
               Our mission is to streamline the hiring process in the fitness industry. We believe that every gym deserves access to verified, highly-skilled trainers, and every trainer deserves a platform that champions their expertise and accelerates their career growth.
