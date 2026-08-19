@@ -47,15 +47,26 @@ export default function Footer() {
             <p className="text-sm text-gray-400 mb-4 max-w-xs leading-relaxed">
               Connecting gyms and individuals with verified trainers, coaches and fitness professionals across India.
             </p>
+            <div className="space-y-1.5 mb-4 text-xs text-gray-400">
+              <p>
+                <span className="text-gray-500 font-medium">Helpline:</span>{" "}
+                <a href="tel:+918130200285" className="text-white hover:text-[#d91a24] font-bold transition-colors">
+                  +91 8130200285
+                </a>
+              </p>
+              <p>
+                <span className="text-gray-500 font-medium">Support:</span>{" "}
+                <a href="mailto:support@fitworks.in" className="text-gray-300 hover:text-white transition-colors">
+                  support@fitworks.in
+                </a>
+              </p>
+            </div>
             <div className="flex gap-2">
-              <a href="#" className="w-7 h-7 rounded-md bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-gray-700 hover:text-white transition-colors">
-                <Globe className="w-3.5 h-3.5" />
+              <a href="https://wa.me/918130200285" target="_blank" rel="noopener noreferrer" title="Chat on WhatsApp" className="h-7 px-2.5 rounded-md bg-emerald-950 text-emerald-400 border border-emerald-800/60 flex items-center gap-1 text-[11px] font-bold hover:bg-emerald-900 transition-colors">
+                WhatsApp Support
               </a>
-              <a href="#" className="w-7 h-7 rounded-md bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-gray-700 hover:text-white transition-colors">
+              <a href="mailto:support@fitworks.in" title="Email Support" className="w-7 h-7 rounded-md bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gray-700 hover:text-white transition-colors">
                 <Mail className="w-3.5 h-3.5" />
-              </a>
-              <a href="#" className="w-7 h-7 rounded-md bg-gray-800 flex items-center justify-center text-gray-500 hover:bg-gray-700 hover:text-white transition-colors">
-                <Share2 className="w-3.5 h-3.5" />
               </a>
             </div>
           </div>

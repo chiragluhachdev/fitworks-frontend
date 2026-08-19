@@ -54,11 +54,21 @@ export default function ContactPage() {
             <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center font-bold">
               <Phone className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-gray-900">Partner Helpline</h3>
-            <p className="text-xs text-gray-500">Monday to Saturday (9 AM – 7 PM IST):</p>
-            <a href="tel:+919876543210" className="text-sm font-bold text-[#d91a24] hover:underline">
-              +91 (0) 800-FITWORKS
-            </a>
+            <h3 className="text-base font-bold text-gray-900">Partner &amp; Support Helpline</h3>
+            <p className="text-xs text-gray-500">Call or WhatsApp (Monday – Saturday, 9 AM – 8 PM):</p>
+            <div className="flex flex-col items-center gap-1.5">
+              <a href="tel:+918130200285" className="text-sm font-bold text-[#d91a24] hover:underline">
+                +91 8130200285
+              </a>
+              <a 
+                href="https://wa.me/918130200285" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 hover:bg-emerald-100 transition-colors"
+              >
+                Chat on WhatsApp ↗
+              </a>
+            </div>
           </div>
 
           <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-xs flex flex-col items-center text-center space-y-3">

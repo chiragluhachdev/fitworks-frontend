@@ -16,6 +16,13 @@ export default function StructuredData() {
           "height": "512"
         },
         "description": "India's trusted marketplace connecting gyms and fitness clubs with verified personal trainers, coaches and fitness specialists.",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+91-8130200285",
+          "contactType": "customer service",
+          "areaServed": "IN",
+          "availableLanguage": ["English", "Hindi"]
+        },
         "sameAs": [
           "https://www.instagram.com/fitworks_india",
           "https://www.linkedin.com/company/fitworks"
