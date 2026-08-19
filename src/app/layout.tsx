@@ -19,6 +19,14 @@ export const metadata: Metadata = {
   title: "FitWorks — Find & Hire Verified Fitness Professionals",
   description:
     "FitWorks connects gyms and individuals with verified trainers and fitness professionals across India. Search, connect and hire with confidence.",
+  icons: {
+    icon: [
+      { url: "/icon.png" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: "/icon.png",
+    apple: "/apple-icon.png",
+  },
   openGraph: {
     title: "FitWorks — Find & Hire Verified Fitness Professionals",
     description:
