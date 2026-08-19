@@ -10,7 +10,12 @@ import {
   IndianRupee, 
   Calendar,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Eye,
+  X,
+  Users,
+  Award,
+  FileText
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -19,6 +24,7 @@ export default function AdminVacancies() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedJob, setSelectedJob] = useState<any | null>(null);
 
   const fetchVacancies = async () => {
     try {
@@ -65,7 +71,7 @@ export default function AdminVacancies() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Job Vacancies & Openings</h1>
           <p className="text-xs md:text-sm text-gray-500 mt-1">
-            Directory of all open and closed trainer vacancies posted by partner gyms.
+            Directory of all open and closed trainer vacancies. Click on any vacancy to view complete details in a modal.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -129,12 +135,16 @@ export default function AdminVacancies() {
                   <th className="px-6 py-4">Posting Gym</th>
                   <th className="px-6 py-4">Salary Package</th>
                   <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Date Posted</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filteredVacancies.map((job) => (
-                  <tr key={job._id} className="hover:bg-gray-50/60 transition-colors">
+                  <tr 
+                    key={job._id} 
+                    onClick={() => setSelectedJob(job)}
+                    className="hover:bg-gray-50/80 transition-colors cursor-pointer"
+                  >
                     
                     {/* Position */}
                     <td className="px-6 py-4">
@@ -191,9 +201,18 @@ export default function AdminVacancies() {
                       )}
                     </td>
 
-                    {/* Date Posted */}
-                    <td className="px-6 py-4 text-right text-xs text-gray-500 font-medium">
-                      {job.createdAt ? format(new Date(job.createdAt), "MMM d, yyyy") : "Recent"}
+                    {/* Actions */}
+                    <td className="px-6 py-4 text-right">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedJob(job);
+                        }}
+                        className="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold px-3 py-1.5 rounded-xl transition-colors cursor-pointer"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        View Details
+                      </button>
                     </td>
 
                   </tr>
@@ -215,6 +234,144 @@ export default function AdminVacancies() {
           </div>
         )}
       </div>
+
+      {/* VACANCY DETAIL MODAL */}
+      {selectedJob && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[90vh]">
+            
+            {/* Modal Header */}
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold shrink-0">
+                  <Briefcase className="w-6 h-6" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-gray-900">
+                      {selectedJob.title}
+                    </h3>
+                    {selectedJob.status === "open" ? (
+                      <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                        Active Open
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-bold bg-gray-100 text-gray-600 border border-gray-200 px-2.5 py-0.5 rounded-full">
+                        Closed
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs font-semibold text-[#d91a24] flex items-center gap-1 mt-0.5">
+                    <Building2 className="w-3.5 h-3.5" />
+                    {selectedJob.gymId?.gymName || "FitWorks Gym Partner"}
+                  </p>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setSelectedJob(null)}
+                className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <div className="p-6 overflow-y-auto space-y-6 text-sm text-gray-700">
+              
+              {/* Key Metrics Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Monthly Salary</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block">
+                    ₹{selectedJob.salaryRange?.min?.toLocaleString()} - ₹{selectedJob.salaryRange?.max?.toLocaleString()}
+                  </span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Employment Type</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block">
+                    {selectedJob.employmentType || "Full-time"}
+                  </span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Openings</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block">
+                    {selectedJob.vacanciesCount || 1} Trainer(s)
+                  </span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Location</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block truncate">
+                    {selectedJob.location?.city || "India"}
+                  </span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Experience Required</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block">
+                    {selectedJob.requirements?.preferredExperience || "1-3 Years"}
+                  </span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Posted Date</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block">
+                    {selectedJob.createdAt ? format(new Date(selectedJob.createdAt), "MMM d, yyyy") : "Recent"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Description */}
+              {selectedJob.description && (
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Position Description</h4>
+                  <p className="text-xs md:text-sm text-gray-600 bg-gray-50 p-4 rounded-2xl border border-gray-100 leading-relaxed whitespace-pre-line">
+                    {selectedJob.description}
+                  </p>
+                </div>
+              )}
+
+              {/* Specializations & Trainer Types */}
+              {selectedJob.requirements?.trainerTypes && selectedJob.requirements.trainerTypes.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Target Specializations</h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedJob.requirements.trainerTypes.map((type: string, idx: number) => (
+                      <span key={idx} className="bg-red-50 text-[#d91a24] border border-red-100 text-xs font-semibold px-2.5 py-1 rounded-lg">
+                        {type}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Facility Address */}
+              <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/70 text-xs space-y-1">
+                <span className="font-bold text-blue-900 flex items-center gap-1.5">
+                  <Building2 className="w-4 h-4 text-blue-600" />
+                  Gym Address & Hiring Center
+                </span>
+                <p className="text-blue-800">
+                  {selectedJob.gymId?.gymName} • {selectedJob.location?.city || "India"}
+                </p>
+              </div>
+
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between">
+              <div className="text-xs text-gray-400 font-mono">
+                Job ID: {selectedJob._id}
+              </div>
+              <button
+                onClick={() => setSelectedJob(null)}
+                className="bg-gray-900 hover:bg-black text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-colors cursor-pointer"
+              >
+                Close Details
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -11,9 +11,11 @@ import {
   Loader2, 
   CheckCircle2, 
   AlertCircle,
-  Plus
+  Plus,
+  Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "react-hot-toast";
 
 interface TrainerApplication {
   _id: string;
@@ -40,29 +42,61 @@ export default function TrainerApplicationsPage() {
   const [applications, setApplications] = useState<TrainerApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("all");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const fetchApplications = async () => {
+    setLoading(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const trainerRes = await fetch(`${apiUrl}/trainers/${trainerSlug}`);
+      const trainerData = await trainerRes.json();
+      if (trainerData.success && trainerData.data) {
+        const appRes = await fetch(`${apiUrl}/applications/trainer/${trainerData.data._id}`);
+        const appJson = await appRes.json();
+        if (appJson.success) {
+          setApplications(appJson.data || []);
+        }
+      }
+    } catch (err) {
+      console.error("Fetch Trainer Applications Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchApplications = async () => {
-      setLoading(true);
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-        const trainerRes = await fetch(`${apiUrl}/trainers/${trainerSlug}`);
-        const trainerData = await trainerRes.json();
-        if (trainerData.success && trainerData.data) {
-          const appRes = await fetch(`${apiUrl}/applications/trainer/${trainerData.data._id}`);
-          const appJson = await appRes.json();
-          if (appJson.success) {
-            setApplications(appJson.data || []);
-          }
-        }
-      } catch (err) {
-        console.error("Fetch Trainer Applications Error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchApplications();
   }, [trainerSlug]);
+
+  const handleDeleteApplication = async (appId: string) => {
+    if (!confirm("Are you sure you want to withdraw and delete this job application?")) {
+      return;
+    }
+
+    setDeletingId(appId);
+    try {
+      const token = localStorage.getItem("fitworks_token") || localStorage.getItem("token");
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const res = await fetch(`${apiUrl}/applications/${appId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success("Application withdrawn successfully");
+        setApplications(prev => prev.filter(a => a._id !== appId));
+      } else {
+        toast.error(data.message || "Failed to delete application");
+      }
+    } catch (err) {
+      toast.error("Network error withdrawing application");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const filtered = applications.filter(a => filter === "all" || a.status === filter);
 
@@ -73,10 +107,10 @@ export default function TrainerApplicationsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">My Job Applications</h1>
-          <p className="text-sm text-gray-500 mt-1">Track the hiring status of your submitted gym applications.</p>
+          <p className="text-sm text-gray-500 mt-1">Track the hiring status of your submitted gym applications or withdraw them.</p>
         </div>
         <Link href={`/trainer/${trainerSlug}/jobs`}>
-          <Button className="bg-[#d91a24] hover:bg-[#cc1616] text-white px-5 h-11 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-1.5">
+          <Button className="bg-[#d91a24] hover:bg-[#cc1616] text-white px-5 h-11 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-1.5 cursor-pointer">
             <Plus className="w-4 h-4" /> Apply for More Jobs
           </Button>
         </Link>
@@ -112,7 +146,7 @@ export default function TrainerApplicationsPage() {
           <h3 className="text-lg font-bold text-gray-900">No applications found</h3>
           <p className="text-sm text-gray-500 mt-1 max-w-sm mx-auto mb-6">Browse open vacancies and apply to connect with gym hiring managers.</p>
           <Link href={`/trainer/${trainerSlug}/jobs`}>
-            <Button className="bg-[#d91a24] hover:bg-[#cc1616] text-white rounded-xl font-bold px-6">
+            <Button className="bg-[#d91a24] hover:bg-[#cc1616] text-white rounded-xl font-bold px-6 cursor-pointer">
               Browse Vacancies
             </Button>
           </Link>
@@ -147,8 +181,23 @@ export default function TrainerApplicationsPage() {
                 </div>
               </div>
 
-              <div className="text-xs text-gray-400 font-medium">
-                Applied on {new Date(app.createdAt).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}
+              <div className="flex items-center justify-between md:justify-end gap-4">
+                <div className="text-xs text-gray-400 font-medium">
+                  Applied on {new Date(app.createdAt).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}
+                </div>
+
+                <button
+                  onClick={() => handleDeleteApplication(app._id)}
+                  disabled={deletingId === app._id}
+                  className="text-xs font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-xl border border-red-200/60 transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {deletingId === app._id ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-3.5 h-3.5" />
+                  )}
+                  Withdraw
+                </button>
               </div>
             </div>
           ))}

@@ -1,18 +1,24 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { 
   AlertCircle, 
   CheckCircle2, 
   XCircle, 
   Search, 
-  ExternalLink, 
   MapPin, 
   Briefcase, 
   ShieldCheck, 
   Award,
-  Filter
+  X,
+  User,
+  GraduationCap,
+  FileCheck,
+  Calendar,
+  IndianRupee,
+  Eye,
+  Check,
+  ExternalLink
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -21,6 +27,7 @@ export default function AdminTrainers() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [selectedTrainer, setSelectedTrainer] = useState<any | null>(null);
 
   const fetchTrainers = async () => {
     try {
@@ -59,6 +66,9 @@ export default function AdminTrainers() {
       
       if (res.ok) {
         toast.success(`Trainer verification status updated to ${status}`);
+        if (selectedTrainer && selectedTrainer._id === id) {
+          setSelectedTrainer((prev: any) => ({ ...prev, verificationStatus: status }));
+        }
         fetchTrainers(); // Refresh
       } else {
         toast.error("Failed to update status");
@@ -91,7 +101,7 @@ export default function AdminTrainers() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Trainers & Verification</h1>
           <p className="text-xs md:text-sm text-gray-500 mt-1">
-            Review professional profiles, audit credentials, and grant verification badges.
+            Review professional profiles, audit credentials in modal view, and grant verification badges.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -156,7 +166,7 @@ export default function AdminTrainers() {
                   <th className="px-6 py-4">Location & Experience</th>
                   <th className="px-6 py-4">Specializations</th>
                   <th className="px-6 py-4">Verification</th>
-                  <th className="px-6 py-4 text-right">Moderation Actions</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -235,8 +245,16 @@ export default function AdminTrainers() {
                       )}
                     </td>
 
-                    {/* Moderation Actions */}
+                    {/* Actions */}
                     <td className="px-6 py-4 text-right space-x-1.5 whitespace-nowrap">
+                      <button
+                        onClick={() => setSelectedTrainer(trainer)}
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold px-3 py-1.5 rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        View Profile
+                      </button>
+
                       {trainer.verificationStatus !== "verified" && (
                         <button 
                           onClick={() => handleVerify(trainer._id, "verified")}
@@ -253,14 +271,6 @@ export default function AdminTrainers() {
                           Reject
                         </button>
                       )}
-                      <Link 
-                        href={`/trainer/${trainer.slug}`} 
-                        target="_blank" 
-                        className="inline-flex items-center gap-1 text-gray-700 hover:text-[#d91a24] bg-gray-100 hover:bg-gray-200 text-xs font-bold px-3 py-1.5 rounded-xl transition-colors ml-1"
-                      >
-                        Profile
-                        <ExternalLink className="w-3 h-3" />
-                      </Link>
                     </td>
 
                   </tr>
@@ -282,6 +292,186 @@ export default function AdminTrainers() {
           </div>
         )}
       </div>
+
+      {/* TRAINER PROFILE DETAILS MODAL */}
+      {selectedTrainer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[90vh]">
+            
+            {/* Modal Header */}
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-lg">
+                  {selectedTrainer.personal?.fullName?.charAt(0) || "T"}
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    {selectedTrainer.personal?.fullName}
+                    {selectedTrainer.verificationStatus === "verified" && (
+                      <span className="text-[10px] font-bold bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <ShieldCheck className="w-3 h-3" /> Verified
+                      </span>
+                    )}
+                  </h3>
+                  <p className="text-xs font-semibold text-[#d91a24]">
+                    {selectedTrainer.professional?.professionalTitle || "Fitness Trainer"}
+                  </p>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setSelectedTrainer(null)}
+                className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <div className="p-6 overflow-y-auto space-y-6 text-sm text-gray-700">
+              
+              {/* Bio */}
+              {selectedTrainer.professional?.bio && (
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Professional Summary</h4>
+                  <p className="text-xs md:text-sm text-gray-600 bg-gray-50 p-4 rounded-2xl border border-gray-100 leading-relaxed">
+                    {selectedTrainer.professional.bio}
+                  </p>
+                </div>
+              )}
+
+              {/* Personal & Experience Details Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Experience</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block">
+                    {selectedTrainer.professional?.yearsOfExperience || 0} Years
+                  </span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Location</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block truncate">
+                    {selectedTrainer.personal?.city || "India"}
+                  </span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Gender</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block capitalize">
+                    {selectedTrainer.personal?.gender || "Not specified"}
+                  </span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Expected Salary</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block">
+                    {selectedTrainer.workPreferences?.expectedMonthlySalary || "Market standard"}
+                  </span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Availability</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block capitalize">
+                    {selectedTrainer.workPreferences?.availability || "Immediate"}
+                  </span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Education</span>
+                  <span className="text-xs font-bold text-gray-900 mt-0.5 block truncate">
+                    {selectedTrainer.professional?.education || "Certified"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Specializations & Skills */}
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Specializations & Skills</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedTrainer.professional?.specializations?.map((s: string, idx: number) => (
+                    <span key={idx} className="bg-red-50 text-[#d91a24] border border-red-100 text-xs font-semibold px-2.5 py-1 rounded-lg">
+                      {s}
+                    </span>
+                  ))}
+                  {selectedTrainer.professional?.skills?.map((sk: string, idx: number) => (
+                    <span key={idx} className="bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-1 rounded-lg">
+                      {sk}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Certifications */}
+              {selectedTrainer.professional?.certifications && selectedTrainer.professional.certifications.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Certifications</h4>
+                  <div className="space-y-1.5">
+                    {selectedTrainer.professional.certifications.map((cert: any, idx: number) => (
+                      <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 text-xs">
+                        <span className="font-semibold text-gray-900 flex items-center gap-2">
+                          <GraduationCap className="w-4 h-4 text-[#d91a24]" />
+                          {typeof cert === "string" ? cert : cert.name}
+                        </span>
+                        {cert.url && (
+                          <a href={cert.url} target="_blank" rel="noreferrer" className="text-xs font-bold text-[#d91a24] hover:underline flex items-center gap-1">
+                            Verify Link <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Verification Documents Uploaded */}
+              {selectedTrainer.verificationDocuments && selectedTrainer.verificationDocuments.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Submitted Verification Documents</h4>
+                  <div className="space-y-1.5">
+                    {selectedTrainer.verificationDocuments.map((doc: string, idx: number) => (
+                      <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-amber-50/60 border border-amber-200/60 text-xs">
+                        <span className="font-semibold text-amber-900 flex items-center gap-2">
+                          <FileCheck className="w-4 h-4 text-amber-600" />
+                          Document #{idx + 1}
+                        </span>
+                        <a href={doc} target="_blank" rel="noreferrer" className="text-xs font-bold text-amber-800 hover:underline flex items-center gap-1">
+                          View Attachment <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            </div>
+
+            {/* Modal Actions Footer */}
+            <div className="p-6 border-t border-gray-100 bg-gray-50/50 flex flex-wrap items-center justify-between gap-3">
+              <div className="text-xs text-gray-400">
+                Trainer ID: <span className="font-mono text-gray-600">{selectedTrainer._id}</span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {selectedTrainer.verificationStatus !== "verified" && (
+                  <button
+                    onClick={() => handleVerify(selectedTrainer._id, "verified")}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Check className="w-4 h-4" />
+                    Approve Trainer
+                  </button>
+                )}
+                {selectedTrainer.verificationStatus !== "rejected" && (
+                  <button
+                    onClick={() => handleVerify(selectedTrainer._id, "rejected")}
+                    className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold px-4 py-2.5 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5"
+                  >
+                    <XCircle className="w-4 h-4" />
+                    Reject
+                  </button>
+                )}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
