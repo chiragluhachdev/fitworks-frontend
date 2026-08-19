@@ -16,7 +16,8 @@ import {
   Image as ImageIcon,
   Sparkles,
   User,
-  Briefcase
+  Briefcase,
+  UploadCloud
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
@@ -34,8 +35,39 @@ export default function GymProfilePage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleLogoFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingLogo(true);
+    try {
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      uploadData.append("folder", "fitworks/gyms");
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const res = await fetch(`${apiUrl}/upload`, {
+        method: "POST",
+        body: uploadData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setFormData((prev: any) => ({ ...prev, gymLogo: data.url }));
+        toast.success("Gym brand logo uploaded to Cloudinary!");
+      } else {
+        toast.error(data.message || "Upload failed");
+      }
+    } catch (err) {
+      toast.error("Network error during file upload");
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
 
   const [formData, setFormData] = useState({
     gymName: "",
@@ -221,18 +253,44 @@ export default function GymProfilePage() {
               )}
             </div>
 
-            {/* Logo URL input & presets */}
-            <div className="flex-1 space-y-3 w-full">
+            {/* Upload Button, URL input & presets */}
+            <div className="flex-1 space-y-3.5 w-full">
+              
+              {/* Direct Device Upload */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-                  Brand Logo Image URL
+                  Upload Logo from Device (Cloudinary)
+                </label>
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center justify-center gap-2 bg-[#d91a24] hover:bg-[#cc1616] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-all">
+                    {uploadingLogo ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <UploadCloud className="w-4 h-4" />
+                    )}
+                    {uploadingLogo ? "Uploading to Cloudinary..." : "Choose Brand Logo"}
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                      onChange={handleLogoFileUpload}
+                      disabled={uploadingLogo}
+                      className="hidden"
+                    />
+                  </label>
+                  <span className="text-xs text-gray-400">PNG, JPG, or SVG up to 10MB</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                  Or Paste Brand Logo Image URL
                 </label>
                 <div className="relative">
                   <ImageIcon className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="url"
                     name="gymLogo"
-                    placeholder="https://images.unsplash.com/... or paste logo URL"
+                    placeholder="https://... or paste logo URL"
                     value={formData.gymLogo}
                     onChange={handleChange}
                     className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"

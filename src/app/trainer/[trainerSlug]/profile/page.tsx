@@ -16,7 +16,8 @@ import {
   ShieldCheck,
   Camera,
   Image as ImageIcon,
-  Sparkles
+  Sparkles,
+  UploadCloud
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
@@ -37,6 +38,41 @@ export default function TrainerProfilePage() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  const handlePhotoFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingPhoto(true);
+    try {
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      uploadData.append("folder", "fitworks/profiles");
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const res = await fetch(`${apiUrl}/upload`, {
+        method: "POST",
+        body: uploadData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setFormData((prev: any) => ({
+          ...prev,
+          personal: { ...prev.personal, profilePhoto: data.url },
+        }));
+        toast.success("Profile photo uploaded to Cloudinary!");
+      } else {
+        toast.error(data.message || "Upload failed");
+      }
+    } catch (err) {
+      toast.error("Network error during file upload");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
 
   const [formData, setFormData] = useState({
     personal: {
@@ -242,18 +278,44 @@ export default function TrainerProfilePage() {
               )}
             </div>
 
-            {/* URL Input & Presets */}
-            <div className="flex-1 space-y-3 w-full">
+            {/* Upload Button, URL Input & Presets */}
+            <div className="flex-1 space-y-3.5 w-full">
+              
+              {/* Direct Device Upload */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-                  Profile Photo Image URL
+                  Upload Photo from Device (Cloudinary)
+                </label>
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center justify-center gap-2 bg-[#d91a24] hover:bg-[#cc1616] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-all">
+                    {uploadingPhoto ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <UploadCloud className="w-4 h-4" />
+                    )}
+                    {uploadingPhoto ? "Uploading to Cloudinary..." : "Choose Headshot Photo"}
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg,image/webp"
+                      onChange={handlePhotoFileUpload}
+                      disabled={uploadingPhoto}
+                      className="hidden"
+                    />
+                  </label>
+                  <span className="text-xs text-gray-400">JPG, PNG, or WEBP up to 10MB</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
+                  Or Paste Photo Image URL
                 </label>
                 <div className="relative">
                   <ImageIcon className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="url"
                     name="personal.profilePhoto"
-                    placeholder="https://images.unsplash.com/... or paste image URL"
+                    placeholder="https://... or paste image URL"
                     value={formData.personal.profilePhoto}
                     onChange={handleChange}
                     className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"

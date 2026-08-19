@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { 
   AlertCircle, 
   CheckCircle2, 
@@ -19,7 +20,8 @@ import {
   Eye,
   Check,
   ExternalLink,
-  AlertTriangle
+  AlertTriangle,
+  CreditCard
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -306,9 +308,15 @@ export default function AdminTrainers() {
             {/* Modal Header */}
             <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-lg">
-                  {selectedTrainer.personal?.fullName?.charAt(0) || "T"}
-                </div>
+                {selectedTrainer.personal?.profilePhoto ? (
+                  <div className="w-12 h-12 rounded-2xl overflow-hidden border border-gray-200 relative shrink-0 shadow-2xs">
+                    <Image src={selectedTrainer.personal.profilePhoto} alt="Trainer" fill className="object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-lg shrink-0">
+                    {selectedTrainer.personal?.fullName?.charAt(0) || "T"}
+                  </div>
+                )}
                 <div>
                   <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                     {selectedTrainer.personal?.fullName}
@@ -427,19 +435,41 @@ export default function AdminTrainers() {
               {/* Verification Documents Uploaded */}
               {selectedTrainer.verificationDocuments && selectedTrainer.verificationDocuments.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Submitted Verification Documents</h4>
-                  <div className="space-y-1.5">
-                    {selectedTrainer.verificationDocuments.map((doc: string, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-amber-50/60 border border-amber-200/60 text-xs">
-                        <span className="font-semibold text-amber-900 flex items-center gap-2">
-                          <FileCheck className="w-4 h-4 text-amber-600" />
-                          Document #{idx + 1}
-                        </span>
-                        <a href={doc} target="_blank" rel="noreferrer" className="text-xs font-bold text-amber-800 hover:underline flex items-center gap-1">
-                          View Attachment <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </div>
-                    ))}
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Submitted Verification Documents & PAN</h4>
+                  <div className="space-y-2">
+                    {selectedTrainer.verificationDocuments.map((doc: string, idx: number) => {
+                      const [title, url] = doc.includes(" | ") ? doc.split(" | ") : [doc.startsWith("http") ? `Document #${idx + 1}` : doc, doc];
+                      const linkUrl = url && url.startsWith("http") ? url : doc.startsWith("http") ? doc : null;
+                      const isPan = title.toLowerCase().includes("pan") || title.toLowerCase().includes("id");
+
+                      return (
+                        <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/70 text-xs gap-2">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                              {isPan ? <CreditCard className="w-4 h-4" /> : <FileCheck className="w-4 h-4" />}
+                            </div>
+                            <div>
+                              <span className="font-bold text-gray-900 block">{title}</span>
+                              <span className="text-[10px] text-amber-700 font-semibold">Government / Compliance Proof</span>
+                            </div>
+                          </div>
+
+                          {linkUrl ? (
+                            <a 
+                              href={linkUrl} 
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="bg-white hover:bg-amber-100/60 text-amber-900 border border-amber-300 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 self-start sm:self-auto transition-colors cursor-pointer"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5 text-[#d91a24]" />
+                              Open Document
+                            </a>
+                          ) : (
+                            <span className="text-[11px] text-gray-400">On file</span>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
