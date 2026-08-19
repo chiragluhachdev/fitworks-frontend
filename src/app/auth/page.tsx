@@ -150,13 +150,13 @@ export default function AuthPage() {
             </div>
             <div className="flex flex-col items-center justify-center text-center px-4 border-r border-white/10 w-1/3">
               <Users className="w-6 h-6 text-[#d91a24] mb-2" />
-              <p className="text-white font-bold text-sm">850+ Gyms</p>
-              <p className="text-gray-400 text-[11px] mt-0.5">Across India</p>
+              <p className="text-white font-bold text-sm">Partner Gyms</p>
+              <p className="text-gray-400 text-[11px] mt-0.5">HOPE &amp; ANYDAY</p>
             </div>
             <div className="flex flex-col items-center justify-center text-center px-4 w-1/3">
               <Star className="w-6 h-6 text-[#d91a24] mb-2" />
-              <p className="text-white font-bold text-sm">12K+ Hires</p>
-              <p className="text-gray-400 text-[11px] mt-0.5">Successful connections</p>
+              <p className="text-white font-bold text-sm">Direct Match</p>
+              <p className="text-gray-400 text-[11px] mt-0.5">Verified connections</p>
             </div>
           </div>
 
