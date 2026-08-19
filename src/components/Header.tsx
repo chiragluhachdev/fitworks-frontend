@@ -71,8 +71,8 @@ export default function Header() {
         <div className="flex items-center gap-3">
           {pathname !== "/auth" && (
             <Link href="/auth">
-              <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white rounded-lg px-[22px] h-[38px] text-sm font-semibold hidden md:inline-flex shadow-sm">
-                Join Now <ArrowRight className="w-4 h-4 ml-1.5" />
+              <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white rounded-lg px-[20px] h-[38px] text-sm font-semibold hidden md:inline-flex shadow-sm cursor-pointer">
+                Login / Sign Up <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </Link>
           )}
@@ -96,8 +96,8 @@ export default function Header() {
           <Link href="/#testimonials" className="block py-1.5 hover:text-[#d91a24]" onClick={() => setMobileOpen(false)}>Testimonials</Link>
           {pathname !== "/auth" && (
             <Link href="/auth" onClick={() => setMobileOpen(false)}>
-              <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white rounded-lg w-full h-[38px] text-sm font-semibold mt-2 flex items-center justify-center">
-                Join Now <ArrowRight className="w-4 h-4 ml-1.5" />
+              <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white rounded-lg w-full h-[38px] text-sm font-semibold mt-2 flex items-center justify-center cursor-pointer">
+                Login / Sign Up <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </Link>
           )}
