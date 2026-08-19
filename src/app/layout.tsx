@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.fitworks.in"),
   title: "FitWorks — Find & Hire Verified Fitness Professionals",
   description:
     "FitWorks connects gyms and individuals with verified trainers and fitness professionals across India. Search, connect and hire with confidence.",
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
     description:
       "India's trusted fitness hiring marketplace. Connect with verified trainers, coaches and fitness professionals.",
     type: "website",
+    url: "https://www.fitworks.in",
     siteName: "FitWorks",
   },
 };
