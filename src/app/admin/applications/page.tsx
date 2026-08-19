@@ -1,16 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { format } from "date-fns";
 import { 
   FileText, 
   Search, 
-  Building2, 
-  User, 
   CheckCircle2, 
   Clock, 
   XCircle, 
-  Sparkles,
   Briefcase
 } from "lucide-react";
 import { toast } from "react-hot-toast";
@@ -139,12 +137,18 @@ export default function AdminApplications() {
                 {filteredApplications.map((app) => (
                   <tr key={app._id} className="hover:bg-gray-50/60 transition-colors">
                     
-                    {/* Trainer */}
+                    {/* Trainer Profile Photo */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-xs shrink-0">
-                          {app.trainerId?.personal?.fullName?.charAt(0) || "T"}
-                        </div>
+                        {app.trainerId?.personal?.profilePhoto ? (
+                          <div className="w-9 h-9 rounded-full overflow-hidden border border-gray-200 relative shrink-0 shadow-2xs">
+                            <Image src={app.trainerId.personal.profilePhoto} alt="Trainer" fill className="object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-9 h-9 rounded-full bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                            {app.trainerId?.personal?.fullName?.charAt(0) || "T"}
+                          </div>
+                        )}
                         <div>
                           <div className="font-bold text-gray-900 text-sm">
                             {app.trainerId?.personal?.fullName || "Registered Trainer"}
@@ -164,12 +168,18 @@ export default function AdminApplications() {
                       </div>
                     </td>
 
-                    {/* Gym */}
+                    {/* Gym Logo / Picture */}
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
-                          <Building2 className="w-3.5 h-3.5" />
-                        </div>
+                      <div className="flex items-center gap-2.5">
+                        {app.gymId?.gymLogo ? (
+                          <div className="w-8 h-8 rounded-xl overflow-hidden border border-gray-200 relative shrink-0 shadow-2xs">
+                            <Image src={app.gymId.gymLogo} alt="Logo" fill className="object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                            {app.gymId?.gymName?.charAt(0) || "G"}
+                          </div>
+                        )}
                         <span className="text-xs font-semibold text-gray-900">
                           {app.gymId?.gymName || "FitWorks Gym"}
                         </span>

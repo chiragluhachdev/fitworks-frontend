@@ -1,29 +1,34 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
+import Image from "next/image";
 import { format } from "date-fns";
 import { 
-  Building2, 
   Search, 
   MapPin, 
   User, 
-  Briefcase,
-  Globe,
-  Eye,
-  Edit,
-  Trash2,
-  X,
-  Check,
-  Loader2,
-  AlertTriangle,
-  ExternalLink,
-  Phone,
-  Layers,
-  IndianRupee
+  Globe, 
+  Eye, 
+  Edit, 
+  Trash2, 
+  X, 
+  Check, 
+  Loader2, 
+  AlertTriangle, 
+  ExternalLink, 
+  Camera, 
+  ImageIcon, 
+  Sparkles 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
+
+const PRESET_GYM_LOGOS = [
+  "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=300&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=300&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=300&auto=format&fit=crop&q=80",
+];
 
 export default function AdminGyms() {
   const [gyms, setGyms] = useState<any[]>([]);
@@ -67,6 +72,7 @@ export default function AdminGyms() {
     setIsEditing(false);
     setEditFormData({
       gymName: gym.gymName || "",
+      gymLogo: gym.gymLogo || "",
       gymDescription: gym.gymDescription || "",
       website: gym.website || "",
       instagram: gym.instagram || "",
@@ -108,7 +114,7 @@ export default function AdminGyms() {
 
       const data = await res.json();
       if (res.ok && data.success) {
-        toast.success("Gym details updated successfully!");
+        toast.success("Gym profile and brand logo updated successfully!");
         setSelectedGym(data.data);
         setIsEditing(false);
         fetchGyms();
@@ -171,7 +177,7 @@ export default function AdminGyms() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Partner Gyms & Fitness Centers</h1>
           <p className="text-xs md:text-sm text-gray-500 mt-1">
-            Directory of registered fitness studios. Click on any gym to inspect details, modify parameters, or manage accounts.
+            Directory of registered fitness studios. Inspect brand logos, modify parameters, or manage partner accounts.
           </p>
         </div>
         <div className="text-xs font-semibold px-3.5 py-2 rounded-xl bg-blue-50 text-blue-800 border border-blue-200/60 self-start md:self-auto">
@@ -205,7 +211,7 @@ export default function AdminGyms() {
             <table className="w-full text-left text-sm text-gray-700">
               <thead className="bg-gray-50/80 text-gray-400 uppercase text-[10px] font-bold tracking-wider border-b border-gray-100">
                 <tr>
-                  <th className="px-6 py-4">Gym Facility</th>
+                  <th className="px-6 py-4">Gym & Brand Logo</th>
                   <th className="px-6 py-4">City & Address</th>
                   <th className="px-6 py-4">Contact Representative</th>
                   <th className="px-6 py-4">Hiring Budget</th>
@@ -220,12 +226,23 @@ export default function AdminGyms() {
                     className="hover:bg-gray-50/80 transition-colors cursor-pointer"
                   >
                     
-                    {/* Facility */}
+                    {/* Facility & Logo */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-sm shrink-0">
-                          <Building2 className="w-5 h-5" />
-                        </div>
+                        {gym.gymLogo ? (
+                          <div className="w-11 h-11 rounded-2xl overflow-hidden border border-gray-200 shadow-2xs relative shrink-0">
+                            <Image 
+                              src={gym.gymLogo} 
+                              alt={gym.gymName} 
+                              fill 
+                              className="object-cover" 
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-11 h-11 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-base shrink-0 shadow-2xs">
+                            {gym.gymName?.charAt(0) || "G"}
+                          </div>
+                        )}
                         <div>
                           <div className="font-bold text-gray-900 text-sm">
                             {gym.gymName}
@@ -305,7 +322,6 @@ export default function AdminGyms() {
                   <tr>
                     <td colSpan={5} className="px-6 py-16 text-center">
                       <div className="max-w-xs mx-auto text-center space-y-2">
-                        <Building2 className="w-10 h-10 text-gray-300 mx-auto" />
                         <p className="text-sm font-bold text-gray-700">No gyms match your query</p>
                         <p className="text-xs text-gray-400">Try searching for a different gym name or city.</p>
                       </div>
@@ -326,9 +342,20 @@ export default function AdminGyms() {
             {/* Modal Header */}
             <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold shrink-0">
-                  <Building2 className="w-6 h-6" />
-                </div>
+                {selectedGym.gymLogo ? (
+                  <div className="w-12 h-12 rounded-2xl overflow-hidden border border-gray-200 relative shrink-0 shadow-sm">
+                    <Image 
+                      src={selectedGym.gymLogo} 
+                      alt={selectedGym.gymName} 
+                      fill 
+                      className="object-cover" 
+                    />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-xl shrink-0">
+                    {selectedGym.gymName?.charAt(0) || "G"}
+                  </div>
+                )}
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">{selectedGym.gymName}</h3>
                   <p className="text-xs font-medium text-gray-500 flex items-center gap-1">
@@ -441,8 +468,61 @@ export default function AdminGyms() {
                   </div>
                 </>
               ) : (
-                /* Edit Mode Form */
+                /* Edit Mode Form (Allows Admin to change Gym Logo, Details, etc.) */
                 <div className="space-y-4">
+                  
+                  {/* Admin Gym Logo Edit */}
+                  <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200/80 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Camera className="w-4 h-4 text-[#d91a24]" />
+                      <label className="text-xs font-bold uppercase tracking-wider text-gray-900">
+                        Gym Brand Logo & Picture
+                      </label>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      {editFormData.gymLogo ? (
+                        <div className="w-16 h-16 rounded-2xl overflow-hidden border border-gray-300 relative shrink-0 shadow-2xs">
+                          <Image src={editFormData.gymLogo} alt="Logo" fill className="object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-16 h-16 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-xl shrink-0">
+                          {editFormData.gymName?.charAt(0) || "G"}
+                        </div>
+                      )}
+
+                      <div className="flex-1 space-y-2">
+                        <div className="relative">
+                          <ImageIcon className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                          <input
+                            type="url"
+                            placeholder="Paste brand logo image URL..."
+                            className="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                            value={editFormData.gymLogo}
+                            onChange={(e) => setEditFormData({ ...editFormData, gymLogo: e.target.value })}
+                          />
+                        </div>
+
+                        {/* Presets */}
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="text-[10px] text-gray-400 font-semibold">Presets:</span>
+                          {PRESET_GYM_LOGOS.map((url, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => setEditFormData({ ...editFormData, gymLogo: url })}
+                              className={`w-7 h-7 rounded-lg overflow-hidden border transition-all cursor-pointer relative ${
+                                editFormData.gymLogo === url ? "border-[#d91a24] scale-105" : "border-gray-200 opacity-60 hover:opacity-100"
+                              }`}
+                            >
+                              <Image src={url} alt={`Preset ${idx + 1}`} fill className="object-cover" />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
                       Gym Name

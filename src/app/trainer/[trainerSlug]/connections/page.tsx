@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import { 
   UserPlus, 
   MapPin, 
@@ -118,9 +119,15 @@ export default function TrainerConnectionsPage() {
               
               {/* Gym Info & Message */}
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center font-bold text-base shrink-0">
-                  <Building2 className="w-6 h-6" />
-                </div>
+                {conn.gymId?.gymLogo ? (
+                  <div className="w-12 h-12 rounded-2xl overflow-hidden border border-gray-200 shadow-2xs relative shrink-0">
+                    <Image src={conn.gymId.gymLogo} alt={conn.gymId.gymName || "Gym"} fill className="object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-lg shrink-0 shadow-2xs">
+                    {conn.gymId?.gymName?.charAt(0) || "G"}
+                  </div>
+                )}
                 <div>
                   <div className="flex items-center gap-2.5 flex-wrap">
                     <h3 className="text-base font-bold text-gray-900">{conn.gymId?.gymName || "Verified Gym Partner"}</h3>

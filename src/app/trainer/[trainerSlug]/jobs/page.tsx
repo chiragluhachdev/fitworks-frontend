@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import { 
   Search, 
   MapPin, 
@@ -38,6 +39,7 @@ interface Job {
   gymId: {
     _id: string;
     gymName: string;
+    gymLogo?: string;
     slug?: string;
     gymDescription?: string;
     website?: string;
@@ -217,9 +219,15 @@ export default function TrainerFindJobsPage() {
               <div>
                 <div className="flex items-start justify-between gap-4 mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-sm shrink-0">
-                      <Building2 className="w-5 h-5" />
-                    </div>
+                    {job.gymId?.gymLogo ? (
+                      <div className="w-11 h-11 rounded-2xl overflow-hidden border border-gray-200 shadow-2xs relative shrink-0">
+                        <Image src={job.gymId.gymLogo} alt={job.gymId.gymName || "Gym"} fill className="object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-11 h-11 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-base shrink-0 shadow-2xs">
+                        {job.gymId?.gymName?.charAt(0) || "G"}
+                      </div>
+                    )}
                     <div>
                       <h3 className="text-base font-bold text-gray-900 group-hover:text-[#d91a24] transition-colors line-clamp-1">
                         {job.position}
@@ -282,9 +290,15 @@ export default function TrainerFindJobsPage() {
             {/* Modal Header */}
             <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold shrink-0">
-                  <Building2 className="w-6 h-6" />
-                </div>
+                {selectedJob.gymId?.gymLogo ? (
+                  <div className="w-12 h-12 rounded-2xl overflow-hidden border border-gray-200 shadow-sm relative shrink-0">
+                    <Image src={selectedJob.gymId.gymLogo} alt="Logo" fill className="object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-lg shrink-0">
+                    {selectedJob.gymId?.gymName?.charAt(0) || "G"}
+                  </div>
+                )}
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">{selectedJob.position}</h3>
                   <p className="text-xs font-semibold text-[#d91a24] flex items-center gap-1 mt-0.5">

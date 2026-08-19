@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { 
   Briefcase, 
   UserPlus, 
@@ -26,10 +27,15 @@ export default function TrainerDashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchDashboard = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-        const res = await fetch(`${apiUrl}/trainers/${trainerSlug}/dashboard`);
+        const token = localStorage.getItem("fitworks_token");
+        const res = await fetch(`${apiUrl}/trainers/${trainerSlug}/dashboard`, {
+          headers: {
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
         const json = await res.json();
         if (json.success) {
           setData(json.data);
@@ -40,43 +46,36 @@ export default function TrainerDashboardPage() {
         setLoading(false);
       }
     };
-    fetchStats();
+
+    fetchDashboard();
   }, [trainerSlug]);
-
-  const trainer = data?.trainer;
-  const stats = data?.stats || {
-    profileViews: 48,
-    activeApplications: 0,
-    newConnections: 0,
-    verificationStatus: "verified",
-  };
-  const applications = data?.applications || [];
-  const connections = data?.connections || [];
-  const recommendedJobs = data?.recommendedJobs || [];
-
-  const statCards = [
-    { title: "Profile Views", value: stats.profileViews, icon: Eye, color: "text-blue-600", bg: "bg-blue-50" },
-    { title: "Active Applications", value: stats.activeApplications, icon: Briefcase, color: "text-purple-600", bg: "bg-purple-50" },
-    { title: "Connection Requests", value: stats.newConnections, icon: UserPlus, color: "text-green-600", bg: "bg-green-50" },
-    { title: "Verification Status", value: stats.verificationStatus === "verified" ? "Verified ✓" : "Pending", icon: ShieldCheck, color: "text-[#d91a24]", bg: "bg-red-50" },
-  ];
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
         <Loader2 className="w-8 h-8 text-[#d91a24] animate-spin" />
+        <p className="text-xs font-semibold text-gray-500">Loading trainer dashboard...</p>
       </div>
     );
   }
 
+  const { trainer, stats, applications = [], connections = [], recommendedJobs = [] } = data || {};
+
+  const statCards = [
+    { title: "Profile Views", value: stats?.profileViews || 48, icon: Eye, color: "text-blue-600", bg: "bg-blue-50" },
+    { title: "Active Applications", value: stats?.activeApplications || applications.length, icon: Briefcase, color: "text-purple-600", bg: "bg-purple-50" },
+    { title: "New Invitations", value: stats?.newConnections || connections.filter((c: any) => c.status === "pending").length, icon: UserPlus, color: "text-green-600", bg: "bg-green-50" },
+    { title: "Verification", value: stats?.verificationStatus === "verified" ? "Verified" : "Pending", icon: ShieldCheck, color: "text-[#d91a24]", bg: "bg-red-50" },
+  ];
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-300">
       
-      {/* Verification Alert Banner */}
-      {trainer?.verificationStatus !== "verified" ? (
-        <div className="bg-amber-50 border border-amber-200 rounded-3xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex gap-3.5 items-start">
-            <div className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-700 mt-0.5">
+      {/* Verification Status Banner */}
+      {trainer?.verificationStatus === "pending" ? (
+        <div className="bg-amber-50/80 border border-amber-200/80 rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
               <Clock className="w-5 h-5" />
             </div>
             <div>
@@ -108,7 +107,7 @@ export default function TrainerDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">
-            Hello, {trainer?.personal?.fullName || "Rahul"}!
+            Hello, {trainer?.personal?.fullName || "Trainer"}!
           </h1>
           <p className="text-sm text-gray-500 mt-1">Here is a live summary of your applications and incoming connection requests.</p>
         </div>
@@ -161,10 +160,21 @@ export default function TrainerDashboardPage() {
               <div className="space-y-3">
                 {recommendedJobs.map((job: any) => (
                   <div key={job._id} className="p-4 bg-gray-50/70 hover:bg-gray-50 rounded-2xl border border-gray-100 transition-all flex items-center justify-between gap-3">
-                    <div>
-                      <h4 className="text-sm font-bold text-gray-900">{job.position}</h4>
-                      <p className="text-xs text-gray-500">{job.gymId?.gymName || "Partner Gym"} • {job.location}</p>
-                      <p className="text-xs font-bold text-gray-800 mt-1">{job.salaryRange}</p>
+                    <div className="flex items-center gap-3">
+                      {job.gymId?.gymLogo ? (
+                        <div className="w-10 h-10 rounded-xl overflow-hidden border border-gray-200 relative shrink-0 shadow-2xs">
+                          <Image src={job.gymId.gymLogo} alt="Logo" fill className="object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-sm shrink-0">
+                          {job.gymId?.gymName?.charAt(0) || "G"}
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="text-sm font-bold text-gray-900">{job.position}</h4>
+                        <p className="text-xs text-gray-500">{job.gymId?.gymName || "Partner Gym"} • {job.location}</p>
+                        <p className="text-xs font-bold text-gray-800 mt-0.5">{job.salaryRange}</p>
+                      </div>
                     </div>
                     <Link href={`/trainer/${trainerSlug}/jobs`}>
                       <Button size="sm" className="bg-[#d91a24] hover:bg-[#cc1616] text-white text-xs font-bold rounded-xl h-8 px-3">
@@ -201,9 +211,20 @@ export default function TrainerDashboardPage() {
               <div className="space-y-3">
                 {connections.slice(0, 3).map((conn: any) => (
                   <div key={conn._id} className="p-4 bg-gray-50/70 rounded-2xl border border-gray-100 flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-bold text-gray-900">{conn.gymId?.gymName || "Gym Partner"}</h4>
-                      <p className="text-xs text-gray-500">{conn.gymId?.address?.city || "India"}</p>
+                    <div className="flex items-center gap-3">
+                      {conn.gymId?.gymLogo ? (
+                        <div className="w-10 h-10 rounded-xl overflow-hidden border border-gray-200 relative shrink-0 shadow-2xs">
+                          <Image src={conn.gymId.gymLogo} alt="Logo" fill className="object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-sm shrink-0">
+                          {conn.gymId?.gymName?.charAt(0) || "G"}
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="text-sm font-bold text-gray-900">{conn.gymId?.gymName || "Gym Partner"}</h4>
+                        <p className="text-xs text-gray-500">{conn.gymId?.address?.city || "India"}</p>
+                      </div>
                     </div>
                     <span className="text-xs font-bold px-2.5 py-1 rounded-full capitalize bg-blue-50 text-blue-700 border border-blue-100">
                       {conn.status}

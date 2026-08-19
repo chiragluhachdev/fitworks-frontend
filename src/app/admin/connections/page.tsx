@@ -1,16 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { format } from "date-fns";
 import { 
   Link2, 
   Search, 
-  Building2, 
-  User, 
   CheckCircle2, 
   Clock, 
-  XCircle, 
-  ArrowRight
+  XCircle
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -134,12 +132,18 @@ export default function AdminConnections() {
                 {filteredConnections.map((conn) => (
                   <tr key={conn._id} className="hover:bg-gray-50/60 transition-colors">
                     
-                    {/* Gym */}
+                    {/* Gym Logo / Picture */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-xs shrink-0">
-                          <Building2 className="w-4 h-4" />
-                        </div>
+                        {conn.gymId?.gymLogo ? (
+                          <div className="w-9 h-9 rounded-xl overflow-hidden border border-gray-200 relative shrink-0 shadow-2xs">
+                            <Image src={conn.gymId.gymLogo} alt="Logo" fill className="object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                            {conn.gymId?.gymName?.charAt(0) || "G"}
+                          </div>
+                        )}
                         <div>
                           <div className="font-bold text-gray-900 text-sm">
                             {conn.gymId?.gymName || "FitWorks Gym Partner"}
@@ -151,12 +155,18 @@ export default function AdminConnections() {
                       </div>
                     </td>
 
-                    {/* Trainer */}
+                    {/* Trainer Profile Photo */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-xs shrink-0">
-                          {conn.trainerId?.personal?.fullName?.charAt(0) || "T"}
-                        </div>
+                        {conn.trainerId?.personal?.profilePhoto ? (
+                          <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 relative shrink-0 shadow-2xs">
+                            <Image src={conn.trainerId.personal.profilePhoto} alt="Trainer" fill className="object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                            {conn.trainerId?.personal?.fullName?.charAt(0) || "T"}
+                          </div>
+                        )}
                         <div>
                           <div className="font-semibold text-gray-900 text-xs">
                             {conn.trainerId?.personal?.fullName || "Trainer"}

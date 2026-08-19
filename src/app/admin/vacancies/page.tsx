@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { format } from "date-fns";
 import { 
   Briefcase, 
   Search, 
-  Building2, 
   MapPin, 
   IndianRupee, 
   Calendar,
@@ -15,7 +15,8 @@ import {
   X,
   Users,
   Award,
-  FileText
+  Globe,
+  ExternalLink
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -159,19 +160,25 @@ export default function AdminVacancies() {
                       </div>
                     </td>
 
-                    {/* Gym */}
+                    {/* Gym (Uses real Gym Logo or Monogram) */}
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-red-50 text-[#d91a24] flex items-center justify-center font-bold text-xs shrink-0">
-                          <Building2 className="w-3.5 h-3.5" />
-                        </div>
+                      <div className="flex items-center gap-2.5">
+                        {job.gymId?.gymLogo ? (
+                          <div className="w-8 h-8 rounded-xl overflow-hidden border border-gray-200 relative shrink-0 shadow-2xs">
+                            <Image src={job.gymId.gymLogo} alt="Logo" fill className="object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-8 h-8 rounded-xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                            {job.gymId?.gymName?.charAt(0) || "G"}
+                          </div>
+                        )}
                         <div>
                           <div className="text-xs font-bold text-gray-900">
                             {job.gymId?.gymName || "FitWorks Partner Gym"}
                           </div>
                           <div className="text-[11px] text-gray-400 flex items-center gap-1">
                             <MapPin className="w-3 h-3" />
-                            {job.location?.city || "India"}
+                            {job.location?.city || job.gymId?.address?.city || "India"}
                           </div>
                         </div>
                       </div>
@@ -243,9 +250,15 @@ export default function AdminVacancies() {
             {/* Modal Header */}
             <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold shrink-0">
-                  <Briefcase className="w-6 h-6" />
-                </div>
+                {selectedJob.gymId?.gymLogo ? (
+                  <div className="w-12 h-12 rounded-2xl overflow-hidden border border-gray-200 relative shrink-0 shadow-sm">
+                    <Image src={selectedJob.gymId.gymLogo} alt="Logo" fill className="object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-lg shrink-0">
+                    {selectedJob.gymId?.gymName?.charAt(0) || "G"}
+                  </div>
+                )}
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="text-lg font-bold text-gray-900">
@@ -262,7 +275,6 @@ export default function AdminVacancies() {
                     )}
                   </div>
                   <p className="text-xs font-semibold text-[#d91a24] flex items-center gap-1 mt-0.5">
-                    <Building2 className="w-3.5 h-3.5" />
                     {selectedJob.gymId?.gymName || "FitWorks Gym Partner"}
                   </p>
                 </div>
@@ -302,7 +314,7 @@ export default function AdminVacancies() {
                 <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Location</span>
                   <span className="text-xs font-bold text-gray-900 mt-0.5 block truncate">
-                    {selectedJob.location?.city || "India"}
+                    {selectedJob.location?.city || selectedJob.gymId?.address?.city || "India"}
                   </span>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
@@ -343,14 +355,27 @@ export default function AdminVacancies() {
                 </div>
               )}
 
-              {/* Facility Address */}
-              <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/70 text-xs space-y-1">
-                <span className="font-bold text-blue-900 flex items-center gap-1.5">
-                  <Building2 className="w-4 h-4 text-blue-600" />
-                  Gym Address & Hiring Center
-                </span>
+              {/* Facility Details & Website */}
+              <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/70 text-xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-blue-900">
+                    Gym Facility & Address
+                  </span>
+                  {selectedJob.gymId?.website && (
+                    <a 
+                      href={selectedJob.gymId.website.startsWith("http") ? selectedJob.gymId.website : `https://${selectedJob.gymId.website}`} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="text-[#d91a24] font-bold hover:underline flex items-center gap-1"
+                    >
+                      <Globe className="w-3.5 h-3.5" />
+                      Website
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
                 <p className="text-blue-800">
-                  {selectedJob.gymId?.gymName} • {selectedJob.location?.city || "India"}
+                  {selectedJob.gymId?.gymName} • {selectedJob.gymId?.address?.street ? `${selectedJob.gymId.address.street}, ` : ""}{selectedJob.location?.city || selectedJob.gymId?.address?.city || "India"}
                 </p>
               </div>
 

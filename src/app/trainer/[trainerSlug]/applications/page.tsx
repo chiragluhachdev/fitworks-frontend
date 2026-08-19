@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { 
   Briefcase, 
   MapPin, 
@@ -29,6 +30,7 @@ interface TrainerApplication {
   gymId: {
     _id: string;
     gymName: string;
+    gymLogo?: string;
     slug?: string;
   };
   status: "applied" | "reviewing" | "shortlisted" | "hired" | "rejected";
@@ -168,9 +170,20 @@ export default function TrainerApplicationsPage() {
                   </span>
                 </div>
 
-                <p className="text-xs font-semibold text-[#d91a24] flex items-center gap-1">
-                  <Building2 className="w-3.5 h-3.5" /> {app.gymId?.gymName || "Verified Gym Partner"}
-                </p>
+                <div className="flex items-center gap-2 mt-1 mb-2">
+                  {app.gymId?.gymLogo ? (
+                    <div className="w-5 h-5 rounded-md overflow-hidden border border-gray-200 relative shrink-0 shadow-2xs">
+                      <Image src={app.gymId.gymLogo} alt="Logo" fill className="object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-5 h-5 rounded-md bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-[10px] shrink-0">
+                      {app.gymId?.gymName?.charAt(0) || "G"}
+                    </div>
+                  )}
+                  <p className="text-xs font-semibold text-[#d91a24]">
+                    {app.gymId?.gymName || "Verified Gym Partner"}
+                  </p>
+                </div>
 
                 <div className="flex items-center gap-3 text-xs text-gray-500 font-medium mt-2">
                   <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {app.jobId?.location || "India"}</span>
