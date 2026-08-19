@@ -1,7 +1,20 @@
+"use client";
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, CheckCircle2, UploadCloud } from "lucide-react";
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  CheckCircle2, 
+  UploadCloud, 
+  Loader2, 
+  FileCheck, 
+  CreditCard,
+  Award,
+  Trash2
+} from "lucide-react";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
 
 interface RegisterTrainerFlowProps {
   onBack: () => void;
@@ -12,6 +25,12 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
   const totalSteps = 4;
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Upload States for Step 4
+  const [certDoc, setCertDoc] = useState<{ url: string; name: string } | null>(null);
+  const [govIdDoc, setGovIdDoc] = useState<{ url: string; name: string } | null>(null);
+  const [uploadingCert, setUploadingCert] = useState(false);
+  const [uploadingGovId, setUploadingGovId] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -34,8 +53,8 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
     },
     workPreferences: {
       expectedMonthlySalary: "",
-      employmentType: "",
-      availability: "",
+      employmentType: "Full-time",
+      availability: "Immediate",
       willingToRelocate: false,
     },
   });
@@ -53,6 +72,66 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
       }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: val }));
+    }
+  };
+
+  const handleCertUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingCert(true);
+    try {
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      uploadData.append("folder", "fitworks/certificates");
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const res = await fetch(`${apiUrl}/upload`, {
+        method: "POST",
+        body: uploadData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setCertDoc({ url: data.url, name: file.name });
+        toast.success("Certificate uploaded to Cloudinary!");
+      } else {
+        toast.error(data.message || "Failed to upload certificate");
+      }
+    } catch (err) {
+      toast.error("Upload error. Please try again.");
+    } finally {
+      setUploadingCert(false);
+    }
+  };
+
+  const handleGovIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingGovId(true);
+    try {
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      uploadData.append("folder", "fitworks/pan_cards");
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const res = await fetch(`${apiUrl}/upload`, {
+        method: "POST",
+        body: uploadData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setGovIdDoc({ url: data.url, name: file.name });
+        toast.success("Government ID uploaded to Cloudinary!");
+      } else {
+        toast.error(data.message || "Failed to upload government ID");
+      }
+    } catch (err) {
+      toast.error("Upload error. Please try again.");
+    } finally {
+      setUploadingGovId(false);
     }
   };
 
@@ -74,19 +153,26 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
     setErrorMessage(null);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+
+      const verificationDocuments = [
+        certDoc?.url ? `Fitness Certification: ${certDoc.name} | ${certDoc.url}` : null,
+        govIdDoc?.url ? `Government ID (Aadhaar/PAN): ${govIdDoc.name} | ${govIdDoc.url}` : null,
+      ].filter(Boolean);
+
       const payload = {
         ...formData,
         professional: {
           ...formData.professional,
           yearsOfExperience: Number(formData.professional.yearsOfExperience) || 1,
-          specializations: formData.professional.specializations.split(",").map(s => s.trim()).filter(Boolean),
-          skills: formData.professional.skills.split(",").map(s => s.trim()).filter(Boolean),
+          specializations: formData.professional.specializations ? formData.professional.specializations.split(",").map(s => s.trim()).filter(Boolean) : ["General Fitness"],
+          skills: formData.professional.skills ? formData.professional.skills.split(",").map(s => s.trim()).filter(Boolean) : ["Fitness Coaching"],
         },
         workPreferences: {
           ...formData.workPreferences,
           employmentType: [formData.workPreferences.employmentType],
           preferredLocations: [formData.personal.city],
-        }
+        },
+        verificationDocuments,
       };
 
       const res = await fetch(`${apiUrl}/auth/register/trainer`, {
@@ -124,7 +210,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
           <CheckCircle2 className="w-10 h-10 text-green-500" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-3">Registration Successful!</h2>
-        <p className="text-gray-500 mb-8 max-w-sm">Your trainer profile has been created and is currently pending verification. You can now access your dashboard.</p>
+        <p className="text-gray-500 mb-8 max-w-sm">Your trainer profile has been created with your submitted documents and is currently pending review. You can now access your dashboard.</p>
         <Link href={`/trainer/${createdSlug}/dashboard`} className="w-full max-w-[240px]">
           <Button className="w-full bg-[#d91a24] hover:bg-[#cc1616] text-white py-6 rounded-xl font-bold">
             Go to Dashboard
@@ -136,7 +222,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
 
   return (
     <div className="w-full flex flex-col h-full relative p-6 md:p-10 lg:p-12">
-      <button onClick={handlePrev} className="absolute top-8 left-8 text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-2 text-sm font-medium">
+      <button onClick={handlePrev} className="absolute top-8 left-8 text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-2 text-sm font-medium cursor-pointer">
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
 
@@ -157,6 +243,12 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
             ))}
           </div>
         </div>
+
+        {errorMessage && (
+          <div className="p-3.5 mb-4 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-semibold">
+            {errorMessage}
+          </div>
+        )}
 
         <div className="flex-1 overflow-y-auto pr-2 pb-4 space-y-5">
           
@@ -249,7 +341,6 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-gray-700 ml-1">Employment Type</label>
                   <select name="workPreferences.employmentType" value={formData.workPreferences.employmentType} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
-                    <option value="">Select...</option>
                     <option value="Full-time">Full-time</option>
                     <option value="Part-time">Part-time</option>
                     <option value="Freelance">Freelance</option>
@@ -259,7 +350,6 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-gray-700 ml-1">Availability</label>
                 <select name="workPreferences.availability" value={formData.workPreferences.availability} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
-                  <option value="">Select...</option>
                   <option value="Immediate">Immediate</option>
                   <option value="In 1 week">In 1 week</option>
                   <option value="In 1 month">In 1 month</option>
@@ -272,30 +362,121 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
             </div>
           )}
 
-          {/* STEP 4: Verification Documents */}
+          {/* STEP 4: Verification Documents (Fully Functional Cloudinary Upload) */}
           {step === 4 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="p-4 rounded-xl bg-blue-50 border border-blue-100 mb-2">
-                <p className="text-sm text-blue-800 font-medium">To maintain platform quality, all trainers must provide documents for verification. Your profile will be marked as "Verified" once approved.</p>
+              <div className="p-4 rounded-xl bg-blue-50 border border-blue-100">
+                <p className="text-xs sm:text-sm text-blue-800 font-medium">
+                  To maintain platform quality, all trainers must provide documents for verification. Your profile will be marked as &quot;Verified&quot; once approved.
+                </p>
               </div>
               
+              {/* Certifications Upload Box */}
               <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-900 ml-1">Certifications Upload</label>
-                <div className="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:border-[#d91a24] hover:bg-red-50/30 transition-all cursor-pointer">
-                  <UploadCloud className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-                  <p className="text-sm font-semibold text-gray-700 mb-1">Click to upload certificates</p>
-                  <p className="text-xs text-gray-500">PDF, JPG, or PNG (Max 5MB)</p>
-                </div>
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-900 ml-1 flex items-center gap-1.5">
+                  <Award className="w-4 h-4 text-[#d91a24]" /> Certifications Upload
+                </label>
+                
+                {certDoc ? (
+                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <div className="min-w-0">
+                        <span className="text-xs font-bold text-gray-900 block truncate">{certDoc.name}</span>
+                        <span className="text-[11px] font-semibold text-emerald-700">Certificate uploaded & attached</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setCertDoc(null)}
+                      className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 shrink-0 p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" /> Remove
+                    </button>
+                  </div>
+                ) : (
+                  <label className="block border-2 border-dashed border-gray-200 rounded-2xl p-7 text-center hover:border-[#d91a24] hover:bg-red-50/30 transition-all cursor-pointer group">
+                    <input
+                      type="file"
+                      accept="application/pdf,image/jpeg,image/png,image/webp"
+                      onChange={handleCertUpload}
+                      disabled={uploadingCert}
+                      className="hidden"
+                    />
+                    {uploadingCert ? (
+                      <div className="flex flex-col items-center">
+                        <Loader2 className="w-8 h-8 text-[#d91a24] animate-spin mb-2" />
+                        <p className="text-xs font-bold text-gray-700">Uploading certificate to Cloudinary...</p>
+                      </div>
+                    ) : (
+                      <>
+                        <UploadCloud className="w-9 h-9 text-gray-400 group-hover:text-[#d91a24] mx-auto mb-2 transition-colors" />
+                        <p className="text-xs md:text-sm font-bold text-gray-800 mb-0.5 group-hover:text-[#d91a24]">
+                          Click to upload certificates
+                        </p>
+                        <p className="text-[11px] text-gray-400">PDF, JPG, or PNG (Max 10MB)</p>
+                      </>
+                    )}
+                  </label>
+                )}
               </div>
 
+              {/* Government ID (Aadhaar/PAN) Upload Box */}
               <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-900 ml-1">Government ID</label>
-                <div className="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:border-[#d91a24] hover:bg-red-50/30 transition-all cursor-pointer">
-                  <UploadCloud className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-                  <p className="text-sm font-semibold text-gray-700 mb-1">Click to upload ID (Aadhar/PAN)</p>
-                  <p className="text-xs text-gray-500">PDF, JPG, or PNG (Max 5MB)</p>
-                </div>
+                <label className="text-xs font-bold uppercase tracking-wider text-gray-900 ml-1 flex items-center gap-1.5">
+                  <CreditCard className="w-4 h-4 text-[#d91a24]" /> Government ID (Aadhaar / PAN Card)
+                </label>
+
+                {govIdDoc ? (
+                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <div className="min-w-0">
+                        <span className="text-xs font-bold text-gray-900 block truncate">{govIdDoc.name}</span>
+                        <span className="text-[11px] font-semibold text-emerald-700">Identity proof uploaded & attached</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setGovIdDoc(null)}
+                      className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 shrink-0 p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" /> Remove
+                    </button>
+                  </div>
+                ) : (
+                  <label className="block border-2 border-dashed border-gray-200 rounded-2xl p-7 text-center hover:border-[#d91a24] hover:bg-red-50/30 transition-all cursor-pointer group">
+                    <input
+                      type="file"
+                      accept="application/pdf,image/jpeg,image/png,image/webp"
+                      onChange={handleGovIdUpload}
+                      disabled={uploadingGovId}
+                      className="hidden"
+                    />
+                    {uploadingGovId ? (
+                      <div className="flex flex-col items-center">
+                        <Loader2 className="w-8 h-8 text-[#d91a24] animate-spin mb-2" />
+                        <p className="text-xs font-bold text-gray-700">Uploading ID proof to Cloudinary...</p>
+                      </div>
+                    ) : (
+                      <>
+                        <UploadCloud className="w-9 h-9 text-gray-400 group-hover:text-[#d91a24] mx-auto mb-2 transition-colors" />
+                        <p className="text-xs md:text-sm font-bold text-gray-800 mb-0.5 group-hover:text-[#d91a24]">
+                          Click to upload ID (Aadhaar / PAN)
+                        </p>
+                        <p className="text-[11px] text-gray-400">PDF, JPG, or PNG (Max 10MB)</p>
+                      </>
+                    )}
+                  </label>
+                )}
               </div>
+
             </div>
           )}
         </div>
@@ -303,14 +484,24 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
 
       <div className="mt-6 pt-6 border-t border-gray-100 flex justify-between items-center bg-white">
         {step > 1 ? (
-          <button onClick={handlePrev} className="text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors">
+          <button onClick={handlePrev} className="text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors cursor-pointer">
             Previous
           </button>
         ) : (
           <div></div> // Spacer
         )}
-        <Button onClick={handleNext} disabled={loading} className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-95 text-white px-8 py-5 rounded-xl font-bold transition-all shadow-[0_8px_20px_rgb(217,26,36,0.15)] flex items-center gap-2">
-          {loading ? "Processing..." : (step === totalSteps ? "Submit & Create Profile" : "Continue")}
+        <Button 
+          onClick={handleNext} 
+          disabled={loading || uploadingCert || uploadingGovId} 
+          className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-95 text-white px-8 py-5 rounded-xl font-bold transition-all shadow-[0_8px_20px_rgb(217,26,36,0.15)] flex items-center gap-2 cursor-pointer disabled:opacity-50"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" /> Creating Profile...
+            </>
+          ) : (
+            step === totalSteps ? "Submit & Create Profile" : "Continue"
+          )}
           {!loading && step < totalSteps && <ArrowRight className="w-4 h-4" />}
         </Button>
       </div>
