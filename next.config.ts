@@ -13,6 +13,25 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/login.php',
+        destination: '/auth',
+        permanent: true,
+      },
+      {
+        source: '/index.php',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/:path*.php',
+        destination: '/',
+        permanent: true,
+      }
+    ];
+  },
 };
 
 export default nextConfig;
