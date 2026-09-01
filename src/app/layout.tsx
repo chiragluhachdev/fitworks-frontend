@@ -96,6 +96,12 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  // Meta Business Suite domain verification for fitworks.in.
+  // Must be server-rendered inside <head> — Meta's crawler ignores tags
+  // injected by client-side JavaScript. Do not remove.
+  other: {
+    "facebook-domain-verification": "96nkg6hwwj5mc8gmuibdodtem9dg0u",
+  },
 };
 
 import Script from "next/script";
