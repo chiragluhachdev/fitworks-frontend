@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import CashfreePaymentModal from "@/components/CashfreePaymentModal";
+import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 
 interface RegisterTrainerFlowProps {
   onBack: () => void;
@@ -390,13 +390,12 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
         </Link>
 
         {/* Payment Modal */}
-        <CashfreePaymentModal
+        <RazorpayPaymentModal
           isOpen={showPaymentModal}
           onClose={() => setShowPaymentModal(false)}
           trainerSlug={createdSlug}
           trainerName={formData.personal.fullName}
           trainerEmail={formData.email}
-          trainerPhone="9876543210"
           skipHref={`/trainer/${createdSlug}/dashboard`}
         />
 

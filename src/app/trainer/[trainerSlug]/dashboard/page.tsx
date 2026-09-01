@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -17,8 +17,7 @@ import {
   ChevronRight,
   FileCheck,
 } from "lucide-react";
-import { toast } from "react-hot-toast";
-import CashfreePaymentModal from "@/components/CashfreePaymentModal";
+import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 import StatCard from "@/components/dashboard/StatCard";
 import SectionCard from "@/components/dashboard/SectionCard";
 import EmptyState from "@/components/dashboard/EmptyState";
@@ -31,7 +30,6 @@ const CONNECTION_TONE: Record<string, string> = {
 
 export default function TrainerDashboardPage() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const trainerSlug = (params?.trainerSlug as string) || "";
 
   const [data, setData] = useState<any>(null);
@@ -54,27 +52,11 @@ export default function TrainerDashboardPage() {
     }
   };
 
+  // Razorpay Checkout verifies inline via the modal's handler, so there is no
+  // redirect to reconcile here. The webhook is the backstop if that never runs.
   useEffect(() => {
     fetchDashboard();
-
-    // Returning from Cashfree — confirm the order before showing the badge.
-    const orderId = searchParams.get("order_id");
-    if (orderId && searchParams.get("payment_status") === "success") {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-      fetch(`${apiUrl}/payments/verify-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId, trainerSlug }),
-      })
-        .then((r) => r.json())
-        .then((v) => {
-          if (v.isPaid) {
-            toast.success("Payment verified — your verified badge is active.");
-            fetchDashboard();
-          }
-        });
-    }
-  }, [trainerSlug, searchParams]);
+  }, [trainerSlug]);
 
   if (loading) {
     return (
@@ -165,7 +147,7 @@ export default function TrainerDashboardPage() {
         </div>
       </header>
 
-      <CashfreePaymentModal
+      <RazorpayPaymentModal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
         trainerSlug={trainerSlug}
