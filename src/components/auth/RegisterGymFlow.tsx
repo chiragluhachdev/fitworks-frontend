@@ -82,8 +82,8 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
         toast.error(msg);
         return false;
       }
-      if (!formData.contactPerson.phone || formData.contactPerson.phone.trim().length < 10) {
-        const msg = "Please enter a valid 10-digit phone number";
+      if (!/^[6-9]\d{9}$/.test(formData.contactPerson.phone.replace(/\D/g, "").slice(-10))) {
+        const msg = "Enter a valid 10-digit mobile number";
         setErrorMessage(msg);
         toast.error(msg);
         return false;
@@ -307,7 +307,7 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Phone Number <span className="text-red-500">*</span></label>
-                  <input type="tel" name="contactPerson.phone" required value={formData.contactPerson.phone} onChange={handleChange} placeholder="10-digit mobile number" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="tel" name="contactPerson.phone" required value={formData.contactPerson.phone} onChange={handleChange} placeholder="10-digit mobile number" inputMode="numeric" maxLength={10} className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
                 </div>
               </div>
             </div>

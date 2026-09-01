@@ -12,7 +12,9 @@ import {
   CreditCard,
   Award,
   Trash2,
-  AlertCircle
+  AlertCircle,
+  ShieldCheck,
+  Lock
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
@@ -40,6 +42,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
     password: "",
     personal: {
       fullName: "",
+      phone: "",
       dateOfBirth: "",
       gender: "",
       city: "",
@@ -146,8 +149,16 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
     setErrorMessage(null);
 
     if (step === 1) {
-      if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-        const msg = "Please enter a valid email address";
+      const digits = formData.personal.phone.replace(/\D/g, "").slice(-10);
+      if (!/^[6-9]\d{9}$/.test(digits)) {
+        const msg = "Enter a valid 10-digit mobile number";
+        setErrorMessage(msg);
+        toast.error(msg);
+        return false;
+      }
+      // Email is optional — only validate the format when one is entered.
+      if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+        const msg = "That email address doesn't look right";
         setErrorMessage(msg);
         toast.error(msg);
         return false;
@@ -338,47 +349,59 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
           Profile Created Successfully!
         </h2>
         <p className="text-gray-500 text-xs md:text-sm mb-6 max-w-md">
-          Welcome to FitWorks. Stand out to gym owners and get recommended to partner gyms by activating your verified candidate badge.
+          Welcome to FitWorks. One last step — activate your membership so
+          hiring gyms can actually find you.
         </p>
 
-        {/* ₹99 Activation Card */}
-        <div className="w-full max-w-md bg-gradient-to-br from-red-50/70 to-orange-50/50 border border-red-200/80 rounded-2xl p-5 mb-6 text-left shadow-xs">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-[#d91a24] text-white flex items-center justify-center font-bold text-xs">
-                ✓
-              </div>
-              <span className="text-xs font-black uppercase tracking-wider text-gray-900">
-                Verified Trainer Listing
+        {/* ₹99 / month activation card */}
+        <div className="w-full max-w-md bg-gradient-to-br from-red-50/70 to-orange-50/50 border border-red-200/80 rounded-2xl p-5 mb-5 text-left shadow-xs">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="w-7 h-7 rounded-lg bg-[#d91a24] text-white flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-4 h-4" />
+              </span>
+              <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-gray-900">
+                Trainer Membership
               </span>
             </div>
-            <div className="flex items-baseline gap-1.5">
+            <div className="flex items-baseline gap-1 shrink-0">
               <span className="text-xl font-black text-[#d91a24]">₹99</span>
-              <span className="text-[11px] text-gray-400 line-through">₹499</span>
+              <span className="text-[11px] font-semibold text-gray-500">/mo</span>
             </div>
           </div>
 
+          <div className="flex items-start gap-2 p-2.5 mb-3 rounded-xl bg-white/70 border border-red-100">
+            <Lock className="w-3.5 h-3.5 text-[#d91a24] shrink-0 mt-0.5" />
+            <p className="text-[11px] font-semibold text-gray-700 leading-relaxed">
+              Your profile is hidden from gym search until your membership is active.
+            </p>
+          </div>
+
           <ul className="space-y-1.5 text-xs text-gray-600 mb-4 font-medium">
-            <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-              Verified checkmark badge on public marketplace
+            <li className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
+              Visible to every hiring gym on FitWorks
             </li>
-            <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-              Priority placement for partner gyms (HOPE &amp; ANYDAY)
+            <li className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
+              Unlimited applications to open vacancies
             </li>
-            <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-              Fast-track credential review within 24 hours
+            <li className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
+              Verified badge once your documents are reviewed
             </li>
           </ul>
 
           <Button
             onClick={() => setShowPaymentModal(true)}
-            className="w-full bg-[#d91a24] hover:bg-[#c2141d] active:scale-[0.99] text-white py-5 rounded-xl font-bold text-sm shadow-md shadow-red-500/20 flex items-center justify-center gap-2 cursor-pointer transition-all"
+            className="w-full h-12 bg-[#d91a24] hover:bg-[#c2141d] active:scale-[0.99] text-white py-5 rounded-xl font-bold text-sm shadow-md shadow-red-500/20 flex items-center justify-center gap-2 cursor-pointer transition-all"
           >
-            Pay ₹99 &amp; Activate Verified Badge
+            <Lock className="w-4 h-4" /> Activate for ₹99 / month
           </Button>
+
+          <p className="text-[10px] text-gray-400 text-center mt-2.5 leading-relaxed">
+            Renews every 30 days. Cancel any time by simply not renewing.
+          </p>
         </div>
 
         {/* Skip Option */}
@@ -386,7 +409,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
           href={`/trainer/${createdSlug}/dashboard`} 
           className="text-xs font-semibold text-gray-500 hover:text-gray-900 transition-colors"
         >
-          Skip for now &amp; Go to Dashboard →
+          I&apos;ll activate later →
         </Link>
 
         {/* Payment Modal */}
@@ -441,18 +464,55 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-700 ml-1">Email Address <span className="text-red-500">*</span></label>
-                  <input type="email" name="email" required value={formData.email} onChange={handleChange} placeholder="trainer@example.com" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <label className="text-xs font-bold text-gray-700 ml-1">
+                    Mobile Number <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-0 inset-y-0 flex items-center pl-4 pr-2 text-sm font-semibold text-gray-500 border-r border-gray-200 my-2 pointer-events-none">
+                      +91
+                    </span>
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      autoComplete="tel"
+                      maxLength={10}
+                      name="personal.phone"
+                      required
+                      value={formData.personal.phone}
+                      onChange={(e) => {
+                        e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                        handleChange(e);
+                      }}
+                      placeholder="98765 43210"
+                      className="w-full h-12 pl-16 pr-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10"
+                    />
+                  </div>
+                  <p className="text-[11px] text-gray-400 ml-1">You&apos;ll use this to log in.</p>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Password <span className="text-red-500">*</span></label>
-                  <input type="password" name="password" required value={formData.password} onChange={handleChange} placeholder="Create password (min 6 chars)" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="password" name="password" required value={formData.password} onChange={handleChange} placeholder="Create password (min 6 chars)" className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
                 </div>
               </div>
               <hr className="border-gray-100 my-2" />
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Full Name <span className="text-red-500">*</span></label>
-                <input type="text" name="personal.fullName" required value={formData.personal.fullName} onChange={handleChange} placeholder="E.g. Rahul Sharma" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <input type="text" name="personal.fullName" required value={formData.personal.fullName} onChange={handleChange} placeholder="E.g. Rahul Sharma" className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-700 ml-1">
+                  Email Address <span className="text-gray-400 font-semibold">(Optional)</span>
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="trainer@example.com"
+                  className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10"
+                />
+                <p className="text-[11px] text-gray-400 ml-1">Add one and you can log in with either.</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">

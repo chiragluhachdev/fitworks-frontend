@@ -16,9 +16,11 @@ import {
   Clock,
   ChevronRight,
   FileCheck,
+  CalendarClock,
 } from "lucide-react";
 import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 import StatCard from "@/components/dashboard/StatCard";
+import SubscriptionBanner, { MembershipPill, type SubscriptionState } from "@/components/dashboard/SubscriptionBanner";
 import SectionCard from "@/components/dashboard/SectionCard";
 import EmptyState from "@/components/dashboard/EmptyState";
 
@@ -68,42 +70,15 @@ export default function TrainerDashboardPage() {
   }
 
   const { trainer, stats, applications = [], connections = [], recommendedJobs = [] } = data || {};
-  const isPaid = trainer?.payment?.isPaid;
+  const subscription: SubscriptionState | null = data?.subscription ?? null;
   const status = trainer?.verificationStatus;
   const pendingInvites = connections.filter((c: any) => c.status === "pending").length;
 
   return (
     <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-300">
 
-      {/* ── ₹99 badge activation ── */}
-      {!isPaid && (
-        <div className="bg-gradient-to-br from-[#d91a24] to-[#a8111a] rounded-2xl sm:rounded-3xl p-5 sm:p-6 text-white shadow-[0_10px_30px_rgb(217,26,36,0.25)]">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
-            <span className="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-6 h-6 text-amber-300" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2 mb-1">
-                <h2 className="font-extrabold text-[15px] sm:text-base leading-tight">
-                  Activate your Verified Badge
-                </h2>
-                <span className="text-[10px] font-bold bg-amber-400 text-gray-950 px-2 py-0.5 rounded-full uppercase tracking-wide">
-                  ₹99 one-time
-                </span>
-              </div>
-              <p className="text-[13px] text-white/85 leading-relaxed">
-                Stand out to partner gyms and unlock priority on your applications.
-              </p>
-            </div>
-            <button
-              onClick={() => setShowPaymentModal(true)}
-              className="w-full sm:w-auto h-12 px-6 rounded-xl bg-white hover:bg-gray-100 text-[#d91a24] text-sm font-extrabold shrink-0 active:scale-[0.98] transition-all cursor-pointer"
-            >
-              Activate now
-            </button>
-          </div>
-        </div>
-      )}
+      {/* ── Membership state: activate / renew / expired ── */}
+      <SubscriptionBanner subscription={subscription} onActivate={() => setShowPaymentModal(true)} />
 
       {/* ── Greeting ── */}
       <header className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
@@ -122,9 +97,12 @@ export default function TrainerDashboardPage() {
                   <Clock className="w-3.5 h-3.5" /> Pending review
                 </span>
               )}
+              <MembershipPill subscription={subscription} />
             </div>
             <p className="text-[13px] sm:text-sm text-gray-500 leading-relaxed">
-              {pendingInvites > 0
+              {!subscription?.isActive
+                ? "Activate your membership to appear in gym search and start applying."
+                : pendingInvites > 0
                 ? `You have ${pendingInvites} gym invitation${pendingInvites > 1 ? "s" : ""} waiting for a reply.`
                 : "Track your applications and incoming gym invitations here."}
             </p>
@@ -152,7 +130,10 @@ export default function TrainerDashboardPage() {
         onClose={() => setShowPaymentModal(false)}
         trainerSlug={trainerSlug}
         trainerName={trainer?.personal?.fullName}
-        trainerEmail={trainer?.userId?.email}
+        trainerEmail={trainer?.personal?.email}
+        trainerPhone={trainer?.personal?.phone}
+        isRenewal={(subscription?.cyclesPaid ?? 0) > 0}
+        expiresAt={subscription?.expiresAt ?? null}
         onSuccess={() => {
           setShowPaymentModal(false);
           fetchDashboard();
@@ -184,11 +165,19 @@ export default function TrainerDashboardPage() {
           href={`/trainer/${trainerSlug}/verification`}
         />
         <StatCard
-          label="Verified badge"
-          value={isPaid ? "Active" : "₹99"}
-          icon={ShieldCheck}
-          tone={isPaid ? "green" : "red"}
-          hint={isPaid ? undefined : "Not activated"}
+          label="Membership"
+          value={
+            subscription?.isActive ? `${subscription.daysRemaining}d` : subscription?.cyclesPaid ? "Expired" : "Inactive"
+          }
+          icon={CalendarClock}
+          tone={
+            subscription?.status === "active"
+              ? "green"
+              : subscription?.status === "expiring_soon"
+              ? "amber"
+              : "red"
+          }
+          hint={subscription?.isActive ? "until renewal" : "₹99 / month"}
         />
       </div>
 

@@ -22,26 +22,29 @@ interface RazorpayPaymentModalProps {
   trainerPhone?: string;
   onSuccess?: () => void;
   skipHref?: string;
+  /** Renewal wording differs from first-time activation. */
+  isRenewal?: boolean;
+  expiresAt?: string | null;
 }
 
 const BENEFITS = [
   {
     icon: ShieldCheck,
     tone: "bg-emerald-100 text-emerald-600",
-    title: "Verified Marketplace Badge",
-    body: "Official checkmark shown to gyms searching for coaches.",
+    title: "Visible in gym search",
+    body: "Hiring gyms can find, shortlist and contact you directly.",
   },
   {
     icon: Zap,
     tone: "bg-red-100 text-[#d91a24]",
-    title: "Priority Partner Gym Placement",
-    body: "Recommended first to clubs like HOPE GYM & ANYDAY FITNESS.",
+    title: "Apply to every open vacancy",
+    body: "Unlimited applications to roles from partner gyms across India.",
   },
   {
     icon: Award,
     tone: "bg-blue-100 text-blue-600",
-    title: "Fast-Track Verification Review",
-    body: "Certificates reviewed by our verification team within 24 hours.",
+    title: "Verified badge on your profile",
+    body: "Your reviewed certificates and ID displayed as a trust signal.",
   },
 ];
 
@@ -54,6 +57,8 @@ export default function RazorpayPaymentModal({
   trainerPhone,
   onSuccess,
   skipHref,
+  isRenewal = false,
+  expiresAt,
 }: RazorpayPaymentModalProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -97,7 +102,9 @@ export default function RazorpayPaymentModal({
         amount: data.amount,
         currency: data.currency || "INR",
         name: "FitWorks",
-        description: "Verified Trainer Badge — lifetime activation",
+        description: isRenewal
+          ? "FitWorks trainer membership — 30-day renewal"
+          : "FitWorks trainer membership — 30 days",
         image: "/icon.png",
         prefill: {
           name: trainerName || data.trainerName || "",
@@ -128,7 +135,11 @@ export default function RazorpayPaymentModal({
             const vData = await vRes.json();
 
             if (vData.success && vData.isPaid) {
-              toast.success("Payment verified — your verified badge is active.");
+              toast.success(
+                isRenewal
+                  ? "Renewed — your membership is extended by 30 days."
+                  : "Activated — your profile is now live for gyms."
+              );
               if (onSuccess) onSuccess();
               else if (skipHref) router.push(skipHref);
               else onClose();
@@ -184,29 +195,34 @@ export default function RazorpayPaymentModal({
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
 
           <span className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" /> Lifetime Profile Activation
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            {isRenewal ? "Renew Membership" : "Trainer Membership"}
           </span>
 
           <h2 className="text-xl sm:text-2xl font-black tracking-tight">
-            Activate Your Verified Badge
+            {isRenewal ? "Renew for another 30 days" : "Activate your FitWorks profile"}
           </h2>
           <p className="text-white/80 text-xs mt-1.5 max-w-xs mx-auto leading-relaxed">
-            Get noticed by top partner gyms and unlock priority placement across FitWorks.
+            {isRenewal
+              ? "Keep your profile visible to hiring gyms without a break."
+              : "Your profile stays hidden from gyms until your membership is active."}
           </p>
 
-          <div className="mt-4 inline-flex items-baseline gap-2 bg-white/10 px-4 py-2 rounded-2xl border border-white/20 backdrop-blur-sm">
+          <div className="mt-4 inline-flex items-baseline gap-1.5 bg-white/10 px-4 py-2.5 rounded-2xl border border-white/20 backdrop-blur-sm">
             <span className="text-3xl font-black">₹99</span>
-            <span className="text-xs text-white/80 font-medium line-through">₹499</span>
-            <span className="text-[10px] font-bold bg-amber-400 text-gray-950 px-2 py-0.5 rounded-full uppercase ml-1">
-              80% off
-            </span>
+            <span className="text-sm text-white/80 font-semibold">/ month</span>
           </div>
+          <p className="text-[11px] text-white/70 mt-2">
+            {isRenewal && expiresAt
+              ? `Adds 30 days on top of your current period`
+              : "30 days of full visibility · cancel anytime by not renewing"}
+          </p>
         </div>
 
         {/* Benefits */}
         <div className="p-5 sm:p-6 space-y-4">
           <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-            Included with verified activation
+            What your membership includes
           </p>
 
           <div className="space-y-2.5">
@@ -235,7 +251,8 @@ export default function RazorpayPaymentModal({
                 </>
               ) : (
                 <>
-                  <Lock className="w-4 h-4" /> Pay ₹99 &amp; activate badge
+                  <Lock className="w-4 h-4" />
+                  {isRenewal ? "Renew for ₹99" : "Activate for ₹99"}
                 </>
               )}
             </button>
@@ -245,7 +262,7 @@ export default function RazorpayPaymentModal({
               onClick={handleSkip}
               className="w-full py-3 text-xs font-semibold text-gray-500 hover:text-gray-800 transition-colors cursor-pointer"
             >
-              Skip for now &amp; go to dashboard →
+              Not now →
             </button>
           </div>
 

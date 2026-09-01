@@ -41,15 +41,15 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
   const go = (next: AuthMode) => router.push(AUTH_MODE_PATHS[next]);
   const [role, setRole] = useState<"gym" | "trainer">("gym");
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError("Please fill in both email and password.");
+    if (!identifier || !password) {
+      setError("Please enter your mobile number or email, and your password.");
       return;
     }
 
@@ -61,13 +61,13 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
       const res = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password }),
+        body: JSON.stringify({ identifier: identifier.trim(), password }),
       });
 
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setError(data.message || "Invalid credentials. Please check your email and password.");
+        setError(data.message || "Invalid credentials. Check your mobile number or email, and password.");
         setLoading(false);
         return;
       }
@@ -249,18 +249,22 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
                 
                 {/* Email */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-gray-700 block ml-1">Email Address</label>
+                  <label className="text-xs font-semibold text-gray-700 block ml-1">
+                    Mobile Number or Email
+                  </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                       <Mail className="h-4 w-4 text-gray-400" />
                     </div>
                     <input
-                      type="email"
+                      type="text"
+                      inputMode="email"
+                      autoComplete="username"
                       required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      className="block w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none transition-all focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 placeholder:text-gray-400"
+                      value={identifier}
+                      onChange={(e) => setIdentifier(e.target.value)}
+                      placeholder="98765 43210 or you@example.com"
+                      className="block w-full h-12 pl-10 pr-4 bg-white border border-gray-200 rounded-xl text-sm outline-none transition-all focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 placeholder:text-gray-400"
                     />
                   </div>
                 </div>
@@ -281,7 +285,7 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
-                      className="block w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none transition-all focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 placeholder:text-gray-400"
+                      className="block w-full h-12 pl-10 pr-10 bg-white border border-gray-200 rounded-xl text-sm outline-none transition-all focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 placeholder:text-gray-400"
                     />
                     <button
                       type="button"
