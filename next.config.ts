@@ -4,6 +4,13 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        // All user uploads (trainer photos, gym logos, verification docs)
+        // are served from Cloudinary. Without this, next/image blocks them
+        // and the page renders a broken image instead.
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
         protocol: "https",
         hostname: "i.pravatar.cc",
       },

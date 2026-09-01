@@ -270,8 +270,9 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
   };
 
   const handleSubmit = async () => {
-    // Re-verify all steps
-    if (!formData.email || !formData.password || !formData.personal.fullName) {
+    // Re-verify step 1 essentials. Email is optional — phone is the identifier.
+    const phoneDigits = formData.personal.phone.replace(/\D/g, "").slice(-10);
+    if (!/^[6-9]\d{9}$/.test(phoneDigits) || !formData.password || !formData.personal.fullName) {
       setStep(1);
       toast.error("Please complete Step 1: Account & Personal Details");
       return;
