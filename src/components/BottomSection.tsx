@@ -2,41 +2,37 @@
 
 import React from "react";
 
-const partnerGymLogos = [
-  { name: "HOPE GYM & SPA", tag: "FITNESS & WELLNESS" },
-  { name: "ANYDAY FITNESS", tag: "24/7 STRENGTH CLUB" },
-  { name: "HOPE GYM & SPA", tag: "FITNESS & WELLNESS" },
-  { name: "ANYDAY FITNESS", tag: "24/7 STRENGTH CLUB" },
-  { name: "HOPE GYM & SPA", tag: "FITNESS & WELLNESS" },
-  { name: "ANYDAY FITNESS", tag: "24/7 STRENGTH CLUB" },
-  { name: "HOPE GYM & SPA", tag: "FITNESS & WELLNESS" },
-  { name: "ANYDAY FITNESS", tag: "24/7 STRENGTH CLUB" },
+const partnerGyms = [
+  { name: "HOPE GYM & SPA", tag: "Fitness & Wellness" },
+  { name: "ANYDAY FITNESS", tag: "24/7 Strength Club" },
 ];
+
+/** Repeated so the marquee track can loop seamlessly at -50%. */
+const track = [...partnerGyms, ...partnerGyms, ...partnerGyms, ...partnerGyms];
 
 export default function TrustedBy() {
   return (
-    <section className="w-full bg-[#f8f9fa] py-8 my-4 overflow-hidden border-y border-gray-100">
-      <p className="text-[11px] font-extrabold text-gray-400 uppercase tracking-[0.22em] text-center mb-5">
-        Trusted by Premier Gyms &amp; Fitness Clubs
+    <section className="w-full bg-[#f8f9fa] py-7 sm:py-9 overflow-hidden border-y border-gray-100">
+      <p className="text-[10px] sm:text-[11px] font-extrabold text-gray-400 uppercase tracking-[0.2em] text-center mb-5 px-5">
+        Trusted by premier gyms &amp; fitness clubs
       </p>
 
-      {/* Infinite scroll marquee */}
       <div className="relative w-full flex items-center">
-        {/* Left & right fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#f8f9fa] to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#f8f9fa] to-transparent z-10 pointer-events-none" />
+        {/* Fade edges */}
+        <div className="absolute left-0 inset-y-0 w-16 sm:w-24 bg-gradient-to-r from-[#f8f9fa] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 inset-y-0 w-16 sm:w-24 bg-gradient-to-l from-[#f8f9fa] to-transparent z-10 pointer-events-none" />
 
-        <div className="flex animate-marquee items-center">
-          {partnerGymLogos.map((gym, idx) => (
+        <div className="flex w-max animate-marquee items-center motion-reduce:animate-none">
+          {track.concat(track).map((gym, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-3.5 mx-8 md:mx-12 shrink-0 opacity-70 hover:opacity-100 transition-opacity"
+              className="flex items-center gap-2.5 sm:gap-3.5 mx-6 sm:mx-10 md:mx-12 shrink-0 opacity-75 hover:opacity-100 transition-opacity"
             >
-              <div className="w-2.5 h-2.5 rounded-full bg-[#d91a24] shrink-0" />
-              <span className="text-lg md:text-xl font-extrabold tracking-tight text-gray-900 uppercase">
+              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#d91a24] shrink-0" />
+              <span className="text-base sm:text-lg md:text-xl font-extrabold tracking-tight text-gray-900 uppercase whitespace-nowrap">
                 {gym.name}
               </span>
-              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider px-2 py-0.5 bg-gray-200/70 rounded-md">
+              <span className="hidden sm:inline text-[10px] font-bold text-gray-500 uppercase tracking-wider px-2 py-0.5 bg-gray-200/70 rounded-md whitespace-nowrap">
                 {gym.tag}
               </span>
             </div>

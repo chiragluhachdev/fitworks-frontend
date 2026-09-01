@@ -203,20 +203,14 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
         toast.error(msg);
         return false;
       }
-      if (!formData.professional.specializations || formData.professional.specializations.trim().length < 2) {
-        const msg = "Please enter at least one specialization (e.g. Weight Loss, Strength)";
-        setErrorMessage(msg);
-        toast.error(msg);
-        return false;
-      }
       if (!formData.professional.education || formData.professional.education.trim().length < 2) {
         const msg = "Please enter your education or fitness certification name";
         setErrorMessage(msg);
         toast.error(msg);
         return false;
       }
-      if (!formData.professional.bio || formData.professional.bio.trim().length < 10) {
-        const msg = "Please write a short bio (minimum 10 characters)";
+      if (!formData.professional.bio || !formData.professional.bio.trim()) {
+        const msg = "Please write a short bio about yourself";
         setErrorMessage(msg);
         toast.error(msg);
         return false;
@@ -503,11 +497,11 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-700 ml-1">Specializations (Comma separated) <span className="text-red-500">*</span></label>
-                <input type="text" name="professional.specializations" required value={formData.professional.specializations} onChange={handleChange} placeholder="E.g. Weight Loss, Strength Training, CrossFit, HIIT" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <label className="text-xs font-bold text-gray-700 ml-1">Specializations <span className="text-gray-400 font-semibold">(Optional)</span></label>
+                <input type="text" name="professional.specializations" value={formData.professional.specializations} onChange={handleChange} placeholder="E.g. Weight Loss, Strength Training, CrossFit, HIIT" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-700 ml-1">Skills (Comma separated)</label>
+                <label className="text-xs font-bold text-gray-700 ml-1">Skills <span className="text-gray-400 font-semibold">(Optional)</span></label>
                 <input type="text" name="professional.skills" value={formData.professional.skills} onChange={handleChange} placeholder="E.g. Nutrition planning, CPR, Client Management" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
               </div>
               <div className="space-y-1.5">

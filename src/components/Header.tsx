@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Header() {
@@ -18,7 +18,7 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  if (pathname === "/about" || pathname === "/auth") return null;
+  if (pathname === "/about" || pathname.startsWith("/auth")) return null;
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -37,7 +37,7 @@ export default function Header() {
     >
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="inline-block relative w-[150px] h-[47px] shrink-0">
+        <Link href="/" aria-label="FitWorks home" className="inline-block relative w-[132px] h-[41px] sm:w-[150px] sm:h-[47px] shrink-0">
           <Image
             src="/images/logo.png"
             alt="FitWorks Logo"
@@ -79,30 +79,49 @@ export default function Header() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden w-9 h-9 flex items-center justify-center text-gray-700"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            className="md:hidden w-11 h-11 -mr-2 flex items-center justify-center text-gray-700 rounded-xl active:bg-gray-100 transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileOpen ? <X className="w-[22px] h-[22px]" /> : <Menu className="w-[22px] h-[22px]" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Nav */}
-      {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 space-y-3 text-sm font-semibold text-gray-900">
-          <Link href="/" className="block py-1.5 hover:text-[#d91a24]" onClick={() => setMobileOpen(false)}>Home</Link>
-          <Link href="/for-gyms" className="block py-1.5 hover:text-[#d91a24]" onClick={() => setMobileOpen(false)}>For Gyms</Link>
-          <Link href="/for-trainers" className="block py-1.5 hover:text-[#d91a24]" onClick={() => setMobileOpen(false)}>For Trainers</Link>
-          <Link href="/#testimonials" className="block py-1.5 hover:text-[#d91a24]" onClick={() => setMobileOpen(false)}>Testimonials</Link>
+      <div
+        className={`md:hidden overflow-hidden transition-[max-height,opacity] duration-300 ease-out ${
+          mobileOpen ? "max-h-[340px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <nav className="bg-white border-t border-gray-100 px-5 pt-3 pb-5 shadow-[0_12px_24px_rgb(0,0,0,0.06)]">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className={`flex items-center justify-between py-3 border-b border-gray-50 text-[15px] font-semibold transition-colors ${
+                  isActive ? "text-[#d91a24]" : "text-gray-900 hover:text-[#d91a24]"
+                }`}
+              >
+                {link.name}
+                <ArrowRight className="w-4 h-4 text-gray-300" />
+              </Link>
+            );
+          })}
+
           {pathname !== "/auth" && (
-            <Link href="/auth" onClick={() => setMobileOpen(false)}>
-              <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white rounded-lg w-full h-[38px] text-sm font-semibold mt-2 flex items-center justify-center cursor-pointer">
-                Login / Sign Up <ArrowRight className="w-4 h-4 ml-1.5" />
+            <Link href="/auth" onClick={() => setMobileOpen(false)} className="block mt-4">
+              <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.98] transition-all duration-200 ease-out active:duration-0 text-white rounded-xl w-full h-[48px] text-[15px] font-semibold flex items-center justify-center cursor-pointer shadow-[0_6px_16px_rgb(217,26,36,0.22)]">
+                Login / Sign Up <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
           )}
-        </div>
-      )}
+        </nav>
+      </div>
     </header>
   );
 }

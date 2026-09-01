@@ -44,7 +44,7 @@ export default function AdminApplications() {
   const filteredApplications = applications.filter((app) => {
     const trainerName = app.trainerId?.personal?.fullName?.toLowerCase() || "";
     const gymName = app.gymId?.gymName?.toLowerCase() || "";
-    const jobTitle = app.jobId?.title?.toLowerCase() || "";
+    const jobTitle = app.jobId?.position?.toLowerCase() || "";
     const matchesSearch = trainerName.includes(searchTerm.toLowerCase()) || 
                           gymName.includes(searchTerm.toLowerCase()) || 
                           jobTitle.includes(searchTerm.toLowerCase());
@@ -164,7 +164,7 @@ export default function AdminApplications() {
                     <td className="px-6 py-4">
                       <div className="font-semibold text-gray-900 text-xs flex items-center gap-1.5">
                         <Briefcase className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                        {app.jobId?.title || "Trainer Vacancy"}
+                        {app.jobId?.position || "Trainer Vacancy"}
                       </div>
                     </td>
 

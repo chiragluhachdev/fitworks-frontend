@@ -27,7 +27,10 @@ export default function GymDashboardPage() {
     const fetchStats = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-        const res = await fetch(`${apiUrl}/gyms/${gymSlug}/dashboard`);
+        const token = typeof window !== "undefined" ? localStorage.getItem("fitworks_token") : null;
+        const res = await fetch(`${apiUrl}/gyms/${gymSlug}/dashboard`, {
+          headers: { Authorization: `Bearer ${token || ""}` },
+        });
         const json = await res.json();
         if (json.success) {
           setData(json.data);

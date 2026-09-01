@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Hero from "@/components/Hero";
 import TrustedBy from "@/components/BottomSection";
 import HowItWorks from "@/components/HowItWorks";
-import TrainerShowcase from "@/components/TrainerShowcase";
+import VerifiedTrainers from "@/components/VerifiedTrainers";
 import WhyFitWorks from "@/components/WhyFitWorks";
 import Testimonials from "@/components/Testimonials";
 import FinalCTA from "@/components/FinalCTA";
@@ -22,7 +22,7 @@ export default function Home() {
       <Hero />
       <TrustedBy />
       <HowItWorks />
-      <TrainerShowcase />
+      <VerifiedTrainers />
       <WhyFitWorks />
       <Testimonials />
       <FinalCTA />

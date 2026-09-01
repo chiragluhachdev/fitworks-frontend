@@ -50,10 +50,12 @@ export default function TrainerApplicationsPage() {
     setLoading(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-      const trainerRes = await fetch(`${apiUrl}/trainers/${trainerSlug}`);
+      const token = typeof window !== "undefined" ? localStorage.getItem("fitworks_token") : null;
+      const authHeaders = { Authorization: `Bearer ${token || ""}` };
+      const trainerRes = await fetch(`${apiUrl}/trainers/${trainerSlug}`, { headers: authHeaders });
       const trainerData = await trainerRes.json();
       if (trainerData.success && trainerData.data) {
-        const appRes = await fetch(`${apiUrl}/applications/trainer/${trainerData.data._id}`);
+        const appRes = await fetch(`${apiUrl}/applications/trainer/${trainerData.data._id}`, { headers: authHeaders });
         const appJson = await appRes.json();
         if (appJson.success) {
           setApplications(appJson.data || []);

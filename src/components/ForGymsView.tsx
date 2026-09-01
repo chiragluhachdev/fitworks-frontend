@@ -158,7 +158,7 @@ export default function ForGymsView() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-9">
-              <Link href="/auth">
+              <Link href="/auth/gym-signup">
                 <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white h-[46px] px-[26px] rounded-xl text-[15px] font-semibold shadow-[0_8px_20px_rgb(217,26,36,0.25)] w-full sm:w-auto">
                   <Users className="w-4 h-4 mr-2" />
                   Find a Trainer for Your Gym <ArrowRight className="w-4 h-4 ml-1.5" />

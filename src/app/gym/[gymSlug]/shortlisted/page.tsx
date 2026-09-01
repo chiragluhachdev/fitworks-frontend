@@ -53,11 +53,13 @@ export default function GymApplicationsPage() {
     setLoading(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const token = typeof window !== "undefined" ? localStorage.getItem("fitworks_token") : null;
+      const authHeaders = { Authorization: `Bearer ${token || ""}` };
       // First get gymId
       const gymRes = await fetch(`${apiUrl}/gyms/${gymSlug}`);
       const gymData = await gymRes.json();
       if (gymData.success && gymData.data) {
-        const appRes = await fetch(`${apiUrl}/applications/gym/${gymData.data._id}`);
+        const appRes = await fetch(`${apiUrl}/applications/gym/${gymData.data._id}`, { headers: authHeaders });
         const appJson = await appRes.json();
         if (appJson.success) {
           setApplications(appJson.data || []);

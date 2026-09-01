@@ -52,7 +52,7 @@ export default function ForTrainersView() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-8">
-              <Link href="/auth">
+              <Link href="/auth/trainer-signup">
                 <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white h-[46px] px-[26px] rounded-lg text-[15px] font-semibold shadow-[0_8px_20px_rgb(217,26,36,0.25)] w-full sm:w-auto">
                   Create Your Profile <ArrowRight className="w-4 h-4 ml-1.5" />
                 </Button>

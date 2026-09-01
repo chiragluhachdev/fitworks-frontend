@@ -37,7 +37,9 @@ export default function TrainerVerificationPage() {
   const fetchTrainer = async () => {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-      const res = await fetch(`${apiUrl}/trainers/${trainerSlug}`);
+      const token = typeof window !== "undefined" ? localStorage.getItem("fitworks_token") : null;
+      const authHeaders = { Authorization: `Bearer ${token || ""}` };
+      const res = await fetch(`${apiUrl}/trainers/${trainerSlug}`, { headers: authHeaders });
       const json = await res.json();
       if (json.success && json.data) {
         setTrainer(json.data);

@@ -12,7 +12,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     pathname.startsWith("/gym") ||
     pathname.startsWith("/trainer") ||
     pathname.startsWith("/admin") ||
-    pathname === "/auth" ||
+    pathname.startsWith("/auth") ||
     pathname === "/about";
 
   if (isStandaloneOrDashboard) {
@@ -26,7 +26,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header />
-      <main className="flex-1 flex flex-col w-full pt-[60px]">
+      <main className="flex-1 flex flex-col w-full pt-[68px] md:pt-[74px]">
         {children}
       </main>
       <Footer />

@@ -28,7 +28,7 @@ interface ConnectionItem {
     slug?: string;
   };
   message?: string;
-  status: "pending" | "accepted" | "declined";
+  status: "pending" | "accepted" | "rejected";
   createdAt: string;
 }
 
@@ -44,10 +44,12 @@ export default function TrainerConnectionsPage() {
     setLoading(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-      const trainerRes = await fetch(`${apiUrl}/trainers/${trainerSlug}`);
+      const token = typeof window !== "undefined" ? localStorage.getItem("fitworks_token") : null;
+      const authHeaders = { Authorization: `Bearer ${token || ""}` };
+      const trainerRes = await fetch(`${apiUrl}/trainers/${trainerSlug}`, { headers: authHeaders });
       const trainerData = await trainerRes.json();
       if (trainerData.success && trainerData.data) {
-        const connRes = await fetch(`${apiUrl}/connections/trainer/${trainerData.data._id}`);
+        const connRes = await fetch(`${apiUrl}/connections/trainer/${trainerData.data._id}`, { headers: authHeaders });
         const connJson = await connRes.json();
         if (connJson.success) {
           setConnections(connJson.data || []);
@@ -64,7 +66,7 @@ export default function TrainerConnectionsPage() {
     fetchConnections();
   }, [trainerSlug]);
 
-  const updateStatus = async (connId: string, newStatus: "accepted" | "declined") => {
+  const updateStatus = async (connId: string, newStatus: "accepted" | "rejected") => {
     setActionId(connId);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
@@ -133,7 +135,7 @@ export default function TrainerConnectionsPage() {
                     <h3 className="text-base font-bold text-gray-900">{conn.gymId?.gymName || "Verified Gym Partner"}</h3>
                     <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full capitalize ${
                       conn.status === "accepted" ? "bg-green-50 text-green-700 border border-green-200" :
-                      conn.status === "declined" ? "bg-gray-100 text-gray-600 border border-gray-200" :
+                      conn.status === "rejected" ? "bg-gray-100 text-gray-600 border border-gray-200" :
                       "bg-amber-50 text-amber-700 border border-amber-200"
                     }`}>
                       {conn.status === "pending" ? "Action Required" : conn.status}
@@ -169,7 +171,7 @@ export default function TrainerConnectionsPage() {
                       size="sm"
                       variant="outline"
                       disabled={actionId === conn._id}
-                      onClick={() => updateStatus(conn._id, "declined")}
+                      onClick={() => updateStatus(conn._id, "rejected")}
                       className="border-gray-200 text-gray-500 hover:bg-gray-50 rounded-xl text-xs font-semibold"
                     >
                       Decline
