@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
-  Search,
   Briefcase,
   Users,
   Building2,
@@ -67,7 +66,6 @@ export default function GymDashboardLayout({ children }: { children: React.React
 
   const navLinks = [
     { name: "Overview", shortName: "Home", href: `/gym/${gymSlug}/dashboard`, icon: LayoutDashboard },
-    { name: "Find Trainers", shortName: "Trainers", href: `/gym/${gymSlug}/find-trainers`, icon: Search },
     { name: "My Vacancies", shortName: "Jobs", href: `/gym/${gymSlug}/vacancies`, icon: Briefcase },
     { name: "Applications & Hires", shortName: "Applied", href: `/gym/${gymSlug}/shortlisted`, icon: Users },
     { name: "Gym Profile", href: `/gym/${gymSlug}/profile`, icon: Building2 },

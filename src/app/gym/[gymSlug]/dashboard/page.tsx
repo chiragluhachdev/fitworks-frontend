@@ -11,7 +11,6 @@ import {
   ShieldCheck,
   Plus,
   Loader2,
-  Search,
   ChevronRight,
 } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
@@ -86,10 +85,10 @@ export default function GymDashboardPage() {
           {/* Primary actions — full width and thumb-sized on mobile */}
           <div className="grid grid-cols-2 lg:flex items-center gap-2.5 shrink-0">
             <Link
-              href={`/gym/${gymSlug}/find-trainers`}
+              href={`/gym/${gymSlug}/shortlisted`}
               className="inline-flex items-center justify-center gap-2 h-12 lg:h-11 px-4 rounded-xl border border-gray-200 bg-white text-gray-800 text-[13px] sm:text-sm font-bold active:scale-[0.98] hover:bg-gray-50 transition-all"
             >
-              <Search className="w-4 h-4" /> Find Trainers
+              <Users className="w-4 h-4" /> Applications
             </Link>
             <Link
               href={`/gym/${gymSlug}/vacancies/new`}
@@ -146,7 +145,7 @@ export default function GymDashboardPage() {
             <EmptyState
               icon={Users}
               title="No applications yet"
-              description="Post a vacancy or browse verified trainers and invite them to interview."
+              description="Post a vacancy and verified trainers will start applying to it."
               action={{ label: "Post a Vacancy", href: `/gym/${gymSlug}/vacancies/new` }}
             />
           ) : (

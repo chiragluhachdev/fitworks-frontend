@@ -23,23 +23,6 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        // Trainer discovery moved behind a gym login; keep old links working
-        // instead of 404ing anything already indexed or shared.
-        source: '/find-trainers',
-        destination: '/auth',
-        permanent: true,
-      },
-      {
-        source: '/trainers',
-        destination: '/auth',
-        permanent: true,
-      },
-      {
-        source: '/trainers/:slug',
-        destination: '/auth',
-        permanent: true,
-      },
-      {
         source: '/login.php',
         destination: '/auth',
         permanent: true,
