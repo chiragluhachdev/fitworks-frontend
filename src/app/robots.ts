@@ -11,13 +11,14 @@ export default function robots(): MetadataRoute.Robots {
           "/",
           "/for-gyms",
           "/for-trainers",
-          "/find-trainers",
-          "/trainers",
           "/about",
           "/contact",
           "/pricing",
         ],
         disallow: [
+          // Trainer discovery is gym-only; these public pages were removed.
+          "/find-trainers",
+          "/trainers",
           "/admin",
           "/admin/*",
           "/auth",
