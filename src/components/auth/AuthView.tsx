@@ -17,12 +17,14 @@ import {
   Users, 
   Star,
   AlertCircle,
-  Loader2
+  Loader2,
+  Smartphone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import RegisterGymFlow from "@/components/auth/RegisterGymFlow";
 import RegisterTrainerFlow from "@/components/auth/RegisterTrainerFlow";
+import OtpVerification from "@/components/auth/OtpVerification";
 
 export type AuthMode = "login" | "register_select" | "register_gym" | "register_trainer";
 
@@ -42,9 +44,53 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
   const [role, setRole] = useState<"gym" | "trainer">("gym");
   const [showPassword, setShowPassword] = useState(false);
   const [identifier, setIdentifier] = useState("");
+  // Passwordless path: prove the number by OTP, then exchange for a session.
+  const [otpMode, setOtpMode] = useState(false);
+  const [otpPhone, setOtpPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const routeToDashboard = (user: any) => {
+    if (user?.role === "gym") router.push(`/gym/${user.slug}/dashboard`);
+    else if (user?.role === "trainer") router.push(`/trainer/${user.slug}/dashboard`);
+    else if (user?.role === "admin") router.push("/admin/dashboard");
+    else router.push("/");
+  };
+
+  const completeOtpLogin = async (verificationToken: string) => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const res = await fetch(`${apiUrl}/auth/login-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: otpPhone, verificationToken }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setOtpMode(false);
+        setError(data.message || "Could not sign you in. Please try again.");
+        return;
+      }
+      localStorage.setItem("fitworks_token", data.token);
+      localStorage.setItem("fitworks_user", JSON.stringify(data.user));
+      routeToDashboard(data.user);
+    } catch {
+      setOtpMode(false);
+      setError("Unable to connect to the server.");
+    }
+  };
+
+  const startOtpLogin = () => {
+    const digits = identifier.replace(/\D/g, "").slice(-10);
+    if (!/^[6-9]\d{9}$/.test(digits)) {
+      setError("Enter your 10-digit mobile number to sign in with an OTP.");
+      return;
+    }
+    setError(null);
+    setOtpPhone(digits);
+    setOtpMode(true);
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,19 +124,7 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
         localStorage.setItem("fitworks_user", JSON.stringify(data.user));
       }
 
-      // Redirect to appropriate dashboard
-      const userRole = data.user?.role;
-      const userSlug = data.user?.slug;
-
-      if (userRole === "gym") {
-        router.push(`/gym/${userSlug || "powerfit-studio"}/dashboard`);
-      } else if (userRole === "trainer") {
-        router.push(`/trainer/${userSlug || "rahul-sharma"}/dashboard`);
-      } else if (userRole === "admin") {
-        router.push("/admin/verify");
-      } else {
-        router.push("/");
-      }
+      routeToDashboard(data.user);
     } catch (err: any) {
       console.error("Login network error:", err);
       setError("Unable to connect to server. Please check your backend connection.");
@@ -199,7 +233,20 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
           </Link>
         </div>
 
-        {mode === "login" && (
+        {mode === "login" && otpMode && (
+          <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-10 lg:p-12 w-full my-auto">
+            <div className="w-full max-w-[440px] bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 sm:p-8 md:p-10 border border-gray-100/80">
+              <OtpVerification
+                phone={otpPhone}
+                purpose="login"
+                onChangeNumber={() => setOtpMode(false)}
+                onVerified={completeOtpLogin}
+              />
+            </div>
+          </div>
+        )}
+
+        {mode === "login" && !otpMode && (
           <div className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-10 lg:p-12 w-full my-auto">
             <div className="w-full max-w-[440px] bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 sm:p-8 md:p-10 border border-gray-100/80">
               
@@ -315,6 +362,26 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
                   )}
                 </Button>
               </form>
+
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-gray-100" />
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="bg-white px-3 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                    or
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={startOtpLogin}
+                className="w-full h-12 rounded-xl border border-gray-200 bg-white text-gray-800 text-sm font-bold hover:bg-gray-50 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Smartphone className="w-4 h-4 text-gray-500" />
+                Sign in with OTP
+              </button>
 
               <div className="text-center mt-6 text-xs sm:text-sm text-gray-500">
                 New to FitWorks? <button onClick={() => go("register_select")} className="text-[#d91a24] hover:text-[#cc1616] font-bold transition-colors bg-transparent border-none p-0 cursor-pointer">Create an account</button>

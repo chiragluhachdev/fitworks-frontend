@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
+import OtpVerification from "@/components/auth/OtpVerification";
 
 interface RegisterGymFlowProps {
   onBack: () => void;
@@ -12,6 +13,10 @@ interface RegisterGymFlowProps {
 
 export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
   const [step, setStep] = useState(1);
+  // Phone must be proven by OTP before the account can be created.
+  const [showOtp, setShowOtp] = useState(false);
+  const [verifiedPhone, setVerifiedPhone] = useState("");
+  const [verificationToken, setVerificationToken] = useState("");
   const totalSteps = 4;
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -162,8 +167,15 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
     return true;
   };
 
+  const currentPhone = () => formData.contactPerson.phone.replace(/\D/g, "").slice(-10);
+
   const handleNext = () => {
     if (!validateCurrentStep()) {
+      return;
+    }
+    // The contact number is captured on step 2; verify it before moving on.
+    if (step === 2 && currentPhone() !== verifiedPhone) {
+      setShowOtp(true);
       return;
     }
     if (step < totalSteps) {
@@ -197,7 +209,8 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
           ...formData.hiringInformation,
           trainersRequired: Number(formData.hiringInformation.trainersRequired) || 1,
           trainerTypes: formData.hiringInformation.trainerTypes ? formData.hiringInformation.trainerTypes.split(",").map(s => s.trim()).filter(Boolean) : ["General Fitness"],
-        }
+        },
+        verificationToken,
       };
 
       const res = await fetch(`${apiUrl}/auth/register/gym`, {
@@ -230,6 +243,24 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
       setLoading(false);
     }
   };
+
+  if (showOtp) {
+    return (
+      <div className="w-full flex flex-col h-full justify-center p-5 sm:p-8 md:p-10 animate-in fade-in slide-in-from-right-4 duration-300">
+        <OtpVerification
+          phone={currentPhone()}
+          purpose="registration"
+          onChangeNumber={() => setShowOtp(false)}
+          onVerified={(token) => {
+            setVerificationToken(token);
+            setVerifiedPhone(currentPhone());
+            setShowOtp(false);
+            setStep(3);
+          }}
+        />
+      </div>
+    );
+  }
 
   if (isSuccess) {
     return (

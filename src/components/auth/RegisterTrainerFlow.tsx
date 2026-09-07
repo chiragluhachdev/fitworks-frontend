@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
+import OtpVerification from "@/components/auth/OtpVerification";
 
 interface RegisterTrainerFlowProps {
   onBack: () => void;
@@ -26,6 +27,10 @@ interface RegisterTrainerFlowProps {
 
 export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps) {
   const [step, setStep] = useState(1);
+  // Phone must be proven by OTP before the account can be created.
+  const [showOtp, setShowOtp] = useState(false);
+  const [verifiedPhone, setVerifiedPhone] = useState("");
+  const [verificationToken, setVerificationToken] = useState("");
   const totalSteps = 4;
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -252,8 +257,15 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
     return true;
   };
 
+  const currentPhone = () => formData.personal.phone.replace(/\D/g, "").slice(-10);
+
   const handleNext = () => {
     if (!validateCurrentStep()) {
+      return;
+    }
+    // Editing the number after verifying invalidates the proof.
+    if (step === 1 && currentPhone() !== verifiedPhone) {
+      setShowOtp(true);
       return;
     }
     if (step < totalSteps) {
@@ -302,6 +314,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
           preferredLocations: [formData.personal.city || "Mumbai"],
         },
         verificationDocuments,
+        verificationToken,
       };
 
       const res = await fetch(`${apiUrl}/auth/register/trainer`, {
@@ -336,6 +349,24 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
   };
 
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  if (showOtp) {
+    return (
+      <div className="w-full flex flex-col h-full justify-center p-5 sm:p-8 md:p-10 animate-in fade-in slide-in-from-right-4 duration-300">
+        <OtpVerification
+          phone={currentPhone()}
+          purpose="registration"
+          onChangeNumber={() => setShowOtp(false)}
+          onVerified={(token) => {
+            setVerificationToken(token);
+            setVerifiedPhone(currentPhone());
+            setShowOtp(false);
+            setStep(2);
+          }}
+        />
+      </div>
+    );
+  }
 
   if (isSuccess) {
     return (
