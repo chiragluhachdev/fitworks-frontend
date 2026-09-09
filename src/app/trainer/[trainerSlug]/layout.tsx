@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   LayoutDashboard,
   Search,
@@ -13,6 +14,8 @@ import {
   Settings,
   Clock,
   AlertCircle,
+  Loader2,
+  UserX,
 } from "lucide-react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 
@@ -39,11 +42,15 @@ export default function TrainerDashboardLayout({ children }: { children: React.R
   const router = useRouter();
   const trainerSlug = (params?.trainerSlug as string) || "";
 
-  const [trainer, setTrainer] = useState({
-    fullName: "",
-    profilePhoto: "",
-    verificationStatus: "pending",
-  });
+  // "loading" until the profile is confirmed to exist. Never assume a status —
+  // a deleted trainer's URL used to render a full dashboard shell, and every
+  // page briefly claimed "Pending review" before the fetch came back.
+  const [state, setState] = useState<"loading" | "ready" | "missing">("loading");
+  const [trainer, setTrainer] = useState<{
+    fullName: string;
+    profilePhoto: string;
+    verificationStatus: string | null;
+  }>({ fullName: "", profilePhoto: "", verificationStatus: null });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -54,14 +61,22 @@ export default function TrainerDashboardLayout({ children }: { children: React.R
       router.push("/auth");
       return;
     }
+
+    let me: any;
     try {
-      const u = JSON.parse(stored);
-      if (u.role && u.role !== "trainer" && u.role !== "admin") {
-        router.push(u.slug ? `/gym/${u.slug}/dashboard` : "/auth");
-        return;
-      }
+      me = JSON.parse(stored);
     } catch {
       router.push("/auth");
+      return;
+    }
+
+    if (me.role && me.role !== "trainer" && me.role !== "admin") {
+      router.push(me.slug ? `/gym/${me.slug}/dashboard` : "/auth");
+      return;
+    }
+    // A trainer only ever belongs on their own pages. Admins may look at anyone.
+    if (me.role === "trainer" && me.slug && me.slug !== trainerSlug) {
+      router.replace(`/trainer/${me.slug}/dashboard`);
       return;
     }
 
@@ -71,16 +86,28 @@ export default function TrainerDashboardLayout({ children }: { children: React.R
         const res = await fetch(`${apiUrl}/trainers/${trainerSlug}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
+        if (res.status === 404) {
+          setState("missing");
+          return;
+        }
+
         const json = await res.json();
         if (json.success && json.data) {
           setTrainer({
             fullName: json.data.personal?.fullName || "Trainer",
             profilePhoto: json.data.personal?.profilePhoto || "",
-            verificationStatus: json.data.verificationStatus || "pending",
+            verificationStatus: json.data.verificationStatus || null,
           });
+          setState("ready");
+        } else {
+          setState("missing");
         }
       } catch (err) {
         console.error("Layout trainer fetch error:", err);
+        // A network blip is not a deleted account — keep the shell, leave the
+        // badge blank rather than inventing a status.
+        setState("ready");
       }
     })();
   }, [router, trainerSlug]);
@@ -102,7 +129,49 @@ export default function TrainerDashboardLayout({ children }: { children: React.R
     { name: "Settings", href: `/trainer/${trainerSlug}/settings`, icon: Settings },
   ];
 
-  const badge = VERIFICATION_BADGE[trainer.verificationStatus];
+  if (state === "loading") {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-gray-50">
+        <Loader2 className="w-7 h-7 text-[#d91a24] animate-spin" />
+        <p className="text-xs font-semibold text-gray-500">Loading your workspace…</p>
+      </div>
+    );
+  }
+
+  // The profile behind this URL is gone. Say so plainly instead of rendering an
+  // empty dashboard that looks like the account still exists.
+  if (state === "missing") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-5">
+        <div className="max-w-md w-full bg-white rounded-3xl border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)] p-8 text-center">
+          <span className="w-14 h-14 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center mx-auto mb-4">
+            <UserX className="w-7 h-7" />
+          </span>
+          <h1 className="text-xl font-extrabold text-gray-900 mb-2">This trainer profile no longer exists</h1>
+          <p className="text-[13px] text-gray-500 leading-relaxed mb-7">
+            The profile at <span className="font-semibold text-gray-700">/{trainerSlug}</span> has been
+            removed from FitWorks. If this is your account, please sign in again.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2.5">
+            <button
+              onClick={handleLogout}
+              className="flex-1 h-12 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-sm font-bold transition-colors cursor-pointer"
+            >
+              Sign in again
+            </button>
+            <Link
+              href="/"
+              className="flex-1 h-12 rounded-xl border border-gray-200 text-gray-800 text-sm font-bold hover:bg-gray-50 transition-colors inline-flex items-center justify-center"
+            >
+              Back to FitWorks
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const badge = trainer.verificationStatus ? VERIFICATION_BADGE[trainer.verificationStatus] : undefined;
 
   return (
     <DashboardShell

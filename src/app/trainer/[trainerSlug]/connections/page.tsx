@@ -34,7 +34,7 @@ interface ConnectionItem {
 
 export default function TrainerConnectionsPage() {
   const params = useParams();
-  const trainerSlug = (params?.trainerSlug as string) || "rahul-sharma";
+  const trainerSlug = (params?.trainerSlug as string) || "";
 
   const [connections, setConnections] = useState<ConnectionItem[]>([]);
   const [loading, setLoading] = useState(true);

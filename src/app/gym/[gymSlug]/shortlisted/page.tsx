@@ -42,7 +42,7 @@ interface ApplicationItem {
 
 export default function GymApplicationsPage() {
   const params = useParams();
-  const gymSlug = (params?.gymSlug as string) || "powerfit-studio";
+  const gymSlug = (params?.gymSlug as string) || "";
 
   const [applications, setApplications] = useState<ApplicationItem[]>([]);
   const [loading, setLoading] = useState(true);

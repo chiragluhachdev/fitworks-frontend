@@ -34,7 +34,7 @@ interface JobVacancy {
 
 export default function GymVacanciesListPage() {
   const params = useParams();
-  const gymSlug = (params?.gymSlug as string) || "powerfit-studio";
+  const gymSlug = (params?.gymSlug as string) || "";
 
   const [vacancies, setVacancies] = useState<JobVacancy[]>([]);
   const [loading, setLoading] = useState(true);

@@ -22,7 +22,7 @@ import { toast } from "react-hot-toast";
 
 export default function TrainerVerificationPage() {
   const params = useParams();
-  const trainerSlug = (params?.trainerSlug as string) || "rahul-sharma";
+  const trainerSlug = (params?.trainerSlug as string) || "";
 
   const [trainer, setTrainer] = useState<any>(null);
   const [loading, setLoading] = useState(true);

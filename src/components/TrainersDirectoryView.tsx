@@ -32,6 +32,7 @@ interface Trainer {
 export default function TrainersDirectoryView() {
   const [trainers, setTrainers] = useState<Trainer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -40,13 +41,14 @@ export default function TrainersDirectoryView() {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
         const res = await fetch(`${apiUrl}/trainers`);
         const json = await res.json();
-        if (json.success && json.data.length > 0) {
-          setTrainers(json.data);
-        } else {
-          loadDummyData();
-        }
+        // Only real, verified, paid-up trainers ever appear here. This list used
+        // to fall back to invented profiles when the API returned nothing, which
+        // put people who don't exist in front of hiring gyms.
+        setTrainers(json.success ? json.data || [] : []);
       } catch (error) {
-        loadDummyData();
+        console.error("Fetch trainers error:", error);
+        setLoadFailed(true);
+        setTrainers([]);
       } finally {
         setLoading(false);
       }
@@ -54,44 +56,6 @@ export default function TrainersDirectoryView() {
 
     fetchTrainers();
   }, []);
-
-  const loadDummyData = () => {
-    setTrainers([
-      {
-        _id: "1",
-        slug: "rahul-sharma",
-        personal: { 
-          fullName: "Rahul Sharma", 
-          city: "Mumbai", 
-          profilePhoto: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80" 
-        },
-        professional: { professionalTitle: "Senior Yoga Instructor", yearsOfExperience: 5, specializations: ["Yoga", "Pilates"] },
-        workPreferences: { expectedMonthlySalary: "₹25k - ₹35k" }
-      },
-      {
-        _id: "2",
-        slug: "priya-verma",
-        personal: { 
-          fullName: "Priya Verma", 
-          city: "Delhi NCR", 
-          profilePhoto: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80" 
-        },
-        professional: { professionalTitle: "CrossFit Coach", yearsOfExperience: 3, specializations: ["CrossFit", "Strength"] },
-        workPreferences: { expectedMonthlySalary: "₹20k - ₹30k" }
-      },
-      {
-        _id: "3",
-        slug: "amit-singh",
-        personal: { 
-          fullName: "Amit Singh", 
-          city: "Bangalore", 
-          profilePhoto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80" 
-        },
-        professional: { professionalTitle: "Personal Trainer", yearsOfExperience: 2, specializations: ["Weight Loss", "General Fitness"] },
-        workPreferences: { expectedMonthlySalary: "₹15k - ₹25k" }
-      }
-    ]);
-  };
 
   const filteredTrainers = trainers.filter(t => 
     t.personal.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -139,10 +103,22 @@ export default function TrainersDirectoryView() {
             <div className="animate-spin w-8 h-8 border-4 border-[#d91a24] border-t-transparent rounded-full" />
           </div>
         ) : filteredTrainers.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
+          <div className="text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm px-6">
             <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <h3 className="text-xl font-bold text-gray-900 mb-1">No trainers found</h3>
-            <p className="text-gray-500 text-sm">Try adjusting your search criteria</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">
+              {loadFailed
+                ? "We couldn't load the directory"
+                : searchTerm
+                ? "No trainers match your search"
+                : "No trainers listed yet"}
+            </h3>
+            <p className="text-gray-500 text-sm max-w-md mx-auto">
+              {loadFailed
+                ? "Please refresh the page in a moment."
+                : searchTerm
+                ? "Try a different name, role or city."
+                : "Verified trainers on an active membership appear here as soon as they join."}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

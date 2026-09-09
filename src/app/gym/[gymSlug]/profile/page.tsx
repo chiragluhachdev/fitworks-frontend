@@ -31,7 +31,7 @@ const PRESET_GYM_LOGOS = [
 
 export default function GymProfilePage() {
   const params = useParams();
-  const gymSlug = (params?.gymSlug as string) || "powerfit-studio";
+  const gymSlug = (params?.gymSlug as string) || "";
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

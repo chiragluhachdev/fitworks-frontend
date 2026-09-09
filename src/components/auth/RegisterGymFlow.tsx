@@ -42,7 +42,7 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
   });
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [createdSlug, setCreatedSlug] = useState("powerfit-studio");
+  const [createdSlug, setCreatedSlug] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setErrorMessage(null);
@@ -205,7 +205,7 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
         localStorage.setItem("fitworks_user", JSON.stringify(data.user));
       }
 
-      setCreatedSlug(data.gym?.slug || "powerfit-studio");
+      setCreatedSlug(data.gym?.slug || "");
       setIsSuccess(true);
       toast.success("Gym account registered successfully!");
     } catch (err: any) {

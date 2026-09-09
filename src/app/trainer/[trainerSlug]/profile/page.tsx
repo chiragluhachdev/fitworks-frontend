@@ -32,7 +32,7 @@ const PRESET_AVATARS = [
 
 export default function TrainerProfilePage() {
   const params = useParams();
-  const trainerSlug = (params?.trainerSlug as string) || "rahul-sharma";
+  const trainerSlug = (params?.trainerSlug as string) || "";
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -100,7 +100,10 @@ export default function TrainerProfilePage() {
     const fetchTrainer = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-        const res = await fetch(`${apiUrl}/trainers/${trainerSlug}`);
+        const token = typeof window !== "undefined" ? localStorage.getItem("fitworks_token") : null;
+        const res = await fetch(`${apiUrl}/trainers/${trainerSlug}`, {
+          headers: { Authorization: `Bearer ${token || ""}` },
+        });
         const json = await res.json();
         if (json.success && json.data) {
           const t = json.data;

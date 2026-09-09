@@ -59,7 +59,7 @@ interface Job {
 
 export default function TrainerFindJobsPage() {
   const params = useParams();
-  const trainerSlug = (params?.trainerSlug as string) || "rahul-sharma";
+  const trainerSlug = (params?.trainerSlug as string) || "";
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);

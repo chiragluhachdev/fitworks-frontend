@@ -17,17 +17,38 @@ import {
   ChevronRight,
   FileCheck,
   CalendarClock,
+  Lock,
+  AlertCircle,
 } from "lucide-react";
 import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 import StatCard from "@/components/dashboard/StatCard";
 import SubscriptionBanner, { MembershipPill, type SubscriptionState } from "@/components/dashboard/SubscriptionBanner";
 import SectionCard from "@/components/dashboard/SectionCard";
 import EmptyState from "@/components/dashboard/EmptyState";
+import type { LockInfo } from "@/components/dashboard/AccessLocked";
 
 const CONNECTION_TONE: Record<string, string> = {
   pending: "bg-amber-50 text-amber-700 border-amber-100",
   accepted: "bg-emerald-50 text-emerald-700 border-emerald-100",
   rejected: "bg-gray-100 text-gray-600 border-gray-200",
+};
+
+const VERIFICATION_PILL: Record<string, { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
+  verified: {
+    label: "Verified",
+    cls: "text-emerald-700 bg-emerald-50 border-emerald-200/80",
+    Icon: CheckCircle2,
+  },
+  pending: {
+    label: "Pending review",
+    cls: "text-amber-700 bg-amber-50 border-amber-200/80",
+    Icon: Clock,
+  },
+  rejected: {
+    label: "Not verified",
+    cls: "text-red-700 bg-red-50 border-red-200/80",
+    Icon: AlertCircle,
+  },
 };
 
 export default function TrainerDashboardPage() {
@@ -36,6 +57,7 @@ export default function TrainerDashboardPage() {
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const fetchDashboard = async () => {
@@ -46,9 +68,15 @@ export default function TrainerDashboardPage() {
         headers: { Authorization: `Bearer ${token || ""}` },
       });
       const json = await res.json();
-      if (json.success) setData(json.data);
+      if (json.success) {
+        setData(json.data);
+        setLoadError(null);
+      } else {
+        setLoadError(json.message || "We couldn't load your dashboard.");
+      }
     } catch (err) {
       console.error("Fetch Trainer Dashboard Error:", err);
+      setLoadError("Couldn't reach FitWorks. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -69,9 +97,39 @@ export default function TrainerDashboardPage() {
     );
   }
 
-  const { trainer, stats, applications = [], connections = [], recommendedJobs = [] } = data || {};
+  // Nothing came back — show the reason rather than an empty dashboard that
+  // reads as if the account is fine.
+  if (!data) {
+    return (
+      <div className="max-w-md mx-auto mt-10 bg-white rounded-3xl border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)] p-8 text-center">
+        <span className="w-14 h-14 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center mx-auto mb-4">
+          <AlertCircle className="w-7 h-7" />
+        </span>
+        <h1 className="text-lg font-extrabold text-gray-900 mb-2">Dashboard unavailable</h1>
+        <p className="text-[13px] text-gray-500 leading-relaxed mb-6">
+          {loadError || "We couldn't load your dashboard."}
+        </p>
+        <button
+          onClick={() => {
+            setLoading(true);
+            fetchDashboard();
+          }}
+          className="h-12 px-6 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-sm font-bold transition-colors cursor-pointer"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+
+  const { trainer, stats, applications = [], connections = [], recommendedJobs = [] } = data;
   const subscription: SubscriptionState | null = data?.subscription ?? null;
+  const jobAccess: (LockInfo & { allowed: boolean }) | null = data?.jobAccess ?? null;
   const status = trainer?.verificationStatus;
+  const verification = status ? VERIFICATION_PILL[status] : undefined;
+  // "Active" means approved AND paid. Verification alone never makes a profile
+  // live, so it must never be presented as if it does.
+  const accountActive = status === "verified" && Boolean(subscription?.isActive);
   const pendingInvites = connections.filter((c: any) => c.status === "pending").length;
 
   return (
@@ -88,13 +146,11 @@ export default function TrainerDashboardPage() {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
                 Hello, {trainer?.personal?.fullName?.split(" ")[0] || "Trainer"}
               </h1>
-              {status === "verified" ? (
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-0.5 rounded-full">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Verified
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200/80 px-2.5 py-0.5 rounded-full">
-                  <Clock className="w-3.5 h-3.5" /> Pending review
+              {verification && (
+                <span
+                  className={`inline-flex items-center gap-1 text-[11px] font-bold border px-2.5 py-0.5 rounded-full ${verification.cls}`}
+                >
+                  <verification.Icon className="w-3.5 h-3.5" /> {verification.label}
                 </span>
               )}
               <MembershipPill subscription={subscription} />
@@ -102,6 +158,8 @@ export default function TrainerDashboardPage() {
             <p className="text-[13px] sm:text-sm text-gray-500 leading-relaxed">
               {!subscription?.isActive
                 ? "Activate your membership to appear in gym search and start applying."
+                : status !== "verified"
+                ? "Your membership is paid. Your profile goes live to gyms as soon as our team approves your documents."
                 : pendingInvites > 0
                 ? `You have ${pendingInvites} gym invitation${pendingInvites > 1 ? "s" : ""} waiting for a reply.`
                 : "Track your applications and incoming gym invitations here."}
@@ -140,6 +198,45 @@ export default function TrainerDashboardPage() {
         }}
       />
 
+      {/* ── Is this profile actually live? Approved AND paid, never one alone. ── */}
+      <div
+        className={`flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl border ${
+          accountActive ? "bg-emerald-50/70 border-emerald-200/70" : "bg-gray-50 border-gray-200"
+        }`}
+      >
+        <span
+          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+            accountActive ? "bg-emerald-100 text-emerald-700" : "bg-white text-gray-400 border border-gray-200"
+          }`}
+        >
+          {accountActive ? <ShieldCheck className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className={`text-sm font-bold ${accountActive ? "text-emerald-900" : "text-gray-900"}`}>
+            {accountActive ? "Your profile is live in gym search" : "Your profile is not visible to gyms yet"}
+          </p>
+          <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 leading-relaxed">
+            {accountActive
+              ? "Verified and on an active membership — hiring gyms can find and contact you."
+              : !subscription?.isActive && status !== "verified"
+              ? "Two things left: activate your ₹99/month membership, and get your documents approved."
+              : !subscription?.isActive
+              ? "Your ₹99/month membership isn't active. Activate it to appear in gym search."
+              : status === "rejected"
+              ? "Your documents were not approved. Re-upload them from the Verification page."
+              : "Our team is still reviewing your documents."}
+          </p>
+        </div>
+        {!subscription?.isActive && (
+          <button
+            onClick={() => setShowPaymentModal(true)}
+            className="h-10 px-4 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-xs font-bold shrink-0 active:scale-[0.98] transition-all cursor-pointer"
+          >
+            Activate ₹99
+          </button>
+        )}
+      </div>
+
       {/* ── Stats: 2-up on mobile ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard
@@ -159,9 +256,9 @@ export default function TrainerDashboardPage() {
         />
         <StatCard
           label="Verification"
-          value={status === "verified" ? "Verified" : "Pending"}
+          value={status === "verified" ? "Verified" : status === "rejected" ? "Rejected" : "Pending"}
           icon={FileCheck}
-          tone={status === "verified" ? "green" : "amber"}
+          tone={status === "verified" ? "green" : status === "rejected" ? "red" : "amber"}
           href={`/trainer/${trainerSlug}/verification`}
         />
         <StatCard
@@ -187,9 +284,42 @@ export default function TrainerDashboardPage() {
         <SectionCard
           title="Recommended jobs"
           description="Open vacancies from partner gyms"
-          action={recommendedJobs.length > 0 ? { label: "View all", href: `/trainer/${trainerSlug}/jobs` } : undefined}
+          action={
+            recommendedJobs.length > 0 ? { label: "View all", href: `/trainer/${trainerSlug}/jobs` } : undefined
+          }
         >
-          {recommendedJobs.length === 0 ? (
+          {jobAccess && !jobAccess.allowed ? (
+            /* The backend withholds vacancies from a locked trainer, so this panel
+               explains why instead of showing an empty list. */
+            <div className="p-5 sm:p-6 rounded-2xl bg-gray-50/80 border border-gray-100 text-center">
+              <span className="w-12 h-12 rounded-2xl bg-white border border-gray-200 text-[#d91a24] flex items-center justify-center mx-auto mb-3.5">
+                {jobAccess.reason === "pending_review" ? (
+                  <Clock className="w-6 h-6 text-amber-500" />
+                ) : (
+                  <Lock className="w-6 h-6" />
+                )}
+              </span>
+              <h3 className="text-sm font-extrabold text-gray-900 mb-1.5">{jobAccess.title}</h3>
+              <p className="text-[12px] sm:text-[13px] text-gray-500 leading-relaxed mb-5 max-w-sm mx-auto">
+                {jobAccess.message}
+              </p>
+              {jobAccess.reason === "subscription_inactive" ? (
+                <button
+                  onClick={() => setShowPaymentModal(true)}
+                  className="w-full sm:w-auto h-11 px-6 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-sm font-bold shadow-[0_8px_20px_rgb(217,26,36,0.2)] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  Activate for ₹99/month <ArrowRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <Link
+                  href={`/trainer/${trainerSlug}/verification`}
+                  className="w-full sm:w-auto h-11 px-6 rounded-xl border border-gray-200 bg-white text-gray-800 text-sm font-bold hover:bg-gray-50 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2"
+                >
+                  Go to Verification <ArrowRight className="w-4 h-4" />
+                </Link>
+              )}
+            </div>
+          ) : recommendedJobs.length === 0 ? (
             <EmptyState
               icon={Briefcase}
               title="No open vacancies right now"

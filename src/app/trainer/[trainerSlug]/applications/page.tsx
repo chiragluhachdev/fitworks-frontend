@@ -39,7 +39,7 @@ interface TrainerApplication {
 
 export default function TrainerApplicationsPage() {
   const params = useParams();
-  const trainerSlug = (params?.trainerSlug as string) || "rahul-sharma";
+  const trainerSlug = (params?.trainerSlug as string) || "";
 
   const [applications, setApplications] = useState<TrainerApplication[]>([]);
   const [loading, setLoading] = useState(true);

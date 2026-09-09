@@ -70,7 +70,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
   });
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [createdSlug, setCreatedSlug] = useState("rahul-sharma");
+  const [createdSlug, setCreatedSlug] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setErrorMessage(null);
@@ -336,7 +336,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
         localStorage.setItem("fitworks_user", JSON.stringify(data.user));
       }
 
-      setCreatedSlug(data.trainer?.slug || "rahul-sharma");
+      setCreatedSlug(data.trainer?.slug || "");
       setIsSuccess(true);
       toast.success("Trainer account registered successfully!");
     } catch (err: any) {

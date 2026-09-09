@@ -22,9 +22,20 @@ import {
   ExternalLink,
   AlertTriangle,
   CreditCard,
-  Loader2
+  Loader2,
+  Trash2,
+  Lock,
+  Clock
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+
+/** Membership badge shown per row, so paid vs unpaid is visible at a glance. */
+const MEMBERSHIP: Record<string, { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
+  active: { label: "Paid · active", cls: "bg-emerald-50 text-emerald-700 border-emerald-200", Icon: CheckCircle2 },
+  expiring_soon: { label: "Expiring soon", cls: "bg-amber-50 text-amber-700 border-amber-200", Icon: Clock },
+  expired: { label: "Expired", cls: "bg-red-50 text-red-700 border-red-200", Icon: AlertTriangle },
+  inactive: { label: "Never paid", cls: "bg-gray-100 text-gray-600 border-gray-200", Icon: Lock },
+};
 
 export default function AdminTrainers() {
   const [trainers, setTrainers] = useState<any[]>([]);
@@ -57,6 +68,38 @@ export default function AdminTrainers() {
   
   // Rejection confirmation dialog state
   const [rejectingTrainer, setRejectingTrainer] = useState<any | null>(null);
+  // Deletion removes the profile, its login and everything attached — confirm it.
+  const [deletingTrainer, setDeletingTrainer] = useState<any | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [filterMembership, setFilterMembership] = useState<string>("all");
+
+  const handleDelete = async (id: string) => {
+    setDeleting(true);
+    try {
+      const token = localStorage.getItem("fitworks_token") || localStorage.getItem("token");
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const res = await fetch(`${apiUrl}/admin/trainers/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        toast.success(json.message || "Trainer removed");
+        setDeletingTrainer(null);
+        if (selectedTrainer?._id === id) {
+          setSelectedTrainer(null);
+          setDetail(null);
+        }
+        fetchTrainers();
+      } else {
+        toast.error(json.message || "Failed to remove trainer");
+      }
+    } catch (err) {
+      toast.error("Network error removing trainer");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const fetchTrainers = async () => {
     try {
@@ -116,12 +159,21 @@ export default function AdminTrainers() {
                           title.includes(searchTerm.toLowerCase()) || 
                           city.includes(searchTerm.toLowerCase());
     
-    if (filterStatus === "all") return matchesSearch;
-    return matchesSearch && t.verificationStatus === filterStatus;
+    const matchesStatus = filterStatus === "all" || t.verificationStatus === filterStatus;
+    const matchesMembership =
+      filterMembership === "all"
+        ? true
+        : filterMembership === "paid"
+        ? t.subscriptionState?.isActive
+        : !t.subscriptionState?.isActive;
+
+    return matchesSearch && matchesStatus && matchesMembership;
   });
 
   const pendingCount = trainers.filter(t => t.verificationStatus === "pending").length;
   const verifiedCount = trainers.filter(t => t.verificationStatus === "verified").length;
+  const paidCount = trainers.filter(t => t.subscriptionState?.isActive).length;
+  const unpaidCount = trainers.length - paidCount;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -134,12 +186,18 @@ export default function AdminTrainers() {
             Review professional profiles, audit credentials in modal view, and grant verification badges.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200/60">
             {pendingCount} Pending Review
           </span>
           <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-green-50 text-green-800 border border-green-200/60">
             {verifiedCount} Verified
+          </span>
+          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200/60">
+            {paidCount} Paid
+          </span>
+          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-gray-100 text-gray-700 border border-gray-200">
+            {unpaidCount} Unpaid
           </span>
         </div>
       </div>
@@ -158,25 +216,48 @@ export default function AdminTrainers() {
         </div>
 
         {/* Status Filter Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
-          {[
-            { id: "all", label: `All (${trainers.length})` },
-            { id: "pending", label: `Pending (${pendingCount})` },
-            { id: "verified", label: `Verified (${verifiedCount})` },
-            { id: "rejected", label: "Rejected" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setFilterStatus(tab.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
-                filterStatus === tab.id
-                  ? "bg-[#d91a24] text-white shadow-xs"
-                  : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+            {[
+              { id: "all", label: `All (${trainers.length})` },
+              { id: "pending", label: `Pending (${pendingCount})` },
+              { id: "verified", label: `Verified (${verifiedCount})` },
+              { id: "rejected", label: "Rejected" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setFilterStatus(tab.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
+                  filterStatus === tab.id
+                    ? "bg-[#d91a24] text-white shadow-xs"
+                    : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Who has actually paid the ₹99 — the other half of "is this profile live?" */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 sm:border-l sm:border-gray-200 sm:pl-2">
+            {[
+              { id: "all", label: "Any membership" },
+              { id: "paid", label: `Paid (${paidCount})` },
+              { id: "unpaid", label: `Unpaid (${unpaidCount})` },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setFilterMembership(tab.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
+                  filterMembership === tab.id
+                    ? "bg-gray-900 text-white shadow-xs"
+                    : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -196,6 +277,7 @@ export default function AdminTrainers() {
                   <th className="px-6 py-4">Location & Experience</th>
                   <th className="px-6 py-4">Specializations</th>
                   <th className="px-6 py-4">Verification</th>
+                  <th className="px-6 py-4">Membership (₹99/mo)</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -275,6 +357,40 @@ export default function AdminTrainers() {
                       )}
                     </td>
 
+                    {/* Membership — has this trainer actually paid? */}
+                    <td className="px-6 py-4">
+                      {(() => {
+                        const sub = trainer.subscriptionState;
+                        const m = MEMBERSHIP[sub?.status || "inactive"];
+                        return (
+                          <div className="space-y-1">
+                            <span
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${m.cls}`}
+                            >
+                              <m.Icon className="w-3.5 h-3.5" />
+                              {m.label}
+                            </span>
+                            <div className="text-[11px] text-gray-500 font-medium">
+                              {sub?.isActive
+                                ? `${sub.daysRemaining} day${sub.daysRemaining === 1 ? "" : "s"} left`
+                                : sub?.cyclesPaid
+                                ? `Lapsed · ₹${trainer.totalPaid || 0} lifetime`
+                                : "Not visible to gyms"}
+                            </div>
+                            {trainer.accountActive ? (
+                              <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wide">
+                                Live on FitWorks
+                              </div>
+                            ) : (
+                              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">
+                                Not live
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </td>
+
                     {/* Actions */}
                     <td className="px-6 py-4 text-right space-x-1.5 whitespace-nowrap">
                       <button
@@ -293,6 +409,14 @@ export default function AdminTrainers() {
                           Approve
                         </button>
                       )}
+                      <button
+                        onClick={() => setDeletingTrainer(trainer)}
+                        title="Delete this trainer, their login and all their activity"
+                        className="bg-gray-100 hover:bg-red-100 text-gray-500 hover:text-red-700 text-xs font-bold px-2.5 py-1.5 rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+
                       {trainer.verificationStatus !== "rejected" && (
                         <button 
                           onClick={() => setRejectingTrainer(trainer)}
@@ -308,7 +432,7 @@ export default function AdminTrainers() {
 
                 {filteredTrainers.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-6 py-16 text-center">
+                    <td colSpan={6} className="px-6 py-16 text-center">
                       <div className="max-w-xs mx-auto text-center space-y-2">
                         <Award className="w-10 h-10 text-gray-300 mx-auto" />
                         <p className="text-sm font-bold text-gray-700">No trainers match your filter</p>
@@ -653,6 +777,44 @@ export default function AdminTrainers() {
               >
                 <XCircle className="w-4 h-4" />
                 Yes, Reject Verification
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE CONFIRMATION — removes the profile AND the login behind it */}
+      {deletingTrainer && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-gray-100 p-6 text-center space-y-4">
+            <div className="w-14 h-14 rounded-2xl bg-red-50 text-red-600 border border-red-100 flex items-center justify-center mx-auto">
+              <Trash2 className="w-7 h-7" />
+            </div>
+
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Delete this trainer permanently?</h3>
+              <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
+                <span className="font-bold text-gray-900">{deletingTrainer.personal?.fullName}</span>, their
+                login, and every application and gym invitation attached to them will be removed. Their
+                dashboard URL will stop working. This cannot be undone.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => setDeletingTrainer(null)}
+                disabled={deleting}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer disabled:opacity-60"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(deletingTrainer._id)}
+                disabled={deleting}
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 shadow-sm shadow-red-500/20 transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-60"
+              >
+                {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                {deleting ? "Deleting…" : "Yes, delete permanently"}
               </button>
             </div>
           </div>

@@ -52,9 +52,19 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
   const [error, setError] = useState<string | null>(null);
 
   const routeToDashboard = (user: any) => {
-    if (user?.role === "gym") router.push(`/gym/${user.slug}/dashboard`);
-    else if (user?.role === "trainer") router.push(`/trainer/${user.slug}/dashboard`);
-    else if (user?.role === "admin") router.push("/admin/dashboard");
+    if (user?.role === "admin") {
+      router.push("/admin/dashboard");
+      return;
+    }
+    // Without a slug there is no dashboard to open. Sending them to a guessed
+    // one lands them on someone else's URL, so say what's wrong instead.
+    if (!user?.slug) {
+      setError("Your profile couldn't be found. Please contact FitWorks support.");
+      setLoading(false);
+      return;
+    }
+    if (user.role === "gym") router.push(`/gym/${user.slug}/dashboard`);
+    else if (user.role === "trainer") router.push(`/trainer/${user.slug}/dashboard`);
     else router.push("/");
   };
 

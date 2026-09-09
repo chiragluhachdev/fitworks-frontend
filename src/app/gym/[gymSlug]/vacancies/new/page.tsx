@@ -9,7 +9,7 @@ import { useRouter, useParams } from "next/navigation";
 export default function CreateVacancyPage() {
   const router = useRouter();
   const params = useParams();
-  const gymSlug = (params?.gymSlug as string) || "powerfit-studio";
+  const gymSlug = (params?.gymSlug as string) || "";
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
