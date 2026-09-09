@@ -381,8 +381,9 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
           Profile Created Successfully!
         </h2>
         <p className="text-gray-500 text-xs md:text-sm mb-6 max-w-md">
-          Welcome to FitWorks. One last step — activate your membership so
-          hiring gyms can actually find you.
+          Welcome to FitWorks. Two things unlock your profile for hiring gyms:
+          our team approving your documents, and an active ₹99/month membership.
+          You can activate now and we&apos;ll review your documents in parallel.
         </p>
 
         {/* ₹99 / month activation card */}
