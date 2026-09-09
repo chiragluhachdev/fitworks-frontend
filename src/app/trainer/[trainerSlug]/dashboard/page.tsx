@@ -12,7 +12,6 @@ import {
   Search,
   ShieldCheck,
   Loader2,
-  MapPin,
   Clock,
   ChevronRight,
   FileCheck,
@@ -27,10 +26,12 @@ import SectionCard from "@/components/dashboard/SectionCard";
 import EmptyState from "@/components/dashboard/EmptyState";
 import type { LockInfo } from "@/components/dashboard/AccessLocked";
 
-const CONNECTION_TONE: Record<string, string> = {
-  pending: "bg-amber-50 text-amber-700 border-amber-100",
-  accepted: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  rejected: "bg-gray-100 text-gray-600 border-gray-200",
+const APPLICATION_TONE: Record<string, string> = {
+  hired: "bg-green-50 text-green-700 border-green-200",
+  shortlisted: "bg-orange-50 text-orange-700 border-orange-200",
+  rejected: "bg-red-50 text-red-700 border-red-200",
+  reviewing: "bg-blue-50 text-blue-700 border-blue-200",
+  applied: "bg-blue-50 text-blue-700 border-blue-200",
 };
 
 const VERIFICATION_PILL: Record<string, { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
@@ -360,53 +361,62 @@ export default function TrainerDashboardPage() {
           )}
         </SectionCard>
 
-        {/* ── Gym invitations ── */}
+        {/* ── My applications ── */}
         <SectionCard
-          title="Gym invitations"
-          description="Direct connection requests from gyms"
-          action={connections.length > 0 ? { label: "View all", href: `/trainer/${trainerSlug}/connections` } : undefined}
+          title="My applications"
+          description="Roles you've applied to and where they stand"
+          action={
+            applications.length > 0 ? { label: "View all", href: `/trainer/${trainerSlug}/applications` } : undefined
+          }
         >
-          {connections.length === 0 ? (
+          {applications.length === 0 ? (
             <EmptyState
-              icon={UserPlus}
-              title="No invitations yet"
-              description="When gyms discover your profile, their interview invitations land here."
-              action={{ label: "Complete your profile", href: `/trainer/${trainerSlug}/profile` }}
+              icon={Briefcase}
+              title="You haven't applied anywhere yet"
+              description="Browse open vacancies from partner gyms and your applications will be tracked here."
+              action={
+                jobAccess?.allowed
+                  ? { label: "Browse jobs", href: `/trainer/${trainerSlug}/jobs` }
+                  : undefined
+              }
             />
           ) : (
             <ul className="space-y-2.5">
-              {connections.slice(0, 4).map((conn: any) => (
-                <li key={conn._id}>
+              {applications.slice(0, 4).map((app: any) => (
+                <li key={app._id}>
                   <Link
-                    href={`/trainer/${trainerSlug}/connections`}
+                    href={`/trainer/${trainerSlug}/applications`}
                     className="flex items-center gap-3 p-3 sm:p-4 bg-gray-50/70 hover:bg-gray-50 active:scale-[0.99] rounded-2xl border border-gray-100 transition-all"
                   >
-                    {conn.gymId?.gymLogo ? (
+                    {app.gymId?.gymLogo ? (
                       <span className="w-11 h-11 rounded-xl overflow-hidden border border-gray-200 relative shrink-0">
-                        <Image src={conn.gymId.gymLogo} alt="" fill className="object-cover" />
+                        <Image src={app.gymId.gymLogo} alt="" fill className="object-cover" />
                       </span>
                     ) : (
-                      <span className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-sm shrink-0">
-                        {conn.gymId?.gymName?.charAt(0)?.toUpperCase() || "G"}
+                      <span className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center font-bold text-sm shrink-0">
+                        {app.gymId?.gymName?.charAt(0)?.toUpperCase() || "G"}
                       </span>
                     )}
 
                     <div className="min-w-0 flex-1">
                       <h3 className="text-sm font-bold text-gray-900 truncate">
-                        {conn.gymId?.gymName || "Gym partner"}
+                        {app.jobId?.position || "Trainer role"}
                       </h3>
-                      <p className="text-[11px] sm:text-xs text-gray-500 truncate flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-gray-400 shrink-0" />
-                        {conn.gymId?.address?.city || "India"}
+                      <p className="text-[11px] sm:text-xs text-gray-500 truncate">
+                        {app.gymId?.gymName || "Partner gym"}
+                        {app.jobId?.location ? ` • ${app.jobId.location}` : ""}
                       </p>
+                      {app.jobId?.salaryRange && (
+                        <p className="text-xs font-bold text-gray-800 mt-1">{app.jobId.salaryRange}</p>
+                      )}
                     </div>
 
                     <span
                       className={`text-[10px] sm:text-[11px] font-bold px-2 sm:px-2.5 py-1 rounded-full border capitalize shrink-0 ${
-                        CONNECTION_TONE[conn.status] || CONNECTION_TONE.pending
+                        APPLICATION_TONE[app.status] || APPLICATION_TONE.applied
                       }`}
                     >
-                      {conn.status === "pending" ? "Reply" : conn.status}
+                      {app.status === "applied" ? "Under review" : app.status}
                     </span>
                   </Link>
                 </li>
