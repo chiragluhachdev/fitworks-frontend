@@ -17,7 +17,7 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
   const [showOtp, setShowOtp] = useState(false);
   const [verifiedPhone, setVerifiedPhone] = useState("");
   const [verificationToken, setVerificationToken] = useState("");
-  const totalSteps = 4;
+  const totalSteps = 3;
   const [loading, setLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -102,12 +102,6 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
         toast.error(msg);
         return false;
       }
-      if (!formData.gymDescription || formData.gymDescription.trim().length < 10) {
-        const msg = "Please write a brief gym description (minimum 10 characters)";
-        setErrorMessage(msg);
-        toast.error(msg);
-        return false;
-      }
       if (!formData.numberOfLocations || Number(formData.numberOfLocations) < 1) {
         const msg = "Please specify the number of gym branches (at least 1)";
         setErrorMessage(msg);
@@ -137,27 +131,6 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
       }
       if (!formData.address.pincode || formData.address.pincode.trim().length < 4) {
         const msg = "Please enter a valid pincode";
-        setErrorMessage(msg);
-        toast.error(msg);
-        return false;
-      }
-    }
-
-    if (step === 4) {
-      if (!formData.hiringInformation.trainersRequired || Number(formData.hiringInformation.trainersRequired) < 1) {
-        const msg = "Please enter how many trainers you require";
-        setErrorMessage(msg);
-        toast.error(msg);
-        return false;
-      }
-      if (!formData.hiringInformation.trainerTypes || formData.hiringInformation.trainerTypes.trim().length < 2) {
-        const msg = "Please enter required trainer specializations (e.g. Yoga, Crossfit, Strength)";
-        setErrorMessage(msg);
-        toast.error(msg);
-        return false;
-      }
-      if (!formData.hiringInformation.salaryBudget || formData.hiringInformation.salaryBudget.trim().length < 2) {
-        const msg = "Please enter your salary budget range";
         setErrorMessage(msg);
         toast.error(msg);
         return false;
@@ -290,14 +263,13 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Gym Registration</h2>
             <p className="text-sm text-gray-500 mt-1.5 font-medium">
-              {step === 1 && "Step 1: Account & Contact Details (Mandatory)"}
-              {step === 2 && "Step 2: Gym Information (Mandatory)"}
-              {step === 3 && "Step 3: Location & Social (Mandatory)"}
-              {step === 4 && "Step 4: Hiring Preferences (Mandatory)"}
+              {step === 1 && "Step 1 of 3 — Account & contact"}
+              {step === 2 && "Step 2 of 3 — Gym information"}
+              {step === 3 && "Step 3 of 3 — Location & hiring"}
             </p>
           </div>
           <div className="flex gap-2 mb-1">
-            {[1, 2, 3, 4].map((s) => (
+            {[1, 2, 3].map((s) => (
               <div key={s} className={`h-2 w-8 md:w-10 rounded-full transition-colors ${s <= step ? "bg-[#d91a24]" : "bg-gray-100"}`} />
             ))}
           </div>
@@ -353,7 +325,7 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Gym Description <span className="text-red-500">*</span></label>
-                <textarea name="gymDescription" required value={formData.gymDescription} onChange={handleChange} rows={4} placeholder="Tell us about your fitness club, facilities, floor area, and culture..." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 resize-none" />
+                <textarea name="gymDescription" value={formData.gymDescription} onChange={handleChange} rows={4} placeholder="Optional — a line or two about your club, facilities and culture." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 resize-none" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Number of Locations / Branches <span className="text-red-500">*</span></label>
@@ -398,42 +370,6 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
           )}
 
           {/* STEP 4: Hiring Preferences */}
-          {step === 4 && (
-            <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-700 ml-1">Trainers Required Now <span className="text-red-500">*</span></label>
-                  <input type="number" name="hiringInformation.trainersRequired" required value={formData.hiringInformation.trainersRequired} onChange={handleChange} min="1" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-700 ml-1">Hiring Frequency <span className="text-red-500">*</span></label>
-                  <select name="hiringInformation.hiringFrequency" required value={formData.hiringInformation.hiringFrequency} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
-                    <option value="Urgent (1-2 weeks)">Urgent (1-2 weeks)</option>
-                    <option value="Regular (Monthly)">Regular (Monthly)</option>
-                    <option value="Occasionally">Occasionally</option>
-                  </select>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-gray-700 ml-1">Trainer Specializations Required <span className="text-red-500">*</span></label>
-                <input type="text" name="hiringInformation.trainerTypes" required value={formData.hiringInformation.trainerTypes} onChange={handleChange} placeholder="E.g. Yoga, Crossfit, Strength & Conditioning (comma separated)" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-700 ml-1">Preferred Experience <span className="text-red-500">*</span></label>
-                  <select name="hiringInformation.preferredExperience" required value={formData.hiringInformation.preferredExperience} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
-                    <option value="Fresher (0-1 yrs)">Fresher (0-1 yrs)</option>
-                    <option value="Intermediate (1-3 yrs)">Intermediate (1-3 yrs)</option>
-                    <option value="Expert (3+ yrs)">Expert (3+ yrs)</option>
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-700 ml-1">Salary Budget Range <span className="text-red-500">*</span></label>
-                  <input type="text" name="hiringInformation.salaryBudget" required value={formData.hiringInformation.salaryBudget} onChange={handleChange} placeholder="E.g. ₹20,000 - ₹35,000" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 

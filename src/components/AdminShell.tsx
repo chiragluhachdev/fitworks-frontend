@@ -16,7 +16,8 @@ import {
   Menu, 
   X, 
   Building2, 
-  ExternalLink 
+  ExternalLink,
+  CreditCard
 } from "lucide-react";
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
@@ -69,6 +70,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     { name: "Vacancies", href: "/admin/vacancies", icon: Briefcase },
     { name: "Applications", href: "/admin/applications", icon: FileText },
     { name: "Connections", href: "/admin/connections", icon: Link2 },
+    { name: "Subscriptions", href: "/admin/subscriptions", icon: CreditCard },
     { name: "Users", href: "/admin/users", icon: Users },
   ];
 

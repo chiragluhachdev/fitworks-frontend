@@ -8,6 +8,7 @@ export interface SubscriptionState {
   isActive: boolean;
   daysRemaining: number;
   expiresAt: string | null;
+  startedAt: string | null;
   needsRenewal: boolean;
   cyclesPaid: number;
 }

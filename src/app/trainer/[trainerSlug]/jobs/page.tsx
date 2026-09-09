@@ -20,6 +20,8 @@ import {
   Eye
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AccessLocked, { type LockInfo } from "@/components/dashboard/AccessLocked";
+import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 import { toast } from "react-hot-toast";
 
 interface Job {
@@ -61,6 +63,9 @@ export default function TrainerFindJobsPage() {
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  // Set when the API refuses access: unverified profile or inactive membership.
+  const [lock, setLock] = useState<LockInfo | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("");
 
@@ -79,9 +84,15 @@ export default function TrainerFindJobsPage() {
       if (searchTerm) url += `location=${encodeURIComponent(searchTerm)}&`;
       if (selectedType) url += `type=${encodeURIComponent(selectedType)}&`;
 
-      const res = await fetch(url);
+      const token = typeof window !== "undefined" ? localStorage.getItem("fitworks_token") : null;
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token || ""}` } });
       const json = await res.json();
-      if (json.success) {
+
+      if (res.status === 403 && json.locked) {
+        setLock({ reason: json.reason, title: json.title, message: json.message });
+        setJobs([]);
+      } else if (json.success) {
+        setLock(null);
         setJobs(json.data || []);
       }
     } catch (err) {
@@ -143,6 +154,37 @@ export default function TrainerFindJobsPage() {
       setApplying(false);
     }
   };
+
+  if (lock) {
+    return (
+      <div className="max-w-3xl mx-auto space-y-5 animate-in fade-in duration-300">
+        <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
+            Gym vacancies
+          </h1>
+          <p className="text-[13px] sm:text-sm text-gray-500 mt-1.5">
+            Open roles from partner gyms across India.
+          </p>
+        </div>
+
+        <AccessLocked
+          lock={lock}
+          trainerSlug={trainerSlug}
+          onActivate={() => setShowPaymentModal(true)}
+        />
+
+        <RazorpayPaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          trainerSlug={trainerSlug}
+          onSuccess={() => {
+            setShowPaymentModal(false);
+            fetchJobs();
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-300">

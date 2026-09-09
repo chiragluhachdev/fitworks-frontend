@@ -21,7 +21,8 @@ import {
   Check,
   ExternalLink,
   AlertTriangle,
-  CreditCard
+  CreditCard,
+  Loader2
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -31,6 +32,28 @@ export default function AdminTrainers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [selectedTrainer, setSelectedTrainer] = useState<any | null>(null);
+  // Full record (account, membership, billing, activity) fetched on open.
+  const [detail, setDetail] = useState<any | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+
+  const openTrainer = async (trainer: any) => {
+    setSelectedTrainer(trainer);
+    setDetail(null);
+    setDetailLoading(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const token = localStorage.getItem("fitworks_token") || localStorage.getItem("token");
+      const res = await fetch(`${apiUrl}/admin/trainers/${trainer._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const json = await res.json();
+      if (json.success) setDetail(json.data);
+    } catch (err) {
+      console.error("Trainer detail error:", err);
+    } finally {
+      setDetailLoading(false);
+    }
+  };
   
   // Rejection confirmation dialog state
   const [rejectingTrainer, setRejectingTrainer] = useState<any | null>(null);
@@ -255,7 +278,7 @@ export default function AdminTrainers() {
                     {/* Actions */}
                     <td className="px-6 py-4 text-right space-x-1.5 whitespace-nowrap">
                       <button
-                        onClick={() => setSelectedTrainer(trainer)}
+                        onClick={() => openTrainer(trainer)}
                         className="bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold px-3 py-1.5 rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1"
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -333,7 +356,7 @@ export default function AdminTrainers() {
               </div>
 
               <button 
-                onClick={() => setSelectedTrainer(null)}
+                onClick={() => { setSelectedTrainer(null); setDetail(null); }}
                 className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
@@ -342,6 +365,99 @@ export default function AdminTrainers() {
 
             {/* Modal Scrollable Body */}
             <div className="p-6 overflow-y-auto space-y-6 text-sm text-gray-700">
+
+              {/* Account & membership */}
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
+                  Account &amp; Membership
+                </h4>
+                {detailLoading ? (
+                  <div className="flex items-center gap-2 p-4 rounded-2xl bg-gray-50 border border-gray-100 text-xs text-gray-500">
+                    <Loader2 className="w-4 h-4 animate-spin text-[#d91a24]" /> Loading full record…
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+                      <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 col-span-2 sm:col-span-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Mobile</span>
+                        <span className="text-xs font-bold text-gray-900 mt-0.5 block">
+                          {detail?.account?.phone || selectedTrainer.personal?.phone || "—"}
+                        </span>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 col-span-2 sm:col-span-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Email</span>
+                        <span className="text-xs font-bold text-gray-900 mt-0.5 block truncate">
+                          {detail?.account?.email || "Not provided"}
+                        </span>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Applications</span>
+                        <span className="text-xs font-bold text-gray-900 mt-0.5 block">{detail?.counts?.applications ?? 0}</span>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Connections</span>
+                        <span className="text-xs font-bold text-gray-900 mt-0.5 block">{detail?.counts?.connections ?? 0}</span>
+                      </div>
+                    </div>
+
+                    {(() => {
+                      const sub = detail?.subscription;
+                      const map: Record<string, string> = {
+                        active: "bg-emerald-50 text-emerald-700 border-emerald-200/70",
+                        expiring_soon: "bg-amber-50 text-amber-700 border-amber-200/70",
+                        expired: "bg-red-50 text-red-700 border-red-200/70",
+                        inactive: "bg-gray-100 text-gray-600 border-gray-200",
+                      };
+                      const label: Record<string, string> = {
+                        active: "Active", expiring_soon: "Expiring soon", expired: "Expired", inactive: "Never paid",
+                      };
+                      const st = sub?.status || "inactive";
+                      const d = (v: any) => v ? new Date(v).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
+                      return (
+                        <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                          <div className="flex flex-wrap items-center gap-2 mb-3">
+                            <span className="text-xs font-bold text-gray-900">₹99 / month membership</span>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${map[st]}`}>
+                              {label[st]}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                            <div>
+                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Started</span>
+                              <span className="font-bold text-gray-800">{d(sub?.startedAt)}</span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Expires</span>
+                              <span className="font-bold text-gray-800">{d(sub?.expiresAt)}</span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Cycles paid</span>
+                              <span className="font-bold text-gray-800">{sub?.cyclesPaid ?? 0}</span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Days left</span>
+                              <span className="font-bold text-gray-800">{sub?.isActive ? `${sub.daysRemaining}d` : "—"}</span>
+                            </div>
+                          </div>
+
+                          {detail?.billingHistory?.length > 0 && (
+                            <div className="mt-3 pt-3 border-t border-gray-200/70 space-y-1.5">
+                              <span className="text-[10px] font-bold uppercase text-gray-400 block mb-1">Payments</span>
+                              {detail.billingHistory.map((h: any) => (
+                                <div key={h.paymentId} className="flex items-center justify-between text-[11px] bg-white rounded-lg px-2.5 py-1.5 border border-gray-100">
+                                  <span className="font-semibold text-gray-800">₹{h.amount}</span>
+                                  <span className="text-gray-500">{d(h.periodStart)} → {d(h.periodEnd)}</span>
+                                  <span className="font-mono text-gray-400 truncate max-w-[120px]">{h.paymentId}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </>
+                )}
+              </div>
               
               {/* Bio */}
               {selectedTrainer.professional?.bio && (

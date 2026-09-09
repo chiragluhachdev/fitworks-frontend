@@ -9,6 +9,7 @@ import {
   UserPlus,
   User,
   ShieldCheck,
+  CreditCard,
   Settings,
   Clock,
   AlertCircle,
@@ -97,6 +98,7 @@ export default function TrainerDashboardLayout({ children }: { children: React.R
     { name: "Connections", shortName: "Invites", href: `/trainer/${trainerSlug}/connections`, icon: UserPlus },
     { name: "My Profile", href: `/trainer/${trainerSlug}/profile`, icon: User },
     { name: "Verification", href: `/trainer/${trainerSlug}/verification`, icon: ShieldCheck },
+    { name: "Membership", href: `/trainer/${trainerSlug}/subscription`, icon: CreditCard },
     { name: "Settings", href: `/trainer/${trainerSlug}/settings`, icon: Settings },
   ];
 
