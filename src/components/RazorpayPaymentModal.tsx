@@ -106,10 +106,14 @@ export default function RazorpayPaymentModal({
           ? "FitWorks trainer membership — 30-day renewal"
           : "FitWorks trainer membership — 30 days",
         image: "/icon.png",
+        // The create-order response carries the trainer's own details, so
+        // checkout prefills correctly whether or not the calling page happened
+        // to have the profile loaded. An empty contact field is real friction —
+        // UPI needs the number.
         prefill: {
           name: trainerName || data.trainerName || "",
-          email: trainerEmail || "",
-          contact: trainerPhone || "",
+          email: trainerEmail || data.trainerEmail || "",
+          contact: trainerPhone || data.trainerPhone || "",
         },
         notes: { trainerSlug },
         theme: { color: "#d91a24" },
