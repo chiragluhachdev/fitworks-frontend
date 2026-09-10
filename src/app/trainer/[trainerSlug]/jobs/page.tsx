@@ -17,11 +17,13 @@ import {
   Globe,
   ExternalLink,
   Users,
-  Eye
+  Eye,
+  AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { type LockInfo } from "@/components/dashboard/AccessLocked";
 import LockedPage from "@/components/dashboard/LockedPage";
+import { getTrainerLock, type LockableTrainer } from "@/lib/trainerAccess";
 import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 import { toast } from "react-hot-toast";
 
@@ -66,6 +68,7 @@ export default function TrainerFindJobsPage() {
   const [loading, setLoading] = useState(true);
   // Set when the API refuses access: unverified profile or inactive membership.
   const [lock, setLock] = useState<LockInfo | null>(null);
+  const [trainer, setTrainer] = useState<LockableTrainer | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("");
@@ -81,14 +84,35 @@ export default function TrainerFindJobsPage() {
     setLoading(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+      const token = typeof window !== "undefined" ? localStorage.getItem("fitworks_token") : null;
+      const authHeaders = { Authorization: `Bearer ${token || ""}` };
+
+      // Decide the lock from the trainer this page belongs to, not from who is
+      // looking at it. /jobs only refuses a trainer's own token, so an admin
+      // previewing the page — or an expired token falling back to anonymous —
+      // used to get the unlocked screen for a trainer who cannot use it.
+      const profileRes = await fetch(`${apiUrl}/trainers/${trainerSlug}`, { headers: authHeaders });
+      const profile = await profileRes.json();
+      if (profile.success && profile.data) {
+        setTrainer(profile.data);
+        const blocked = getTrainerLock(profile.data.verificationStatus, profile.subscription);
+        if (blocked) {
+          setLock(blocked);
+          setJobs([]);
+          setLoading(false);
+          return;
+        }
+      }
+
       let url = `${apiUrl}/jobs?`;
       if (searchTerm) url += `location=${encodeURIComponent(searchTerm)}&`;
       if (selectedType) url += `type=${encodeURIComponent(selectedType)}&`;
 
-      const token = typeof window !== "undefined" ? localStorage.getItem("fitworks_token") : null;
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token || ""}` } });
+      const res = await fetch(url, { headers: authHeaders });
       const json = await res.json();
 
+      // The server stays the authority — it can refuse for a reason the profile
+      // check couldn't see, such as the membership lapsing mid-session.
       if (res.status === 403 && json.locked) {
         setLock({
           reason: json.reason,
@@ -101,9 +125,17 @@ export default function TrainerFindJobsPage() {
       } else if (json.success) {
         setLock(null);
         setJobs(json.data || []);
+        setErrorMsg(null);
+      } else {
+        // Never fall through to an unlocked, empty list — that reads as
+        // "no vacancies" when the real answer is "we could not load them".
+        setJobs([]);
+        setErrorMsg(json.message || "We couldn't load vacancies right now. Please try again.");
       }
     } catch (err) {
       console.error("Fetch Jobs Error:", err);
+      setJobs([]);
+      setErrorMsg("Couldn't reach FitWorks. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -167,6 +199,9 @@ export default function TrainerFindJobsPage() {
       <LockedPage
         lock={lock}
         trainerSlug={trainerSlug}
+        trainerName={trainer?.personal?.fullName}
+        trainerEmail={trainer?.personal?.email}
+        trainerPhone={trainer?.personal?.phone}
         heading="Gym vacancies"
         subheading="Open roles from partner gyms across India."
         isRenewal={Boolean(lock.hasLapsed)}
@@ -231,9 +266,27 @@ export default function TrainerFindJobsPage() {
         </div>
       ) : jobs.length === 0 ? (
         <div className="bg-white p-12 text-center rounded-3xl border border-gray-100 shadow-sm">
-          <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-gray-900">No vacancies found</h3>
-          <p className="text-sm text-gray-500 mt-1 max-w-sm mx-auto">Try clearing your filters or searching for another city.</p>
+          {/* An empty list and a failed load are different things, and saying
+              "no vacancies" when the request broke is a lie. */}
+          {errorMsg ? (
+            <>
+              <AlertCircle className="w-12 h-12 text-red-200 mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-gray-900">Couldn&apos;t load vacancies</h3>
+              <p className="text-sm text-gray-500 mt-1 max-w-sm mx-auto">{errorMsg}</p>
+              <button
+                onClick={fetchJobs}
+                className="mt-5 h-11 px-6 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-sm font-bold transition-colors cursor-pointer"
+              >
+                Try again
+              </button>
+            </>
+          ) : (
+            <>
+              <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-gray-900">No vacancies found</h3>
+              <p className="text-sm text-gray-500 mt-1 max-w-sm mx-auto">Try clearing your filters or searching for another city.</p>
+            </>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
