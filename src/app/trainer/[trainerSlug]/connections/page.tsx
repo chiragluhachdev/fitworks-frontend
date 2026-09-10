@@ -14,6 +14,9 @@ import {
   MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import LockedPage from "@/components/dashboard/LockedPage";
+import { getTrainerLock, type LockableTrainer } from "@/lib/trainerAccess";
+import type { LockInfo } from "@/components/dashboard/AccessLocked";
 
 interface ConnectionItem {
   _id: string;
@@ -38,6 +41,9 @@ export default function TrainerConnectionsPage() {
 
   const [connections, setConnections] = useState<ConnectionItem[]>([]);
   const [loading, setLoading] = useState(true);
+  // Set when the profile isn't approved or the membership isn't paid.
+  const [lock, setLock] = useState<LockInfo | null>(null);
+  const [trainer, setTrainer] = useState<LockableTrainer | null>(null);
   const [actionId, setActionId] = useState<string | null>(null);
 
   const fetchConnections = async () => {
@@ -49,6 +55,16 @@ export default function TrainerConnectionsPage() {
       const trainerRes = await fetch(`${apiUrl}/trainers/${trainerSlug}`, { headers: authHeaders });
       const trainerData = await trainerRes.json();
       if (trainerData.success && trainerData.data) {
+        setTrainer(trainerData.data);
+
+        // Same two gates as the jobs page, from the record already in hand.
+        const blocked = getTrainerLock(trainerData.data.verificationStatus, trainerData.subscription);
+        setLock(blocked);
+        if (blocked) {
+          setLoading(false);
+          return;
+        }
+
         const connRes = await fetch(`${apiUrl}/connections/trainer/${trainerData.data._id}`, { headers: authHeaders });
         const connJson = await connRes.json();
         if (connJson.success) {
@@ -91,6 +107,24 @@ export default function TrainerConnectionsPage() {
       setActionId(null);
     }
   };
+
+  // Nothing on this page is reachable until both gates are cleared, so the
+  // explanation replaces the page rather than sitting on top of an empty list.
+  if (lock) {
+    return (
+      <LockedPage
+        lock={lock}
+        trainerSlug={trainerSlug}
+        trainerName={trainer?.personal?.fullName}
+        trainerEmail={trainer?.personal?.email}
+        trainerPhone={trainer?.personal?.phone}
+        isRenewal={(trainer?.subscription?.cyclesPaid ?? 0) > 0}
+        heading="Gym Interview Invitations"
+        subheading="Accept connection requests from verified gyms interested in interviewing you."
+        onUnlocked={fetchConnections}
+      />
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-300">

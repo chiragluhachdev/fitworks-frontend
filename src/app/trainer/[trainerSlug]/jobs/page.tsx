@@ -20,7 +20,8 @@ import {
   Eye
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import AccessLocked, { type LockInfo } from "@/components/dashboard/AccessLocked";
+import { type LockInfo } from "@/components/dashboard/AccessLocked";
+import LockedPage from "@/components/dashboard/LockedPage";
 import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 import { toast } from "react-hot-toast";
 
@@ -89,7 +90,13 @@ export default function TrainerFindJobsPage() {
       const json = await res.json();
 
       if (res.status === 403 && json.locked) {
-        setLock({ reason: json.reason, title: json.title, message: json.message });
+        setLock({
+          reason: json.reason,
+          title: json.title,
+          message: json.message,
+          membershipActive: json.membershipActive,
+          hasLapsed: json.hasLapsed,
+        });
         setJobs([]);
       } else if (json.success) {
         setLock(null);
@@ -157,32 +164,14 @@ export default function TrainerFindJobsPage() {
 
   if (lock) {
     return (
-      <div className="max-w-3xl mx-auto space-y-5 animate-in fade-in duration-300">
-        <div className="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
-            Gym vacancies
-          </h1>
-          <p className="text-[13px] sm:text-sm text-gray-500 mt-1.5">
-            Open roles from partner gyms across India.
-          </p>
-        </div>
-
-        <AccessLocked
-          lock={lock}
-          trainerSlug={trainerSlug}
-          onActivate={() => setShowPaymentModal(true)}
-        />
-
-        <RazorpayPaymentModal
-          isOpen={showPaymentModal}
-          onClose={() => setShowPaymentModal(false)}
-          trainerSlug={trainerSlug}
-          onSuccess={() => {
-            setShowPaymentModal(false);
-            fetchJobs();
-          }}
-        />
-      </div>
+      <LockedPage
+        lock={lock}
+        trainerSlug={trainerSlug}
+        heading="Gym vacancies"
+        subheading="Open roles from partner gyms across India."
+        isRenewal={Boolean(lock.hasLapsed)}
+        onUnlocked={fetchJobs}
+      />
     );
   }
 

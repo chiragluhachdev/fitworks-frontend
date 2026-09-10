@@ -17,6 +17,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
+import LockedPage from "@/components/dashboard/LockedPage";
+import { getTrainerLock, type LockableTrainer } from "@/lib/trainerAccess";
+import type { LockInfo } from "@/components/dashboard/AccessLocked";
 
 interface TrainerApplication {
   _id: string;
@@ -43,6 +46,9 @@ export default function TrainerApplicationsPage() {
 
   const [applications, setApplications] = useState<TrainerApplication[]>([]);
   const [loading, setLoading] = useState(true);
+  // Set when the profile isn't approved or the membership isn't paid.
+  const [lock, setLock] = useState<LockInfo | null>(null);
+  const [trainer, setTrainer] = useState<LockableTrainer | null>(null);
   const [filter, setFilter] = useState<string>("all");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -55,6 +61,16 @@ export default function TrainerApplicationsPage() {
       const trainerRes = await fetch(`${apiUrl}/trainers/${trainerSlug}`, { headers: authHeaders });
       const trainerData = await trainerRes.json();
       if (trainerData.success && trainerData.data) {
+        setTrainer(trainerData.data);
+
+        // Same two gates as the jobs page, from the record already in hand.
+        const blocked = getTrainerLock(trainerData.data.verificationStatus, trainerData.subscription);
+        setLock(blocked);
+        if (blocked) {
+          setLoading(false);
+          return;
+        }
+
         const appRes = await fetch(`${apiUrl}/applications/trainer/${trainerData.data._id}`, { headers: authHeaders });
         const appJson = await appRes.json();
         if (appJson.success) {
@@ -103,6 +119,24 @@ export default function TrainerApplicationsPage() {
   };
 
   const filtered = applications.filter(a => filter === "all" || a.status === filter);
+
+  // Nothing on this page is reachable until both gates are cleared, so the
+  // explanation replaces the page rather than sitting on top of an empty list.
+  if (lock) {
+    return (
+      <LockedPage
+        lock={lock}
+        trainerSlug={trainerSlug}
+        trainerName={trainer?.personal?.fullName}
+        trainerEmail={trainer?.personal?.email}
+        trainerPhone={trainer?.personal?.phone}
+        isRenewal={(trainer?.subscription?.cyclesPaid ?? 0) > 0}
+        heading="My Job Applications"
+        subheading="Track the hiring status of your submitted gym applications or withdraw them."
+        onUnlocked={fetchApplications}
+      />
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-300">
