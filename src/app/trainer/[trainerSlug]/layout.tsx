@@ -18,6 +18,7 @@ import {
   UserX,
 } from "lucide-react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
+import { loginPathFor, readStoredUser } from "@/lib/session";
 
 const VERIFICATION_BADGE: Record<string, { label: string; className: string; Icon: typeof Clock }> = {
   verified: {
@@ -56,26 +57,30 @@ export default function TrainerDashboardLayout({ children }: { children: React.R
     if (typeof window === "undefined") return;
 
     const token = localStorage.getItem("fitworks_token");
-    const stored = localStorage.getItem("fitworks_user");
-    if (!token || !stored) {
-      router.push("/auth");
+    const me = readStoredUser();
+    if (!token || !me) {
+      // Keep the destination so a link shared over WhatsApp still lands there
+      // after signing in, instead of dumping them on a dashboard.
+      router.replace(loginPathFor(window.location.pathname));
       return;
     }
 
-    let me: any;
-    try {
-      me = JSON.parse(stored);
-    } catch {
-      router.push("/auth");
+    // These pages are the trainer's own workspace, nobody else's. Admins review
+    // trainers through the admin panel, which has the full record; letting them
+    // walk in here shows them a dashboard wired to someone else's session.
+    if (me.role === "admin") {
+      router.replace("/admin/trainers");
       return;
     }
-
-    if (me.role && me.role !== "trainer" && me.role !== "admin") {
-      router.push(me.slug ? `/gym/${me.slug}/dashboard` : "/auth");
+    if (me.role === "gym") {
+      router.replace(me.slug ? `/gym/${me.slug}/dashboard` : "/auth");
       return;
     }
-    // A trainer only ever belongs on their own pages. Admins may look at anyone.
-    if (me.role === "trainer" && me.slug && me.slug !== trainerSlug) {
+    if (me.role !== "trainer") {
+      router.replace("/auth");
+      return;
+    }
+    if (me.slug && me.slug !== trainerSlug) {
       router.replace(`/trainer/${me.slug}/dashboard`);
       return;
     }

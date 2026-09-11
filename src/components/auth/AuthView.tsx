@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { 
   Building2, 
   User, 
@@ -21,6 +21,7 @@ import {
   Smartphone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { dashboardPath, safeNextPath } from "@/lib/session";
 
 import RegisterGymFlow from "@/components/auth/RegisterGymFlow";
 import RegisterTrainerFlow from "@/components/auth/RegisterTrainerFlow";
@@ -38,6 +39,40 @@ export const AUTH_MODE_PATHS: Record<AuthMode, string> = {
 
 export default function AuthView({ mode }: { mode: AuthMode }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  /** Where to land after signing in — set by a guard that bounced us here. */
+  const nextPath = safeNextPath(searchParams?.get("next"));
+  // Nothing renders until we know whether there's already a session, so a
+  // signed-in user never sees a flash of the login form.
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  /**
+   * An existing session means these pages have nothing to ask for. Send them
+   * where they were going, or to their own dashboard. Signing in as someone
+   * else is done by logging out from there.
+   */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const token = localStorage.getItem("fitworks_token");
+    const stored = localStorage.getItem("fitworks_user");
+    if (!token || !stored) {
+      setCheckingSession(false);
+      return;
+    }
+    try {
+      const user = JSON.parse(stored);
+      const target = nextPath || dashboardPath(user);
+      if (target) {
+        router.replace(target);
+        return;
+      }
+    } catch {
+      // Corrupt session object — clear it and show the form.
+      localStorage.removeItem("fitworks_token");
+      localStorage.removeItem("fitworks_user");
+    }
+    setCheckingSession(false);
+  }, [router, nextPath]);
 
   /** Switch mode by navigating, so the URL always reflects what's on screen. */
   const go = (next: AuthMode) => router.push(AUTH_MODE_PATHS[next]);
@@ -52,20 +87,21 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
   const [error, setError] = useState<string | null>(null);
 
   const routeToDashboard = (user: any) => {
-    if (user?.role === "admin") {
-      router.push("/admin/dashboard");
+    // A guard sent us here from a page they were trying to reach — honour it,
+    // so a link shared over WhatsApp survives the login it triggers.
+    if (nextPath && user?.role !== "admin") {
+      router.push(nextPath);
       return;
     }
+    const target = dashboardPath(user);
     // Without a slug there is no dashboard to open. Sending them to a guessed
     // one lands them on someone else's URL, so say what's wrong instead.
-    if (!user?.slug) {
+    if (!target) {
       setError("Your profile couldn't be found. Please contact FitWorks support.");
       setLoading(false);
       return;
     }
-    if (user.role === "gym") router.push(`/gym/${user.slug}/dashboard`);
-    else if (user.role === "trainer") router.push(`/trainer/${user.slug}/dashboard`);
-    else router.push("/");
+    router.push(target);
   };
 
   const completeOtpLogin = async (verificationToken: string) => {
@@ -141,6 +177,15 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
       setLoading(false);
     }
   };
+
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-gray-50">
+        <Loader2 className="w-7 h-7 text-[#d91a24] animate-spin" />
+        <p className="text-xs font-semibold text-gray-500">Checking your session…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex h-full w-full bg-white overflow-hidden">

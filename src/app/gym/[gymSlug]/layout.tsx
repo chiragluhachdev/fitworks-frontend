@@ -11,6 +11,7 @@ import {
   MapPin,
 } from "lucide-react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
+import { loginPathFor, readStoredUser } from "@/lib/session";
 
 export default function GymDashboardLayout({ children }: { children: React.ReactNode }) {
   const params = useParams();
@@ -23,19 +24,29 @@ export default function GymDashboardLayout({ children }: { children: React.React
     if (typeof window === "undefined") return;
 
     const token = localStorage.getItem("fitworks_token");
-    const stored = localStorage.getItem("fitworks_user");
-    if (!token || !stored) {
-      router.push("/auth");
+    const me = readStoredUser();
+    if (!token || !me) {
+      router.replace(loginPathFor(window.location.pathname));
       return;
     }
-    try {
-      const u = JSON.parse(stored);
-      if (u.role && u.role !== "gym" && u.role !== "admin") {
-        router.push(u.slug ? `/trainer/${u.slug}/dashboard` : "/auth");
-        return;
-      }
-    } catch {
-      router.push("/auth");
+
+    // Same rule as the trainer side: this is one gym's own workspace. Admins
+    // review gyms from the admin panel.
+    if (me.role === "admin") {
+      router.replace("/admin/gyms");
+      return;
+    }
+    if (me.role === "trainer") {
+      router.replace(me.slug ? `/trainer/${me.slug}/dashboard` : "/auth");
+      return;
+    }
+    if (me.role !== "gym") {
+      router.replace("/auth");
+      return;
+    }
+    // A gym could previously open any other gym's dashboard by slug.
+    if (me.slug && me.slug !== gymSlug) {
+      router.replace(`/gym/${me.slug}/dashboard`);
       return;
     }
 
