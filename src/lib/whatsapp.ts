@@ -21,8 +21,9 @@ export const WHATSAPP_TEMPLATES = {
 Thanks for registering with FitWorks.
 
 Your trainer account is verified! ✅
-Please activate your ₹99/month membership to go live and start applying to gym vacancies:
+Please activate your ₹99/month membership to go live and start applying to gym vacancies.
 
+Log in here to activate:
 🔗 {link}
 
 Welcome to FitWorks! 💪
@@ -33,8 +34,9 @@ We look forward to helping you discover new opportunities.`,
 
 Good news — your FitWorks profile is verified ✅ and your membership is active.
 
-You're now live in gym search, so hiring gyms can find and contact you. Browse open vacancies here:
+You're now live in gym search, so hiring gyms can find and contact you.
 
+Log in here to browse open vacancies:
 🔗 {link}
 
 Welcome to FitWorks! 💪
@@ -62,9 +64,10 @@ export const buildWhatsAppUrl = (trainer: WhatsAppTrainer): string | null => {
   if (!number) return null;
 
   const isActive = Boolean(trainer.subscriptionState?.isActive);
-  const link = isActive
-    ? `${SITE}/trainer/${trainer.slug}/jobs`
-    : `${SITE}/trainer/${trainer.slug}/subscription`;
+  // One link for everyone: /auth sends an existing session straight to the
+  // dashboard and asks anyone else to sign in first. A deep link would have to
+  // guess whether the phone it lands on is already signed in.
+  const link = `${SITE}/auth`;
 
   const text = (isActive ? WHATSAPP_TEMPLATES.live : WHATSAPP_TEMPLATES.activate)
     .replace("{name}", firstName(trainer.personal?.fullName))

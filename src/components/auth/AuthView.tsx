@@ -76,7 +76,10 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
 
   /** Switch mode by navigating, so the URL always reflects what's on screen. */
   const go = (next: AuthMode) => router.push(AUTH_MODE_PATHS[next]);
-  const [role, setRole] = useState<"gym" | "trainer">("gym");
+  // Trainers are the volume audience and most arrive from a WhatsApp link, so
+  // the login screen opens on their tab. Purely presentational — the server
+  // decides the real role from the credentials.
+  const [role, setRole] = useState<"gym" | "trainer">("trainer");
   const [showPassword, setShowPassword] = useState(false);
   const [identifier, setIdentifier] = useState("");
   // Passwordless path: prove the number by OTP, then exchange for a session.
