@@ -334,6 +334,15 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
       if (typeof window !== "undefined") {
         localStorage.setItem("fitworks_token", data.token);
         localStorage.setItem("fitworks_user", JSON.stringify(data.user));
+
+        // Fire Meta standard Lead event on successful registration (deduplicated)
+        const leadTrackedKey = `fw_lead_tracked_${data.user?._id || data.trainer?.slug || verifiedPhone || "success"}`;
+        if (!sessionStorage.getItem(leadTrackedKey)) {
+          sessionStorage.setItem(leadTrackedKey, "1");
+          if (typeof fbq === "function") {
+            fbq('track', 'Lead');
+          }
+        }
       }
 
       setCreatedSlug(data.trainer?.slug || "");
