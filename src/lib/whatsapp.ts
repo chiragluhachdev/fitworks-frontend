@@ -1,0 +1,74 @@
+const SITE = "https://fitworks.in";
+
+/** Indian numbers are stored bare (10 digits); wa.me needs the country code. */
+const WA_COUNTRY_CODE = "91";
+
+export interface WhatsAppTrainer {
+  personal?: { fullName?: string; phone?: string };
+  slug?: string;
+  subscriptionState?: { isActive?: boolean };
+}
+
+/**
+ * Message sent to a trainer the moment an admin approves them.
+ *
+ * Edit freely — this is the only place the copy lives. `{name}` and `{link}`
+ * are substituted; everything else is sent verbatim, newlines included.
+ */
+export const WHATSAPP_TEMPLATES = {
+  /** Verified but hasn't paid — the nudge that earns the ₹99. */
+  activate: `Hi {name}! 👋
+Thanks for registering with FitWorks.
+
+Your trainer account is verified! ✅
+Please activate your ₹99/month membership to go live and start applying to gym vacancies:
+
+🔗 {link}
+
+Welcome to FitWorks! 💪
+We look forward to helping you discover new opportunities.`,
+
+  /** Verified and already paying — nothing to sell, so don't. */
+  live: `Hi {name}! 👋
+
+Good news — your FitWorks profile is verified ✅ and your membership is active.
+
+You're now live in gym search, so hiring gyms can find and contact you. Browse open vacancies here:
+
+🔗 {link}
+
+Welcome to FitWorks! 💪
+We look forward to helping you discover new opportunities.`,
+};
+
+/** First name only — "Hi Trilokeswari!" reads warmer than the full name. */
+const firstName = (fullName?: string) => (fullName || "there").trim().split(/\s+/)[0];
+
+/** Strips punctuation and any existing country code down to a bare 10 digits. */
+export const whatsappNumber = (phone?: string): string | null => {
+  const digits = String(phone ?? "").replace(/\D/g, "").slice(-10);
+  return /^[6-9]\d{9}$/.test(digits) ? `${WA_COUNTRY_CODE}${digits}` : null;
+};
+
+/**
+ * A wa.me link that opens the desktop app or WhatsApp Web on a computer and the
+ * app on a phone, with the message prefilled for the admin to review and send.
+ *
+ * Returns null when the number can't be dialled, so the caller can disable the
+ * button rather than open a broken chat.
+ */
+export const buildWhatsAppUrl = (trainer: WhatsAppTrainer): string | null => {
+  const number = whatsappNumber(trainer.personal?.phone);
+  if (!number) return null;
+
+  const isActive = Boolean(trainer.subscriptionState?.isActive);
+  const link = isActive
+    ? `${SITE}/trainer/${trainer.slug}/jobs`
+    : `${SITE}/trainer/${trainer.slug}/subscription`;
+
+  const text = (isActive ? WHATSAPP_TEMPLATES.live : WHATSAPP_TEMPLATES.activate)
+    .replace("{name}", firstName(trainer.personal?.fullName))
+    .replace("{link}", link);
+
+  return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+};

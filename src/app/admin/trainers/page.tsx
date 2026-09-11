@@ -28,6 +28,7 @@ import {
   Clock
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import WhatsAppButton from "@/components/admin/WhatsAppButton";
 
 /** Membership badge shown per row, so paid vs unpaid is visible at a glance. */
 const MEMBERSHIP: Record<string, { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
@@ -409,6 +410,10 @@ export default function AdminTrainers() {
                           Approve
                         </button>
                       )}
+                      {trainer.verificationStatus === "verified" && (
+                        <WhatsAppButton trainer={trainer} />
+                      )}
+
                       <button
                         onClick={() => setDeletingTrainer(trainer)}
                         title="Delete this trainer, their login and all their activity"
@@ -722,7 +727,19 @@ export default function AdminTrainers() {
                 Trainer ID: <span className="font-mono text-gray-600">{selectedTrainer._id}</span>
               </div>
               
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Reaching out is the natural next action right after approving. */}
+                {selectedTrainer.verificationStatus === "verified" && (
+                  <WhatsAppButton
+                    trainer={{
+                      personal: selectedTrainer.personal,
+                      slug: selectedTrainer.slug,
+                      subscriptionState: detail?.subscription ?? selectedTrainer.subscriptionState,
+                    }}
+                    variant="full"
+                  />
+                )}
+
                 {selectedTrainer.verificationStatus !== "verified" && (
                   <button
                     onClick={() => handleVerify(selectedTrainer._id, "verified")}
