@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Loader2, ShieldCheck, RefreshCw } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { apiFetch } from "@/lib/api";
 
 const OTP_LENGTH = 6;
 
@@ -60,51 +61,55 @@ export default function OtpVerification({
   async function sendOtp() {
     setResending(true);
     setError(null);
-    try {
-      const res = await fetch(`${api()}/otp/send`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, purpose }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success(data.message || "OTP sent");
-        setCooldown(data.resendAfterSeconds ?? 60);
-      } else {
-        setError(data.message || "Could not send the OTP");
-        if (data.retryAfter) setCooldown(data.retryAfter);
-      }
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setResending(false);
+    const { ok, data, error: failure } = await apiFetch<{
+      success?: boolean;
+      message?: string;
+      resendAfterSeconds?: number;
+      retryAfter?: number;
+    }>(`${api()}/otp/send`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, purpose }),
+    });
+
+    if (ok && data.success) {
+      toast.success(data.message || "OTP sent");
+      setCooldown(data.resendAfterSeconds ?? 60);
+    } else {
+      setError(failure || data.message || "Could not send the OTP");
+      // Keep the resend button disabled for as long as the server asked.
+      if (data.retryAfter) setCooldown(data.retryAfter);
     }
+    setResending(false);
   }
 
   async function submit(value: string) {
     if (value.length !== OTP_LENGTH || verifying) return;
     setVerifying(true);
     setError(null);
-    try {
-      const res = await fetch(`${api()}/otp/verify`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, code: value, purpose }),
-      });
-      const data = await res.json();
-      if (data.success && data.verificationToken) {
-        toast.success("Mobile number verified");
-        onVerified(data.verificationToken);
-      } else {
-        setError(data.message || "Incorrect OTP");
+    const { ok, data, error: failure } = await apiFetch<{
+      success?: boolean;
+      message?: string;
+      verificationToken?: string;
+    }>(`${api()}/otp/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, code: value, purpose }),
+    });
+
+    if (ok && data.success && data.verificationToken) {
+      toast.success("Mobile number verified");
+      onVerified(data.verificationToken);
+    } else {
+      setError(failure || data.message || "Incorrect OTP");
+      // Only clear the boxes when the code itself was wrong. Wiping them after
+      // a rate limit or a server hiccup makes the user retype a correct code.
+      if (ok || data.success === false) {
         setDigits(Array(OTP_LENGTH).fill(""));
         inputs.current[0]?.focus();
       }
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setVerifying(false);
     }
+    setVerifying(false);
   }
 
   const setAt = (i: number, v: string) => {
