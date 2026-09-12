@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AppShell from "@/components/AppShell";
 import StructuredData from "@/components/StructuredData";
+import MetaPixelPageView from "@/components/MetaPixelPageView";
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
@@ -154,6 +155,9 @@ export default function RootLayout({
                 alt=""
               />
             </noscript>
+            {/* The snippet above only fires on a full load; this covers the
+                client-side navigations that make up most of a visit. */}
+            <MetaPixelPageView />
           </>
         )}
       </body>
