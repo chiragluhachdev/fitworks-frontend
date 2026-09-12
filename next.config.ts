@@ -27,6 +27,24 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  /**
+   * Serve the API from our own origin.
+   *
+   * The browser used to call the Railway hostname directly. Indian mobile ISPs,
+   * DNS filters, data-saver proxies and in-app browsers all block shared cloud
+   * subdomains like *.up.railway.app, so fetch threw before reaching the server
+   * and the user was told to check a connection that was working — the page
+   * itself had just loaded over that same connection.
+   *
+   * Going through fitworks.in also removes CORS and preflights entirely: if the
+   * page loaded, the API is reachable by definition.
+   */
+  async rewrites() {
+    const origin =
+      process.env.API_PROXY_ORIGIN || "https://fitworks-backend-production.up.railway.app";
+    return [{ source: "/api/:path*", destination: `${origin}/api/:path*` }];
+  },
+
   async redirects() {
     return [
       {
