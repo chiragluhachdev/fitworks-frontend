@@ -1,9 +1,12 @@
 import type { NextConfig } from "next";
 
+const rawPixelId = process.env.META_PIXEL_ID || process.env.NEXT_PUBLIC_META_PIXEL_ID || "1604943784468462";
+const activePixelId = rawPixelId === "604943784468462" ? "1604943784468462" : rawPixelId;
+
 const nextConfig: NextConfig = {
   env: {
-    META_PIXEL_ID: process.env.META_PIXEL_ID || process.env.NEXT_PUBLIC_META_PIXEL_ID || "1604943784468462",
-    NEXT_PUBLIC_META_PIXEL_ID: process.env.NEXT_PUBLIC_META_PIXEL_ID || process.env.META_PIXEL_ID || "1604943784468462",
+    META_PIXEL_ID: activePixelId,
+    NEXT_PUBLIC_META_PIXEL_ID: activePixelId,
   },
   images: {
     remotePatterns: [
