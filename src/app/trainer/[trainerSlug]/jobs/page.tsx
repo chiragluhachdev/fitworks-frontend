@@ -95,7 +95,7 @@ export default function TrainerFindJobsPage() {
       const profile = await profileRes.json();
       if (profile.success && profile.data) {
         setTrainer(profile.data);
-        const blocked = getTrainerLock(profile.data.verificationStatus, profile.subscription);
+        const blocked = getTrainerLock(profile.data.verificationStatus, profile.activation);
         if (blocked) {
           setLock(blocked);
           setJobs([]);
@@ -118,8 +118,7 @@ export default function TrainerFindJobsPage() {
           reason: json.reason,
           title: json.title,
           message: json.message,
-          membershipActive: json.membershipActive,
-          hasLapsed: json.hasLapsed,
+          isActivated: json.isActivated,
         });
         setJobs([]);
       } else if (json.success) {
@@ -204,7 +203,6 @@ export default function TrainerFindJobsPage() {
         trainerPhone={trainer?.personal?.phone}
         heading="Gym vacancies"
         subheading="Open roles from partner gyms across India."
-        isRenewal={Boolean(lock.hasLapsed)}
         onUnlocked={fetchJobs}
       />
     );

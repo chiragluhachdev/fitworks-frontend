@@ -137,7 +137,7 @@ export default function VerifiedTrainers() {
                 </span>
               </Link>
               <p className="text-[11px] text-gray-400 text-center leading-snug">
-                Free to create an account. Takes under 2 minutes.
+                Free to create an account · one-time ₹99 to go live. Takes under 2 minutes.
               </p>
             </div>
           </div>

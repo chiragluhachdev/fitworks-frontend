@@ -7,9 +7,9 @@ import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 /**
  * A gated page in one line: the lock screen plus the checkout it opens.
  *
- * Every locked surface pairs the same explanation with the same payment modal,
- * and each one has to re-fetch when the payment lands. Keeping that together
- * here is what stops the three pages drifting apart.
+ * Every locked surface pairs the same explanation with the same checkout, and
+ * each one has to re-fetch when the payment lands. Keeping that together here
+ * is what stops the three pages drifting apart.
  */
 export default function LockedPage({
   lock,
@@ -17,8 +17,6 @@ export default function LockedPage({
   trainerName,
   trainerEmail,
   trainerPhone,
-  isRenewal,
-  expiresAt,
   onUnlocked,
   heading,
   subheading,
@@ -28,9 +26,7 @@ export default function LockedPage({
   trainerName?: string;
   trainerEmail?: string;
   trainerPhone?: string;
-  isRenewal?: boolean;
-  expiresAt?: string | null;
-  /** Re-run the page's fetch once the membership is live. */
+  /** Re-run the page's fetch once the profile is activated. */
   onUnlocked: () => void;
   /** The page's own title, kept above the lock so context isn't lost. */
   heading: string;
@@ -54,8 +50,6 @@ export default function LockedPage({
         trainerName={trainerName}
         trainerEmail={trainerEmail}
         trainerPhone={trainerPhone}
-        isRenewal={isRenewal}
-        expiresAt={expiresAt ?? null}
         onSuccess={() => {
           setShowPayment(false);
           onUnlocked();

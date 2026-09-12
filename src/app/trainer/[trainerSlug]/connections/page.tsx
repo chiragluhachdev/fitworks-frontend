@@ -58,7 +58,7 @@ export default function TrainerConnectionsPage() {
         setTrainer(trainerData.data);
 
         // Same two gates as the jobs page, from the record already in hand.
-        const blocked = getTrainerLock(trainerData.data.verificationStatus, trainerData.subscription);
+        const blocked = getTrainerLock(trainerData.data.verificationStatus, trainerData.activation);
         setLock(blocked);
         if (blocked) {
           setLoading(false);
@@ -118,7 +118,6 @@ export default function TrainerConnectionsPage() {
         trainerName={trainer?.personal?.fullName}
         trainerEmail={trainer?.personal?.email}
         trainerPhone={trainer?.personal?.phone}
-        isRenewal={(trainer?.subscription?.cyclesPaid ?? 0) > 0}
         heading="Gym Interview Invitations"
         subheading="Accept connection requests from verified gyms interested in interviewing you."
         onUnlocked={fetchConnections}

@@ -30,12 +30,10 @@ import {
 import { toast } from "react-hot-toast";
 import WhatsAppButton from "@/components/admin/WhatsAppButton";
 
-/** Membership badge shown per row, so paid vs unpaid is visible at a glance. */
-const MEMBERSHIP: Record<string, { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
-  active: { label: "Paid · active", cls: "bg-emerald-50 text-emerald-700 border-emerald-200", Icon: CheckCircle2 },
-  expiring_soon: { label: "Expiring soon", cls: "bg-amber-50 text-amber-700 border-amber-200", Icon: Clock },
-  expired: { label: "Expired", cls: "bg-red-50 text-red-700 border-red-200", Icon: AlertTriangle },
-  inactive: { label: "Never paid", cls: "bg-gray-100 text-gray-600 border-gray-200", Icon: Lock },
+/** Activation badge shown per row, so paid vs unpaid is visible at a glance. */
+const ACTIVATION: Record<string, { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
+  active: { label: "Paid ₹99", cls: "bg-emerald-50 text-emerald-700 border-emerald-200", Icon: CheckCircle2 },
+  inactive: { label: "Not paid", cls: "bg-gray-100 text-gray-600 border-gray-200", Icon: Lock },
 };
 
 export default function AdminTrainers() {
@@ -165,15 +163,15 @@ export default function AdminTrainers() {
       filterMembership === "all"
         ? true
         : filterMembership === "paid"
-        ? t.subscriptionState?.isActive
-        : !t.subscriptionState?.isActive;
+        ? t.activation?.isActive
+        : !t.activation?.isActive;
 
     return matchesSearch && matchesStatus && matchesMembership;
   });
 
   const pendingCount = trainers.filter(t => t.verificationStatus === "pending").length;
   const verifiedCount = trainers.filter(t => t.verificationStatus === "verified").length;
-  const paidCount = trainers.filter(t => t.subscriptionState?.isActive).length;
+  const paidCount = trainers.filter(t => t.activation?.isActive).length;
   const unpaidCount = trainers.length - paidCount;
 
   return (
@@ -278,7 +276,7 @@ export default function AdminTrainers() {
                   <th className="px-6 py-4">Location & Experience</th>
                   <th className="px-6 py-4">Specializations</th>
                   <th className="px-6 py-4">Verification</th>
-                  <th className="px-6 py-4">Membership (₹99/mo)</th>
+                  <th className="px-6 py-4">Activation (₹99 once)</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -358,11 +356,11 @@ export default function AdminTrainers() {
                       )}
                     </td>
 
-                    {/* Membership — has this trainer actually paid? */}
+                    {/* Activation — has this trainer paid the one-time ₹99? */}
                     <td className="px-6 py-4">
                       {(() => {
-                        const sub = trainer.subscriptionState;
-                        const m = MEMBERSHIP[sub?.status || "inactive"];
+                        const act = trainer.activation;
+                        const m = ACTIVATION[act?.isActive ? "active" : "inactive"];
                         return (
                           <div className="space-y-1">
                             <span
@@ -372,10 +370,8 @@ export default function AdminTrainers() {
                               {m.label}
                             </span>
                             <div className="text-[11px] text-gray-500 font-medium">
-                              {sub?.isActive
-                                ? `${sub.daysRemaining} day${sub.daysRemaining === 1 ? "" : "s"} left`
-                                : sub?.cyclesPaid
-                                ? `Lapsed · ₹${trainer.totalPaid || 0} lifetime`
+                              {act?.isActive
+                                ? `Activated ${new Date(act.activatedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`
                                 : "Not visible to gyms"}
                             </div>
                             {trainer.accountActive ? (
@@ -530,42 +526,31 @@ export default function AdminTrainers() {
                     </div>
 
                     {(() => {
-                      const sub = detail?.subscription;
-                      const map: Record<string, string> = {
-                        active: "bg-emerald-50 text-emerald-700 border-emerald-200/70",
-                        expiring_soon: "bg-amber-50 text-amber-700 border-amber-200/70",
-                        expired: "bg-red-50 text-red-700 border-red-200/70",
-                        inactive: "bg-gray-100 text-gray-600 border-gray-200",
-                      };
-                      const label: Record<string, string> = {
-                        active: "Active", expiring_soon: "Expiring soon", expired: "Expired", inactive: "Never paid",
-                      };
-                      const st = sub?.status || "inactive";
+                      const act = detail?.activation;
+                      const isOn = Boolean(act?.isActive);
                       const d = (v: any) => v ? new Date(v).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
                       return (
                         <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
                           <div className="flex flex-wrap items-center gap-2 mb-3">
-                            <span className="text-xs font-bold text-gray-900">₹99 / month membership</span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${map[st]}`}>
-                              {label[st]}
+                            <span className="text-xs font-bold text-gray-900">₹99 one-time activation</span>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                              isOn ? "bg-emerald-50 text-emerald-700 border-emerald-200/70" : "bg-gray-100 text-gray-600 border-gray-200"
+                            }`}>
+                              {isOn ? "Paid" : "Not paid"}
                             </span>
                           </div>
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
                             <div>
-                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Started</span>
-                              <span className="font-bold text-gray-800">{d(sub?.startedAt)}</span>
+                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Activated on</span>
+                              <span className="font-bold text-gray-800">{d(act?.activatedAt)}</span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Total paid</span>
+                              <span className="font-bold text-gray-800">₹{act?.totalPaid ?? 0}</span>
                             </div>
                             <div>
                               <span className="text-[10px] font-bold uppercase text-gray-400 block">Expires</span>
-                              <span className="font-bold text-gray-800">{d(sub?.expiresAt)}</span>
-                            </div>
-                            <div>
-                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Cycles paid</span>
-                              <span className="font-bold text-gray-800">{sub?.cyclesPaid ?? 0}</span>
-                            </div>
-                            <div>
-                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Days left</span>
-                              <span className="font-bold text-gray-800">{sub?.isActive ? `${sub.daysRemaining}d` : "—"}</span>
+                              <span className="font-bold text-gray-800">Never</span>
                             </div>
                           </div>
 
@@ -734,7 +719,7 @@ export default function AdminTrainers() {
                     trainer={{
                       personal: selectedTrainer.personal,
                       slug: selectedTrainer.slug,
-                      subscriptionState: detail?.subscription ?? selectedTrainer.subscriptionState,
+                      subscriptionState: detail?.activation ?? selectedTrainer.activation,
                     }}
                     variant="full"
                   />

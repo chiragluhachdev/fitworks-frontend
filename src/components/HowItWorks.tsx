@@ -51,7 +51,7 @@ const trainerSteps = [
     description:
       "Build a professional profile with your certifications, specialisations, work history and availability — free to set up.",
     icon: UserCheck,
-    highlights: ["Free profile", "Certificate uploads", "Set your expectations"],
+    highlights: ["Free to sign up", "Certificate uploads", "Set your expectations"],
   },
   {
     number: "02",

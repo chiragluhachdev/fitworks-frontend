@@ -7,14 +7,14 @@ import { Button } from "@/components/ui/button";
 export const metadata: Metadata = {
   title: "Pricing Plans for Gyms & Fitness Trainers",
   description:
-    "Explore transparent pricing plans on FitWorks. Free profiles and job discovery for trainers, plus flexible verified hiring packages for gyms.",
+    "Transparent FitWorks pricing. Trainers pay a one-time 99 rupees to activate their profile — no monthly fee. Gyms hire free during beta.",
   alternates: {
     canonical: "/pricing",
   },
   openGraph: {
     title: "Pricing Plans for Gyms & Fitness Trainers | FitWorks",
     description:
-      "Transparent hiring plans for fitness clubs and free verification for personal trainers across India.",
+      "A one-time 99 rupee activation for trainers, and free hiring for gyms across India while we are in beta.",
     url: "https://fitworks.in/pricing",
   },
 };
@@ -33,7 +33,7 @@ export default function PricingPage() {
             Simple plans for <span className="text-[#d91a24]">everyone</span>.
           </h1>
           <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-            Free forever for certified trainers. Flexible hiring packages for fitness studios and gym chains.
+            A one-time ₹99 for trainers — no monthly fee. Free hiring for gyms while we&apos;re in beta.
           </p>
         </div>
 
@@ -51,13 +51,21 @@ export default function PricingPage() {
                 <p className="text-xs text-gray-500 mt-1">Get verified and discovered by top gyms.</p>
               </div>
               <div className="pt-2">
-                <span className="text-4xl font-extrabold text-gray-900">₹0</span>
-                <span className="text-xs text-gray-400 font-semibold ml-1">/ Free Forever</span>
+                <span className="text-4xl font-extrabold text-gray-900">₹99</span>
+                <span className="text-xs text-gray-400 font-semibold ml-1">one-time</span>
+                <p className="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
+                  Pay once to activate. No monthly fee, no renewal. Creating your profile and getting
+                  verified is free.
+                </p>
               </div>
               <ul className="space-y-3 pt-4 border-t border-gray-100 text-xs text-gray-600">
                 <li className="flex items-center gap-2.5">
                   <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Public Trainer Showcase Profile</span>
+                  <span>Free profile creation &amp; verification</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Visible to every hiring gym in India</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -76,7 +84,7 @@ export default function PricingPage() {
 
             <Link href="/auth" className="w-full block">
               <Button variant="outline" className="w-full h-11 rounded-xl text-xs font-bold border-gray-200 hover:bg-gray-50">
-                Join as a Trainer
+                Join free, activate for ₹99
               </Button>
             </Link>
           </div>

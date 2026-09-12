@@ -16,12 +16,12 @@ export interface WhatsAppTrainer {
  * are substituted; everything else is sent verbatim, newlines included.
  */
 export const WHATSAPP_TEMPLATES = {
-  /** Verified but hasn't paid — the nudge that earns the ₹99. */
+  /** Verified but hasn't paid — the nudge that earns the one-time ₹99. */
   activate: `Hi {name}! 👋
 Thanks for registering with FitWorks.
 
 Your trainer account is verified! ✅
-Please activate your ₹99/month membership to go live and start applying to gym vacancies.
+Just one step left — a one-time ₹99 to activate your profile and start applying to gym vacancies. No monthly fee.
 
 Log in here to activate:
 🔗 {link}
@@ -29,10 +29,10 @@ Log in here to activate:
 Welcome to FitWorks! 💪
 We look forward to helping you discover new opportunities.`,
 
-  /** Verified and already paying — nothing to sell, so don't. */
+  /** Verified and already activated — nothing to sell, so don't. */
   live: `Hi {name}! 👋
 
-Good news — your FitWorks profile is verified ✅ and your membership is active.
+Good news — your FitWorks profile is verified ✅ and activated.
 
 You're now live in gym search, so hiring gyms can find and contact you.
 

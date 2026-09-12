@@ -1,5 +1,5 @@
 import type { LockInfo } from "@/components/dashboard/AccessLocked";
-import type { SubscriptionState } from "@/components/dashboard/SubscriptionBanner";
+import type { ActivationState } from "@/components/dashboard/ActivationBanner";
 
 /** The slice of a trainer record a gated page needs to render its lock. */
 export interface LockablePersonal {
@@ -11,7 +11,6 @@ export interface LockablePersonal {
 export interface LockableTrainer {
   personal?: LockablePersonal;
   verificationStatus?: string;
-  subscription?: { cyclesPaid?: number };
 }
 
 /**
@@ -23,14 +22,14 @@ export interface LockableTrainer {
  * and so every surface words it identically.
  *
  * Two gates, checked in the order they have to be cleared: an admin approves the
- * profile, then the membership is paid. Verification comes first because paying
- * cannot fix a rejected profile.
+ * profile, then the one-time ₹99 is paid. Verification comes first because
+ * paying cannot fix a rejected profile.
  */
 export const getTrainerLock = (
   verificationStatus: string | undefined,
-  subscription: SubscriptionState | null | undefined
+  activation: ActivationState | null | undefined
 ): LockInfo | null => {
-  const membershipActive = Boolean(subscription?.isActive);
+  const isActivated = Boolean(activation?.isActive);
 
   if (verificationStatus === "pending") {
     return {
@@ -38,7 +37,7 @@ export const getTrainerLock = (
       title: "Your profile is under review",
       message:
         "Our team is checking your documents. Once approved, gym vacancies unlock here — usually within 24 hours.",
-      membershipActive,
+      isActivated,
     };
   }
 
@@ -48,18 +47,17 @@ export const getTrainerLock = (
       title: "Your profile needs attention",
       message:
         "We couldn't verify the documents you submitted. Re-upload a valid certificate and a clear government ID to get approved.",
-      membershipActive,
+      isActivated,
     };
   }
 
-  if (!membershipActive) {
+  if (!isActivated) {
     return {
-      reason: "subscription_inactive",
-      title: "Activate your membership",
+      reason: "not_activated",
+      title: "Activate your profile",
       message:
-        "FitWorks is a paid platform for trainers. Activate your ₹99/month membership to browse vacancies, apply to roles and be discovered by hiring gyms.",
-      membershipActive: false,
-      hasLapsed: (subscription?.cyclesPaid ?? 0) > 0,
+        "FitWorks charges trainers a one-time ₹99 to activate. Pay once and your profile stays live — browse vacancies, apply to roles and get discovered by hiring gyms, with nothing more to pay later.",
+      isActivated: false,
     };
   }
 

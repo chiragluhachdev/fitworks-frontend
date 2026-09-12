@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 import StatCard from "@/components/dashboard/StatCard";
-import SubscriptionBanner, { MembershipPill, type SubscriptionState } from "@/components/dashboard/SubscriptionBanner";
+import ActivationBanner, { ActivationPill, type ActivationState } from "@/components/dashboard/ActivationBanner";
 import SectionCard from "@/components/dashboard/SectionCard";
 import EmptyState from "@/components/dashboard/EmptyState";
 import type { LockInfo } from "@/components/dashboard/AccessLocked";
@@ -124,20 +124,20 @@ export default function TrainerDashboardPage() {
   }
 
   const { trainer, stats, applications = [], connections = [], recommendedJobs = [] } = data;
-  const subscription: SubscriptionState | null = data?.subscription ?? null;
+  const activation: ActivationState | null = data?.activation ?? null;
   const jobAccess: (LockInfo & { allowed: boolean }) | null = data?.jobAccess ?? null;
   const status = trainer?.verificationStatus;
   const verification = status ? VERIFICATION_PILL[status] : undefined;
   // "Active" means approved AND paid. Verification alone never makes a profile
   // live, so it must never be presented as if it does.
-  const accountActive = status === "verified" && Boolean(subscription?.isActive);
+  const accountActive = status === "verified" && Boolean(activation?.isActive);
   const pendingInvites = connections.filter((c: any) => c.status === "pending").length;
 
   return (
     <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-300">
 
-      {/* ── Membership state: activate / renew / expired ── */}
-      <SubscriptionBanner subscription={subscription} onActivate={() => setShowPaymentModal(true)} />
+      {/* ── Activated, or not. No renewal to chase any more. ── */}
+      <ActivationBanner activation={activation} onActivate={() => setShowPaymentModal(true)} />
 
       {/* ── Greeting ── */}
       <header className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
@@ -154,13 +154,13 @@ export default function TrainerDashboardPage() {
                   <verification.Icon className="w-3.5 h-3.5" /> {verification.label}
                 </span>
               )}
-              <MembershipPill subscription={subscription} />
+              <ActivationPill activation={activation} />
             </div>
             <p className="text-[13px] sm:text-sm text-gray-500 leading-relaxed">
-              {!subscription?.isActive
-                ? "Activate your membership to appear in gym search and start applying."
+              {!activation?.isActive
+                ? "Activate your profile for ₹99 to appear in gym search and start applying."
                 : status !== "verified"
-                ? "Your membership is paid. Your profile goes live to gyms as soon as our team approves your documents."
+                ? "Your ₹99 is paid. Your profile goes live to gyms as soon as our team approves your documents."
                 : pendingInvites > 0
                 ? `You have ${pendingInvites} gym invitation${pendingInvites > 1 ? "s" : ""} waiting for a reply.`
                 : "Track your applications and incoming gym invitations here."}
@@ -191,8 +191,6 @@ export default function TrainerDashboardPage() {
         trainerName={trainer?.personal?.fullName}
         trainerEmail={trainer?.personal?.email}
         trainerPhone={trainer?.personal?.phone}
-        isRenewal={(subscription?.cyclesPaid ?? 0) > 0}
-        expiresAt={subscription?.expiresAt ?? null}
         onSuccess={() => {
           setShowPaymentModal(false);
           fetchDashboard();
@@ -218,17 +216,17 @@ export default function TrainerDashboardPage() {
           </p>
           <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 leading-relaxed">
             {accountActive
-              ? "Verified and on an active membership — hiring gyms can find and contact you."
-              : !subscription?.isActive && status !== "verified"
-              ? "Two things left: activate your ₹99/month membership, and get your documents approved."
-              : !subscription?.isActive
-              ? "Your ₹99/month membership isn't active. Activate it to appear in gym search."
+              ? "Verified and activated — hiring gyms can find and contact you."
+              : !activation?.isActive && status !== "verified"
+              ? "Two things left: a one-time ₹99 activation, and getting your documents approved."
+              : !activation?.isActive
+              ? "Your profile isn't activated. A one-time ₹99 makes it visible in gym search."
               : status === "rejected"
               ? "Your documents were not approved. Re-upload them from the Verification page."
               : "Our team is still reviewing your documents."}
           </p>
         </div>
-        {!subscription?.isActive && (
+        {!activation?.isActive && (
           <button
             onClick={() => setShowPaymentModal(true)}
             className="h-10 px-4 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-xs font-bold shrink-0 active:scale-[0.98] transition-all cursor-pointer"
@@ -263,19 +261,11 @@ export default function TrainerDashboardPage() {
           href={`/trainer/${trainerSlug}/verification`}
         />
         <StatCard
-          label="Membership"
-          value={
-            subscription?.isActive ? `${subscription.daysRemaining}d` : subscription?.cyclesPaid ? "Expired" : "Inactive"
-          }
+          label="Activation"
+          value={activation?.isActive ? "Active" : "Pending"}
           icon={CalendarClock}
-          tone={
-            subscription?.status === "active"
-              ? "green"
-              : subscription?.status === "expiring_soon"
-              ? "amber"
-              : "red"
-          }
-          hint={subscription?.isActive ? "until renewal" : "₹99 / month"}
+          tone={activation?.isActive ? "green" : "red"}
+          hint={activation?.isActive ? "one-time · paid" : "one-time ₹99"}
         />
       </div>
 
@@ -304,12 +294,12 @@ export default function TrainerDashboardPage() {
               <p className="text-[12px] sm:text-[13px] text-gray-500 leading-relaxed mb-5 max-w-sm mx-auto">
                 {jobAccess.message}
               </p>
-              {jobAccess.reason === "subscription_inactive" ? (
+              {jobAccess.reason === "not_activated" ? (
                 <button
                   onClick={() => setShowPaymentModal(true)}
                   className="w-full sm:w-auto h-11 px-6 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-sm font-bold shadow-[0_8px_20px_rgb(217,26,36,0.2)] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Activate for ₹99/month <ArrowRight className="w-4 h-4" />
+                  Activate for ₹99 <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
                 <Link

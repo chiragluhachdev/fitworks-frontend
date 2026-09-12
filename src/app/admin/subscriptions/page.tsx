@@ -23,45 +23,38 @@ interface Row {
   phone: string;
   city: string;
   verificationStatus: string;
-  cyclesPaid: number;
-  amountPerCycle: number;
+
   lastPaidAt: string | null;
   totalPaid: number;
-  subscription: {
-    status: "inactive" | "active" | "expiring_soon" | "expired";
+  activation: {
+    status: "inactive" | "active";
     isActive: boolean;
-    daysRemaining: number;
-    expiresAt: string | null;
-    startedAt: string | null;
+    activatedAt: string | null;
+    totalPaid: number;
+    paymentsMade: number;
   };
 }
 
 interface Summary {
   total: number;
   active: number;
-  expiringSoon: number;
-  expired: number;
   neverPaid: number;
   lifetimeRevenue: number;
-  monthlyRecurring: number;
+  pipelineValue: number;
 }
 
 const fmt = (iso?: string | null) =>
   iso ? new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
 
 const STATUS = {
-  active: { label: "Active", cls: "bg-emerald-50 text-emerald-700 border-emerald-200/70", Icon: CheckCircle2 },
-  expiring_soon: { label: "Expiring soon", cls: "bg-amber-50 text-amber-700 border-amber-200/70", Icon: Clock },
-  expired: { label: "Expired", cls: "bg-red-50 text-red-700 border-red-200/70", Icon: AlertTriangle },
-  inactive: { label: "Never paid", cls: "bg-gray-100 text-gray-600 border-gray-200", Icon: Lock },
+  active: { label: "Activated", cls: "bg-emerald-50 text-emerald-700 border-emerald-200/70", Icon: CheckCircle2 },
+  inactive: { label: "Not paid", cls: "bg-gray-100 text-gray-600 border-gray-200", Icon: Lock },
 } as const;
 
 const FILTERS = [
   { id: "all", label: "All" },
-  { id: "active", label: "Active" },
-  { id: "expiring_soon", label: "Expiring" },
-  { id: "expired", label: "Expired" },
-  { id: "inactive", label: "Never paid" },
+  { id: "active", label: "Activated" },
+  { id: "inactive", label: "Not paid" },
 ] as const;
 
 export default function AdminSubscriptionsPage() {
@@ -97,7 +90,7 @@ export default function AdminSubscriptionsPage() {
   const filtered = useMemo(
     () =>
       rows.filter((r) => {
-        const matchesFilter = filter === "all" || r.subscription.status === filter;
+        const matchesFilter = filter === "all" || r.activation.status === filter;
         const term = q.trim().toLowerCase();
         const matchesSearch =
           !term ||
@@ -119,10 +112,15 @@ export default function AdminSubscriptionsPage() {
   }
 
   const tiles = [
-    { label: "Active members", value: summary?.active ?? 0, Icon: CheckCircle2, tone: "bg-emerald-50 text-emerald-600" },
-    { label: "Expiring in 7 days", value: summary?.expiringSoon ?? 0, Icon: Clock, tone: "bg-amber-50 text-amber-600" },
-    { label: "Expired", value: summary?.expired ?? 0, Icon: AlertTriangle, tone: "bg-red-50 text-[#d91a24]" },
-    { label: "Never paid", value: summary?.neverPaid ?? 0, Icon: Lock, tone: "bg-gray-100 text-gray-600" },
+    { label: "Activated", value: summary?.active ?? 0, Icon: CheckCircle2, tone: "bg-emerald-50 text-emerald-600" },
+    { label: "Not paid yet", value: summary?.neverPaid ?? 0, Icon: Lock, tone: "bg-gray-100 text-gray-600" },
+    { label: "Trainers total", value: summary?.total ?? 0, Icon: Users, tone: "bg-blue-50 text-blue-600" },
+    {
+      label: "Uncollected ₹",
+      value: summary?.pipelineValue ?? 0,
+      Icon: TrendingUp,
+      tone: "bg-amber-50 text-amber-600",
+    },
   ];
 
   return (
@@ -130,9 +128,9 @@ export default function AdminSubscriptionsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Subscriptions</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Activations</h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            ₹99/month trainer memberships — who&apos;s paid, who&apos;s lapsed, and when each expires.
+            One-time ₹99 trainer activations — who has paid, and who still hasn&apos;t.
           </p>
         </div>
       </div>
@@ -143,28 +141,28 @@ export default function AdminSubscriptionsPage() {
           <div className="absolute -top-16 -right-10 w-48 h-48 rounded-full bg-[#d91a24] blur-[80px] opacity-40 pointer-events-none" />
           <div className="relative z-10">
             <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
-              <TrendingUp className="w-3.5 h-3.5" /> Monthly recurring
+              <IndianRupee className="w-3.5 h-3.5" /> Collected
             </p>
             <p className="flex items-baseline gap-0.5 text-3xl font-extrabold tracking-tight">
               <IndianRupee className="w-6 h-6 self-center" />
-              {(summary?.monthlyRecurring ?? 0).toLocaleString("en-IN")}
+              {(summary?.lifetimeRevenue ?? 0).toLocaleString("en-IN")}
             </p>
             <p className="text-[11px] text-gray-400 mt-1.5">
-              From {summary?.active ?? 0} active member{summary?.active === 1 ? "" : "s"}
+              From {summary?.active ?? 0} activated trainer{summary?.active === 1 ? "" : "s"}
             </p>
           </div>
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
           <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
-            <IndianRupee className="w-3.5 h-3.5" /> Lifetime collected
+            <TrendingUp className="w-3.5 h-3.5" /> Still uncollected
           </p>
           <p className="flex items-baseline gap-0.5 text-3xl font-extrabold tracking-tight text-gray-900">
             <IndianRupee className="w-6 h-6 self-center" />
-            {(summary?.lifetimeRevenue ?? 0).toLocaleString("en-IN")}
+            {(summary?.pipelineValue ?? 0).toLocaleString("en-IN")}
           </p>
           <p className="text-[11px] text-gray-400 mt-1.5">
-            Across {summary?.total ?? 0} trainer{summary?.total === 1 ? "" : "s"}
+            If the {summary?.neverPaid ?? 0} unpaid trainer{summary?.neverPaid === 1 ? "" : "s"} activate
           </p>
         </div>
       </div>
@@ -225,7 +223,7 @@ export default function AdminSubscriptionsPage() {
           {/* Mobile */}
           <div className="space-y-2.5 lg:hidden">
             {filtered.map((r) => {
-              const s = STATUS[r.subscription.status];
+              const s = STATUS[r.activation.status];
               return (
                 <Link
                   key={r._id}
@@ -251,12 +249,12 @@ export default function AdminSubscriptionsPage() {
                   </div>
                   <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-100">
                     <div>
-                      <p className="text-[9px] font-bold text-gray-400 uppercase">Expires</p>
-                      <p className="text-[11px] font-bold text-gray-800 mt-0.5">{fmt(r.subscription.expiresAt)}</p>
+                      <p className="text-[9px] font-bold text-gray-400 uppercase">Activated</p>
+                      <p className="text-[11px] font-bold text-gray-800 mt-0.5">{fmt(r.activation.activatedAt)}</p>
                     </div>
                     <div>
-                      <p className="text-[9px] font-bold text-gray-400 uppercase">Cycles</p>
-                      <p className="text-[11px] font-bold text-gray-800 mt-0.5">{r.cyclesPaid}</p>
+                      <p className="text-[9px] font-bold text-gray-400 uppercase">Verified</p>
+                      <p className="text-[11px] font-bold text-gray-800 mt-0.5 capitalize">{r.verificationStatus}</p>
                     </div>
                     <div>
                       <p className="text-[9px] font-bold text-gray-400 uppercase">Paid</p>
@@ -274,7 +272,7 @@ export default function AdminSubscriptionsPage() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-gray-50/80 border-b border-gray-100">
-                    {["Trainer", "Status", "Started", "Expires", "Days left", "Cycles", "Total paid"].map((h) => (
+                    {["Trainer", "Activation", "Paid on", "Verification", "Expires", "Total paid"].map((h) => (
                       <th
                         key={h}
                         className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap"
@@ -286,7 +284,7 @@ export default function AdminSubscriptionsPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {filtered.map((r) => {
-                    const s = STATUS[r.subscription.status];
+                    const s = STATUS[r.activation.status];
                     return (
                       <tr key={r._id} className="hover:bg-gray-50/60 transition-colors">
                         <td className="px-5 py-3.5">
@@ -310,19 +308,18 @@ export default function AdminSubscriptionsPage() {
                             {s.label}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 text-xs text-gray-600 whitespace-nowrap">
-                          {fmt(r.subscription.startedAt)}
-                        </td>
                         <td className="px-5 py-3.5 text-xs font-semibold text-gray-800 whitespace-nowrap">
                           <span className="inline-flex items-center gap-1.5">
                             <CalendarClock className="w-3.5 h-3.5 text-gray-400" />
-                            {fmt(r.subscription.expiresAt)}
+                            {fmt(r.activation.activatedAt)}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 text-xs font-bold text-gray-900">
-                          {r.subscription.isActive ? `${r.subscription.daysRemaining}d` : "—"}
+                        <td className="px-5 py-3.5 text-xs font-semibold text-gray-700 capitalize">
+                          {r.verificationStatus}
                         </td>
-                        <td className="px-5 py-3.5 text-xs font-semibold text-gray-700">{r.cyclesPaid}</td>
+                        <td className="px-5 py-3.5 text-xs font-bold text-gray-900">
+                          {r.activation.isActive ? "Never" : "—"}
+                        </td>
                         <td className="px-5 py-3.5 text-xs font-bold text-gray-900">₹{r.totalPaid}</td>
                       </tr>
                     );

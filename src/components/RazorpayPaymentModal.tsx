@@ -22,9 +22,6 @@ interface RazorpayPaymentModalProps {
   trainerPhone?: string;
   onSuccess?: () => void;
   skipHref?: string;
-  /** Renewal wording differs from first-time activation. */
-  isRenewal?: boolean;
-  expiresAt?: string | null;
 }
 
 const BENEFITS = [
@@ -57,8 +54,6 @@ export default function RazorpayPaymentModal({
   trainerPhone,
   onSuccess,
   skipHref,
-  isRenewal = false,
-  expiresAt,
 }: RazorpayPaymentModalProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -102,9 +97,7 @@ export default function RazorpayPaymentModal({
         amount: data.amount,
         currency: data.currency || "INR",
         name: "FitWorks",
-        description: isRenewal
-          ? "FitWorks trainer membership — 30-day renewal"
-          : "FitWorks trainer membership — 30 days",
+        description: "FitWorks trainer profile activation (one-time)",
         image: "/icon.png",
         // The create-order response carries the trainer's own details, so
         // checkout prefills correctly whether or not the calling page happened
@@ -139,11 +132,7 @@ export default function RazorpayPaymentModal({
             const vData = await vRes.json();
 
             if (vData.success && vData.isPaid) {
-              toast.success(
-                isRenewal
-                  ? "Renewed — your membership is extended by 30 days."
-                  : "Activated — your profile is now live for gyms."
-              );
+              toast.success("Activated — your profile is live for gyms, with nothing more to pay.");
               if (onSuccess) onSuccess();
               else if (skipHref) router.push(skipHref);
               else onClose();
@@ -200,33 +189,29 @@ export default function RazorpayPaymentModal({
 
           <span className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider mb-3">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            {isRenewal ? "Renew Membership" : "Trainer Membership"}
+            One-time activation
           </span>
 
           <h2 className="text-xl sm:text-2xl font-black tracking-tight">
-            {isRenewal ? "Renew for another 30 days" : "Activate your FitWorks profile"}
+            Activate your FitWorks profile
           </h2>
           <p className="text-white/80 text-xs mt-1.5 max-w-xs mx-auto leading-relaxed">
-            {isRenewal
-              ? "Keep your profile visible to hiring gyms without a break."
-              : "Your profile stays hidden from gyms until your membership is active."}
+            Your profile stays hidden from gyms until it&apos;s activated. Pay once — that&apos;s it.
           </p>
 
           <div className="mt-4 inline-flex items-baseline gap-1.5 bg-white/10 px-4 py-2.5 rounded-2xl border border-white/20 backdrop-blur-sm">
             <span className="text-3xl font-black">₹99</span>
-            <span className="text-sm text-white/80 font-semibold">/ month</span>
+            <span className="text-sm text-white/80 font-semibold">once</span>
           </div>
           <p className="text-[11px] text-white/70 mt-2">
-            {isRenewal && expiresAt
-              ? `Adds 30 days on top of your current period`
-              : "30 days of full visibility · cancel anytime by not renewing"}
+            No monthly fee · no renewal · charged once
           </p>
         </div>
 
         {/* Benefits */}
         <div className="p-5 sm:p-6 space-y-4">
           <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-            What your membership includes
+            What activation includes
           </p>
 
           <div className="space-y-2.5">
@@ -256,7 +241,7 @@ export default function RazorpayPaymentModal({
               ) : (
                 <>
                   <Lock className="w-4 h-4" />
-                  {isRenewal ? "Renew for ₹99" : "Activate for ₹99"}
+                  Activate for ₹99
                 </>
               )}
             </button>

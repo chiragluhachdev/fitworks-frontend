@@ -3,46 +3,44 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import {
-  CalendarClock,
-  CheckCircle2,
-  Clock,
+  BadgeCheck,
   Lock,
   Loader2,
   Receipt,
-  AlertTriangle,
   IndianRupee,
+  CheckCircle2,
+  Search,
+  Send,
+  Sparkles,
 } from "lucide-react";
 import SectionCard from "@/components/dashboard/SectionCard";
 import EmptyState from "@/components/dashboard/EmptyState";
 import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
-import type { SubscriptionState } from "@/components/dashboard/SubscriptionBanner";
+import type { ActivationState } from "@/components/dashboard/ActivationBanner";
 
 interface Payment {
   orderId: string;
   paymentId: string;
   amount: number;
   paidAt: string;
-  periodStart: string;
-  periodEnd: string;
 }
 
 const fmt = (iso?: string | null) =>
-  iso
-    ? new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
-    : "—";
+  iso ? new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
 
-const STATUS = {
-  active: { label: "Active", cls: "bg-emerald-50 text-emerald-700 border-emerald-200/80", Icon: CheckCircle2 },
-  expiring_soon: { label: "Expiring soon", cls: "bg-amber-50 text-amber-700 border-amber-200/80", Icon: Clock },
-  expired: { label: "Expired", cls: "bg-red-50 text-red-700 border-red-200/80", Icon: AlertTriangle },
-  inactive: { label: "Not activated", cls: "bg-gray-100 text-gray-600 border-gray-200", Icon: Lock },
-} as const;
+/** What activation unlocks — the same list the paywall shows. */
+const INCLUDED = [
+  { Icon: BadgeCheck, label: "Visible to every hiring gym in India" },
+  { Icon: Search, label: "Browse all open vacancies" },
+  { Icon: Send, label: "Apply to unlimited roles" },
+  { Icon: Sparkles, label: "Receive direct interview invitations" },
+];
 
-export default function TrainerSubscriptionPage() {
+export default function TrainerActivationPage() {
   const params = useParams();
   const trainerSlug = (params?.trainerSlug as string) || "";
 
-  const [subscription, setSubscription] = useState<SubscriptionState | null>(null);
+  const [activation, setActivation] = useState<ActivationState | null>(null);
   const [history, setHistory] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -56,10 +54,10 @@ export default function TrainerSubscriptionPage() {
         fetch(`${apiUrl}/payments/status/${trainerSlug}`).then((r) => r.json()),
         fetch(`${apiUrl}/payments/history/${trainerSlug}`, { headers: auth }).then((r) => r.json()),
       ]);
-      if (s.success) setSubscription(s.subscription);
+      if (s.success) setActivation(s.activation);
       if (h.success) setHistory(h.history || []);
     } catch (err) {
-      console.error("Subscription load error:", err);
+      console.error("Activation load error:", err);
     } finally {
       setLoading(false);
     }
@@ -73,22 +71,21 @@ export default function TrainerSubscriptionPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
         <Loader2 className="w-7 h-7 text-[#d91a24] animate-spin" />
-        <p className="text-xs font-semibold text-gray-500">Loading your membership…</p>
+        <p className="text-xs font-semibold text-gray-500">Loading your activation…</p>
       </div>
     );
   }
 
-  const state = STATUS[subscription?.status || "inactive"];
-  const isRenewal = (subscription?.cyclesPaid ?? 0) > 0;
+  const isActive = Boolean(activation?.isActive);
 
   return (
     <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-300">
       <header className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
-          Membership
+          Activation
         </h1>
         <p className="text-[13px] sm:text-sm text-gray-500 mt-1.5">
-          Your ₹99/month plan, renewal date and payment history.
+          A single ₹99 payment keeps your profile live. No monthly fee, no renewal.
         </p>
       </header>
 
@@ -98,76 +95,69 @@ export default function TrainerSubscriptionPage() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-3">
               <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                Trainer membership
+                Profile activation
               </span>
               <span
-                className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${state.cls}`}
+                className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
+                  isActive
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200/80"
+                    : "bg-gray-100 text-gray-600 border-gray-200"
+                }`}
               >
-                <state.Icon className="w-3.5 h-3.5" />
-                {state.label}
+                {isActive ? <BadgeCheck className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                {isActive ? "Active" : "Not activated"}
               </span>
             </div>
 
             <p className="flex items-baseline gap-1 text-gray-900 mb-1">
               <IndianRupee className="w-5 h-5 self-center" />
               <span className="text-3xl font-extrabold tracking-tight">99</span>
-              <span className="text-sm font-semibold text-gray-500">/ month</span>
+              <span className="text-sm font-semibold text-gray-500">one-time</span>
             </p>
 
             <p className="text-[13px] text-gray-500 leading-relaxed">
-              {subscription?.isActive
-                ? `Renews ${fmt(subscription.expiresAt)} · ${subscription.daysRemaining} day${
-                    subscription.daysRemaining === 1 ? "" : "s"
-                  } remaining`
-                : isRenewal
-                ? `Expired on ${fmt(subscription?.expiresAt)} — your profile is hidden from gym search.`
+              {isActive
+                ? `Activated ${fmt(activation?.activatedAt)} — your profile stays live permanently. Nothing more to pay.`
                 : "Not activated yet — your profile is hidden from gym search."}
             </p>
           </div>
 
-          {(!subscription?.isActive || subscription.status === "expiring_soon") && (
+          {!isActive && (
             <button
               onClick={() => setShowPaymentModal(true)}
               className="w-full sm:w-auto h-12 px-6 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-sm font-bold shadow-[0_8px_20px_rgb(217,26,36,0.22)] active:scale-[0.98] transition-all shrink-0 cursor-pointer"
             >
-              {isRenewal ? "Renew for ₹99" : "Activate for ₹99"}
+              Activate for ₹99
             </button>
           )}
         </div>
 
-        {/* Period summary */}
-        <dl className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-gray-100">
-          {[
-            { label: "Started", value: fmt(subscription?.startedAt), Icon: CalendarClock },
-            {
-              label: subscription?.isActive ? "Renews on" : "Expired on",
-              value: fmt(subscription?.expiresAt),
-              Icon: CalendarClock,
-            },
-            { label: "Cycles paid", value: String(subscription?.cyclesPaid ?? 0), Icon: Receipt },
-            {
-              label: "Days left",
-              value: subscription?.isActive ? String(subscription.daysRemaining) : "0",
-              Icon: Clock,
-            },
-          ].map(({ label, value, Icon }) => (
-            <div key={label} className="p-3.5 rounded-2xl bg-gray-50/80 border border-gray-100">
-              <dt className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
-                <Icon className="w-3.5 h-3.5" /> {label}
-              </dt>
-              <dd className="text-[13px] font-bold text-gray-900">{value}</dd>
-            </div>
+        {/* What it includes */}
+        <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-3 mt-6 pt-6 border-t border-gray-100">
+          {INCLUDED.map(({ Icon, label }) => (
+            <li key={label} className="flex items-center gap-2.5">
+              <span
+                className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                  isActive ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-gray-400"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+              </span>
+              <span className={`text-[13px] font-semibold ${isActive ? "text-gray-800" : "text-gray-500"}`}>
+                {label}
+              </span>
+            </li>
           ))}
-        </dl>
+        </ul>
       </section>
 
-      {/* ── Billing history ── */}
-      <SectionCard title="Payment history" description="Every membership cycle you've paid for">
+      {/* ── Receipt ── */}
+      <SectionCard title="Payment receipt" description="Your one-time activation payment">
         {history.length === 0 ? (
           <EmptyState
             icon={Receipt}
-            title="No payments yet"
-            description="Once you activate your membership, each cycle will be listed here with its receipt."
+            title="No payment yet"
+            description="Once you activate, your receipt appears here."
           />
         ) : (
           <ul className="space-y-2.5">
@@ -180,15 +170,10 @@ export default function TrainerSubscriptionPage() {
                   <CheckCircle2 className="w-5 h-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-gray-900">₹{p.amount} · 30 days</p>
-                  <p className="text-[11px] text-gray-500 truncate">
-                    {fmt(p.periodStart)} → {fmt(p.periodEnd)}
-                  </p>
+                  <p className="text-sm font-bold text-gray-900">₹{p.amount} · Profile activation</p>
+                  <p className="text-[11px] text-gray-500 truncate">Paid {fmt(p.paidAt)}</p>
                   <p className="text-[10px] text-gray-400 font-mono truncate mt-0.5">{p.paymentId}</p>
                 </div>
-                <span className="text-[11px] font-semibold text-gray-400 shrink-0 hidden sm:block">
-                  {fmt(p.paidAt)}
-                </span>
               </li>
             ))}
           </ul>
@@ -199,8 +184,6 @@ export default function TrainerSubscriptionPage() {
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
         trainerSlug={trainerSlug}
-        isRenewal={isRenewal}
-        expiresAt={subscription?.expiresAt ?? null}
         onSuccess={() => {
           setShowPaymentModal(false);
           load();

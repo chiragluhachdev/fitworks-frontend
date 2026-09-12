@@ -16,19 +16,17 @@ import {
   FileUp,
 } from "lucide-react";
 
-export type LockReason = "pending_review" | "rejected" | "subscription_inactive";
+export type LockReason = "pending_review" | "rejected" | "not_activated";
 
 export interface LockInfo {
   reason: LockReason;
   title: string;
   message: string;
   /** Lets the review screen offer activation while the trainer waits. */
-  membershipActive?: boolean;
-  /** Renewal rather than first activation — changes the wording. */
-  hasLapsed?: boolean;
+  isActivated?: boolean;
 }
 
-/** What the ₹99 actually buys. Concrete, not adjectives. */
+/** What the one-time ₹99 actually buys. Concrete, not adjectives. */
 const BENEFITS = [
   { Icon: Search, label: "Browse every open vacancy", body: "Live roles from partner gyms across India." },
   { Icon: Send, label: "Apply to unlimited roles", body: "No per-application fees, ever." },
@@ -65,7 +63,7 @@ export default function AccessLocked({
   onActivate?: () => void;
 }) {
   /* ─────────────────── Paywall ─────────────────── */
-  if (lock.reason === "subscription_inactive") {
+  if (lock.reason === "not_activated") {
     return (
       <div className="max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-2 duration-300">
         <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)] overflow-hidden">
@@ -78,11 +76,11 @@ export default function AccessLocked({
             />
             <span className="relative inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] bg-white/15 backdrop-blur-md px-3 py-1 rounded-full mb-4">
               <Lock className="w-3 h-3" />
-              {lock.hasLapsed ? "Membership expired" : "Membership required"}
+              One-time payment
             </span>
 
             <h2 className="relative text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight mb-2.5">
-              {lock.hasLapsed ? "Renew to unlock vacancies again" : lock.title}
+              {lock.title}
             </h2>
             <p className="relative text-[13px] sm:text-sm text-white/85 leading-relaxed max-w-md mx-auto">
               {lock.message}
@@ -91,10 +89,10 @@ export default function AccessLocked({
             <div className="relative flex items-baseline justify-center gap-1.5 mt-6">
               <span className="text-2xl font-bold">₹</span>
               <span className="text-5xl sm:text-6xl font-extrabold tracking-tight tabular-nums">99</span>
-              <span className="text-sm font-semibold text-white/75">/ month</span>
+              <span className="text-sm font-semibold text-white/75">once</span>
             </div>
             <p className="relative text-[11px] text-white/70 mt-1.5">
-              30 days of full access · renews only when you choose
+              Pay once · no monthly fee · no renewal
             </p>
           </div>
 
@@ -119,7 +117,7 @@ export default function AccessLocked({
                 onClick={onActivate}
                 className="w-full h-14 rounded-2xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-[15px] font-extrabold shadow-[0_10px_26px_rgb(217,26,36,0.26)] active:scale-[0.99] transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
               >
-                {lock.hasLapsed ? "Renew for ₹99/month" : "Activate for ₹99/month"}
+                Activate for ₹99
                 <ArrowRight className="w-[18px] h-[18px]" />
               </button>
             ) : (
@@ -127,7 +125,7 @@ export default function AccessLocked({
                 href={`/trainer/${trainerSlug}/subscription`}
                 className="w-full h-14 rounded-2xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-[15px] font-extrabold shadow-[0_10px_26px_rgb(217,26,36,0.26)] active:scale-[0.99] transition-all inline-flex items-center justify-center gap-2"
               >
-                {lock.hasLapsed ? "Renew for ₹99/month" : "Activate for ₹99/month"}
+                Activate for ₹99
                 <ArrowRight className="w-[18px] h-[18px]" />
               </Link>
             )}
@@ -140,7 +138,7 @@ export default function AccessLocked({
                 <Check className="w-3.5 h-3.5 text-emerald-500" /> Secure UPI &amp; card payment
               </span>
               <span className="inline-flex items-center gap-1">
-                <Check className="w-3.5 h-3.5 text-emerald-500" /> No auto-charge
+                <Check className="w-3.5 h-3.5 text-emerald-500" /> Charged once, never again
               </span>
             </p>
           </div>
@@ -149,7 +147,7 @@ export default function AccessLocked({
         <p className="text-center text-[11px] text-gray-400 mt-4">
           Already paid?{" "}
           <Link href={`/trainer/${trainerSlug}/subscription`} className="font-bold text-gray-600 hover:text-[#d91a24]">
-            Check your membership status
+            Check your activation status
           </Link>
         </p>
       </div>
@@ -254,11 +252,11 @@ export default function AccessLocked({
         )}
 
         {/* Let them clear the second gate while the first is still in progress. */}
-        {isReview && lock.membershipActive === false && (
+        {isReview && lock.isActivated === false && (
           <div className="mt-5 pt-5 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center gap-3">
             <p className="text-[11px] sm:text-xs text-gray-500 leading-relaxed flex-1">
-              <span className="font-bold text-gray-700">One more step after this:</span> an active ₹99/month
-              membership. You can activate now so your profile goes live the moment you&apos;re approved.
+              <span className="font-bold text-gray-700">One more step after this:</span> a one-time ₹99
+              activation. You can pay now so your profile goes live the moment you&apos;re approved.
             </p>
             {onActivate ? (
               <button

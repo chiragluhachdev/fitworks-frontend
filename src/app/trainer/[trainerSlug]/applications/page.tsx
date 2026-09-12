@@ -64,7 +64,7 @@ export default function TrainerApplicationsPage() {
         setTrainer(trainerData.data);
 
         // Same two gates as the jobs page, from the record already in hand.
-        const blocked = getTrainerLock(trainerData.data.verificationStatus, trainerData.subscription);
+        const blocked = getTrainerLock(trainerData.data.verificationStatus, trainerData.activation);
         setLock(blocked);
         if (blocked) {
           setLoading(false);
@@ -130,7 +130,6 @@ export default function TrainerApplicationsPage() {
         trainerName={trainer?.personal?.fullName}
         trainerEmail={trainer?.personal?.email}
         trainerPhone={trainer?.personal?.phone}
-        isRenewal={(trainer?.subscription?.cyclesPaid ?? 0) > 0}
         heading="My Job Applications"
         subheading="Track the hiring status of your submitted gym applications or withdraw them."
         onUnlocked={fetchApplications}

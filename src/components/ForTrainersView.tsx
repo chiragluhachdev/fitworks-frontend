@@ -73,9 +73,9 @@ export default function ForTrainersView() {
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-[#d91a24] shrink-0" />
-                  <span className="text-[13px] font-bold text-gray-900 leading-none">100% Free</span>
+                  <span className="text-[13px] font-bold text-gray-900 leading-none">One-time ₹99</span>
                 </div>
-                <span className="text-[11px] text-gray-500 leading-tight">No registration fee</span>
+                <span className="text-[11px] text-gray-500 leading-tight">No monthly fee, ever</span>
               </div>
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1.5">
