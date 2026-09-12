@@ -67,7 +67,7 @@ const trainerSteps = [
     title: "Grow Career",
     subtitle: "Build Income",
     description:
-      "Get discovered by gyms actively hiring, apply to open vacancies and grow your client base with real opportunities.",
+      "Browse vacancies from gyms actively hiring, apply to the ones that fit, and grow your career with real opportunities.",
     icon: Zap,
     highlights: ["Direct gym invites", "Apply to vacancies", "Track every application"],
   },

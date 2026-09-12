@@ -11,8 +11,6 @@ export default function robots(): MetadataRoute.Robots {
           "/",
           "/for-gyms",
           "/for-trainers",
-          "/find-trainers",
-          "/trainers",
           "/about",
           "/contact",
           "/pricing",

@@ -48,7 +48,7 @@ export default function PricingPage() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900">For Trainers</h3>
-                <p className="text-xs text-gray-500 mt-1">Get verified and discovered by top gyms.</p>
+                <p className="text-xs text-gray-500 mt-1">Apply to gym vacancies across India.</p>
               </div>
               <div className="pt-2">
                 <span className="text-4xl font-extrabold text-gray-900">₹99</span>
@@ -65,7 +65,7 @@ export default function PricingPage() {
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Visible to every hiring gym in India</span>
+                  <span>Gyms see your profile when you apply</span>
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -77,7 +77,7 @@ export default function PricingPage() {
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Direct Gym Interview Invitations</span>
+                  <span>No monthly fee — pay once</span>
                 </li>
               </ul>
             </div>

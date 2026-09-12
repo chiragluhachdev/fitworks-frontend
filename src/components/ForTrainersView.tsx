@@ -47,7 +47,7 @@ export default function ForTrainersView() {
             <p className="text-base lg:text-[17px] text-gray-500 mb-7 max-w-[480px] leading-relaxed">
               Join India&apos;s trusted platform for fitness professionals.
               <br className="hidden sm:block" />
-              Get discovered by top gyms and studios that value your skills.
+              Apply to vacancies at top gyms and studios that value your skills.
             </p>
 
             {/* CTA Buttons */}

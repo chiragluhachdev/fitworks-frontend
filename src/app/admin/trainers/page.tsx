@@ -372,7 +372,7 @@ export default function AdminTrainers() {
                             <div className="text-[11px] text-gray-500 font-medium">
                               {act?.isActive
                                 ? `Activated ${new Date(act.activatedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`
-                                : "Not visible to gyms"}
+                                : "Can't apply yet"}
                             </div>
                             {trainer.accountActive ? (
                               <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wide">

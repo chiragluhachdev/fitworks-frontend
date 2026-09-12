@@ -158,7 +158,7 @@ export default function TrainerDashboardPage() {
             </div>
             <p className="text-[13px] sm:text-sm text-gray-500 leading-relaxed">
               {!activation?.isActive
-                ? "Activate your profile for ₹99 to appear in gym search and start applying."
+                ? "Activate your profile for ₹99 to start applying to gym vacancies."
                 : status !== "verified"
                 ? "Your ₹99 is paid. Your profile goes live to gyms as soon as our team approves your documents."
                 : pendingInvites > 0
@@ -212,15 +212,15 @@ export default function TrainerDashboardPage() {
         </span>
         <div className="min-w-0 flex-1">
           <p className={`text-sm font-bold ${accountActive ? "text-emerald-900" : "text-gray-900"}`}>
-            {accountActive ? "Your profile is live in gym search" : "Your profile is not visible to gyms yet"}
+            {accountActive ? "Your profile is active" : "Your profile isn't active yet"}
           </p>
           <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 leading-relaxed">
             {accountActive
-              ? "Verified and activated — hiring gyms can find and contact you."
+              ? "You can apply to any open vacancy — gyms see your profile with each application."
               : !activation?.isActive && status !== "verified"
               ? "Two things left: a one-time ₹99 activation, and getting your documents approved."
               : !activation?.isActive
-              ? "Your profile isn't activated. A one-time ₹99 makes it visible in gym search."
+              ? "Your profile isn't activated. A one-time ₹99 unlocks applying to vacancies."
               : status === "rejected"
               ? "Your documents were not approved. Re-upload them from the Verification page."
               : "Our team is still reviewing your documents."}

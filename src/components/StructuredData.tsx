@@ -36,14 +36,6 @@ export default function StructuredData() {
         "description": "Find and hire verified fitness trainers and coaches across India.",
         "publisher": {
           "@id": "https://fitworks.in/#organization"
-        },
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://fitworks.in/find-trainers?q={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
         }
       },
       {

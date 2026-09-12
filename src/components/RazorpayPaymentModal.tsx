@@ -28,7 +28,7 @@ const BENEFITS = [
   {
     icon: ShieldCheck,
     tone: "bg-emerald-100 text-emerald-600",
-    title: "Visible in gym search",
+    title: "Apply to any vacancy",
     body: "Hiring gyms can find, shortlist and contact you directly.",
   },
   {
@@ -196,7 +196,7 @@ export default function RazorpayPaymentModal({
             Activate your FitWorks profile
           </h2>
           <p className="text-white/80 text-xs mt-1.5 max-w-xs mx-auto leading-relaxed">
-            Your profile stays hidden from gyms until it&apos;s activated. Pay once — that&apos;s it.
+You can&apos;t apply to vacancies until your profile is activated. Pay once — that&apos;s it.
           </p>
 
           <div className="mt-4 inline-flex items-baseline gap-1.5 bg-white/10 px-4 py-2.5 rounded-2xl border border-white/20 backdrop-blur-sm">

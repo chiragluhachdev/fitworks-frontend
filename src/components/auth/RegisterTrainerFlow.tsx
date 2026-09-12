@@ -392,12 +392,12 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
           Profile Created Successfully!
         </h2>
         <p className="text-gray-500 text-xs md:text-sm mb-6 max-w-md">
-          Welcome to FitWorks. Two things unlock your profile for hiring gyms:
-          our team approving your documents, and an active ₹99/month membership.
-          You can activate now and we&apos;ll review your documents in parallel.
+          Welcome to FitWorks. One step left — a one-time ₹99 to activate your
+          profile. Pay once and you can start applying to gym vacancies right
+          away, with no monthly fee and nothing more to pay later.
         </p>
 
-        {/* ₹99 / month activation card */}
+        {/* One-time ₹99 activation card */}
         <div className="w-full max-w-md bg-gradient-to-br from-red-50/70 to-orange-50/50 border border-red-200/80 rounded-2xl p-5 mb-5 text-left shadow-xs">
           <div className="flex items-center justify-between gap-3 mb-3">
             <div className="flex items-center gap-2 min-w-0">
@@ -417,14 +417,14 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
           <div className="flex items-start gap-2 p-2.5 mb-3 rounded-xl bg-white/70 border border-red-100">
             <Lock className="w-3.5 h-3.5 text-[#d91a24] shrink-0 mt-0.5" />
             <p className="text-[11px] font-semibold text-gray-700 leading-relaxed">
-              Your profile is hidden from gym search until your membership is active.
+              You can&apos;t apply to vacancies until your profile is activated.
             </p>
           </div>
 
           <ul className="space-y-1.5 text-xs text-gray-600 mb-4 font-medium">
             <li className="flex items-start gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
-              Visible to every hiring gym on FitWorks
+              Apply to every open gym vacancy
             </li>
             <li className="flex items-start gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
@@ -440,11 +440,11 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
             onClick={() => setShowPaymentModal(true)}
             className="w-full h-12 bg-[#d91a24] hover:bg-[#c2141d] active:scale-[0.99] text-white py-5 rounded-xl font-bold text-sm shadow-md shadow-red-500/20 flex items-center justify-center gap-2 cursor-pointer transition-all"
           >
-            <Lock className="w-4 h-4" /> Activate for ₹99 / month
+            <Lock className="w-4 h-4" /> Activate for ₹99
           </Button>
 
           <p className="text-[10px] text-gray-400 text-center mt-2.5 leading-relaxed">
-            Renews every 30 days. Cancel any time by simply not renewing.
+            Charged once. No monthly fee and no renewal, ever.
           </p>
         </div>
 

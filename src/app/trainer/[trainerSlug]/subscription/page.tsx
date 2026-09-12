@@ -30,10 +30,10 @@ const fmt = (iso?: string | null) =>
 
 /** What activation unlocks — the same list the paywall shows. */
 const INCLUDED = [
-  { Icon: BadgeCheck, label: "Visible to every hiring gym in India" },
-  { Icon: Search, label: "Browse all open vacancies" },
+  { Icon: Search, label: "Browse every open gym vacancy" },
   { Icon: Send, label: "Apply to unlimited roles" },
-  { Icon: Sparkles, label: "Receive direct interview invitations" },
+  { Icon: BadgeCheck, label: "Gyms see your full profile when you apply" },
+  { Icon: Sparkles, label: "Paid once — no monthly fee, no renewal" },
 ];
 
 export default function TrainerActivationPage() {
@@ -118,7 +118,7 @@ export default function TrainerActivationPage() {
             <p className="text-[13px] text-gray-500 leading-relaxed">
               {isActive
                 ? `Activated ${fmt(activation?.activatedAt)} — your profile stays live permanently. Nothing more to pay.`
-                : "Not activated yet — your profile is hidden from gym search."}
+                : "Not activated yet — you can't apply to vacancies."}
             </p>
           </div>
 

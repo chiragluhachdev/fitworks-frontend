@@ -30,8 +30,8 @@ export interface LockInfo {
 const BENEFITS = [
   { Icon: Search, label: "Browse every open vacancy", body: "Live roles from partner gyms across India." },
   { Icon: Send, label: "Apply to unlimited roles", body: "No per-application fees, ever." },
-  { Icon: BadgeCheck, label: "Appear in gym search", body: "Hiring gyms find and shortlist your profile." },
-  { Icon: Sparkles, label: "Get direct invitations", body: "Gyms reach out to you with interview requests." },
+  { Icon: BadgeCheck, label: "Your profile goes with it", body: "The gym sees your full profile on every application." },
+  { Icon: Sparkles, label: "Paid once, not monthly", body: "No renewal, no recurring charge, ever." },
 ];
 
 const REVIEW_STEPS = [

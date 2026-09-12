@@ -34,7 +34,7 @@ We look forward to helping you discover new opportunities.`,
 
 Good news — your FitWorks profile is verified ✅ and activated.
 
-You're now live in gym search, so hiring gyms can find and contact you.
+You can now browse and apply to gym vacancies. Gyms see your full profile with each application.
 
 Log in here to browse open vacancies:
 🔗 {link}

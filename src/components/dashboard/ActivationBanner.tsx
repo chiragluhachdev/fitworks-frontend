@@ -41,8 +41,8 @@ export default function ActivationBanner({
           <p className="text-[13px] font-bold text-emerald-900 leading-tight">Profile activated</p>
           <p className="text-[11px] text-emerald-700/80 mt-0.5">
             {activation.activatedAt
-              ? `Activated ${formatDate(activation.activatedAt)} · nothing more to pay`
-              : "Nothing more to pay — your profile stays live"}
+              ? `Activated ${formatDate(activation.activatedAt)} · apply to any vacancy, nothing more to pay`
+              : "Apply to any vacancy — nothing more to pay"}
           </p>
         </div>
       </div>
@@ -64,8 +64,8 @@ export default function ActivationBanner({
             </span>
           </div>
           <p className="text-[13px] text-white/85 leading-relaxed">
-            Your profile stays hidden from gyms until it&apos;s activated. Pay ₹99 once — no monthly fee, no
-            renewal.
+            You can&apos;t apply to vacancies until your profile is activated. Pay ₹99 once — no monthly
+            fee, no renewal.
           </p>
         </div>
 
