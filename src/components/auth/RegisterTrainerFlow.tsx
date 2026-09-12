@@ -339,7 +339,9 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
         const leadTrackedKey = `fw_lead_tracked_${data.user?._id || data.trainer?.slug || verifiedPhone || "success"}`;
         if (!sessionStorage.getItem(leadTrackedKey)) {
           sessionStorage.setItem(leadTrackedKey, "1");
-          if (typeof fbq === "function") {
+          if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
+            (window as any).fbq('track', 'Lead');
+          } else if (typeof fbq === "function") {
             fbq('track', 'Lead');
           }
         }
