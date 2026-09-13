@@ -29,7 +29,7 @@ export default function WhatsAppButton({
   variant?: "icon" | "full";
 }) {
   const href = buildWhatsAppUrl(trainer);
-  const label = trainer.subscriptionState?.isActive
+  const label = trainer.activation?.isActive
     ? "Message on WhatsApp"
     : "Send activation message";
 

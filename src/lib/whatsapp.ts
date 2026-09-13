@@ -6,7 +6,7 @@ const WA_COUNTRY_CODE = "91";
 export interface WhatsAppTrainer {
   personal?: { fullName?: string; phone?: string };
   slug?: string;
-  subscriptionState?: { isActive?: boolean };
+  activation?: { isActive?: boolean };
 }
 
 /**
@@ -63,7 +63,7 @@ export const buildWhatsAppUrl = (trainer: WhatsAppTrainer): string | null => {
   const number = whatsappNumber(trainer.personal?.phone);
   if (!number) return null;
 
-  const isActive = Boolean(trainer.subscriptionState?.isActive);
+  const isActive = Boolean(trainer.activation?.isActive);
   // One link for everyone: /auth sends an existing session straight to the
   // dashboard and asks anyone else to sign in first. A deep link would have to
   // guess whether the phone it lands on is already signed in.

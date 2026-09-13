@@ -719,7 +719,7 @@ export default function AdminTrainers() {
                     trainer={{
                       personal: selectedTrainer.personal,
                       slug: selectedTrainer.slug,
-                      subscriptionState: detail?.activation ?? selectedTrainer.activation,
+                      activation: detail?.activation ?? selectedTrainer.activation,
                     }}
                     variant="full"
                   />
