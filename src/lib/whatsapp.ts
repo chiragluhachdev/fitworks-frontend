@@ -31,7 +31,7 @@ To get your trainer profile verified ✅, please upload your documents — a fit
 Log in and open "Verification" to upload:
 🔗 {link}
 
-Gyms across India are posting vacancies for trainers on FitWorks 💪`,
+We connect you with gyms searching for trainers 💪`,
 
   /** Pending, documents already in — don't ask for them again. */
   review: `Hi {name}! 👋
@@ -44,7 +44,7 @@ We've received your documents and our team is reviewing them for verification �
 Log in here:
 🔗 {link}
 
-Gyms across India are posting vacancies for trainers on FitWorks 💪`,
+We connect you with gyms searching for trainers 💪`,
 
   /** Verified but hasn't paid — the nudge that earns the one-time ₹99. */
   activate: `Hi {name}! 👋
