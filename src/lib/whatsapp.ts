@@ -23,9 +23,7 @@ export const WHATSAPP_TEMPLATES = {
   upload: `Hi {name}! 👋
 Thanks for registering with FitWorks.
 
-To get your trainer profile verified ✅, please upload your documents — a fitness certificate and a government ID (Aadhaar or PAN).
-
-{activation}
+To get your trainer profile verified ✅, please upload your documents — a fitness certificate and a government ID (Aadhaar or PAN){activation}
 
 Log in and open "Verification" to upload:
 🔗 {link}
@@ -97,9 +95,11 @@ export const buildWhatsAppUrl = (trainer: WhatsAppTrainer): string | null => {
   const link = `${SITE}/auth`;
 
   const template = pickTemplate(trainer);
+  // Only the pending message uses this. It completes that message's sentence,
+  // so a trainer who has already paid just gets the full stop.
   const activation = isActive
-    ? ""
-    : "Activate your profile for just ₹99 one-time — no monthly fee — and start applying to gym vacancies right away.";
+    ? "."
+    : ", and activate your profile for just ₹99 one-time — no monthly fee — to start applying to gym vacancies right away.";
 
   const text = WHATSAPP_TEMPLATES[template]
     .replace("{name}", firstName(trainer.personal?.fullName))
