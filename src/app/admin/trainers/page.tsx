@@ -720,7 +720,6 @@ export default function AdminTrainers() {
                       personal: selectedTrainer.personal,
                       slug: selectedTrainer.slug,
                       verificationStatus: selectedTrainer.verificationStatus,
-                      verificationDocuments: selectedTrainer.verificationDocuments,
                       activation: detail?.activation ?? selectedTrainer.activation,
                     }}
                     variant="full"

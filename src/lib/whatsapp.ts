@@ -8,7 +8,6 @@ export interface WhatsAppTrainer {
   slug?: string;
   activation?: { isActive?: boolean };
   verificationStatus?: string;
-  verificationDocuments?: string[];
 }
 
 /**
@@ -20,7 +19,7 @@ export interface WhatsAppTrainer {
  * already paid.
  */
 export const WHATSAPP_TEMPLATES = {
-  /** Pending, nothing uploaded yet — ask for documents. */
+  /** Pending — ask them to upload documents so they can be verified. */
   upload: `Hi {name}! 👋
 Thanks for registering with FitWorks.
 
@@ -29,19 +28,6 @@ To get your trainer profile verified ✅, please upload your documents — a fit
 {activation}
 
 Log in and open "Verification" to upload:
-🔗 {link}
-
-We connect you with gyms searching for trainers 💪`,
-
-  /** Pending, documents already in — don't ask for them again. */
-  review: `Hi {name}! 👋
-Thanks for registering with FitWorks.
-
-We've received your documents and our team is reviewing them for verification ✅
-
-{activation}
-
-Log in here:
 🔗 {link}
 
 We connect you with gyms searching for trainers 💪`,
@@ -76,14 +62,11 @@ We look forward to helping you discover new opportunities.`,
 export type WhatsAppTemplate = keyof typeof WHATSAPP_TEMPLATES;
 
 /**
- * Which message fits this trainer's situation. Asking someone to upload
- * documents they already sent, or to pay for something they bought, is exactly
- * the kind of message that makes a trainer stop trusting what we tell them.
+ * Which message fits this trainer: pending trainers are asked for documents,
+ * verified ones get the activation nudge or, once paid, the all-set message.
  */
 export const pickTemplate = (trainer: WhatsAppTrainer): WhatsAppTemplate => {
-  if (trainer.verificationStatus === "pending") {
-    return (trainer.verificationDocuments?.length ?? 0) > 0 ? "review" : "upload";
-  }
+  if (trainer.verificationStatus === "pending") return "upload";
   return trainer.activation?.isActive ? "live" : "activate";
 };
 

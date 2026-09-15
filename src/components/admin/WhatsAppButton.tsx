@@ -31,7 +31,6 @@ export default function WhatsAppButton({
   const href = buildWhatsAppUrl(trainer);
   const label = {
     upload: "Ask for documents",
-    review: "Send review update",
     activate: "Send activation message",
     live: "Message on WhatsApp",
   }[pickTemplate(trainer)];
