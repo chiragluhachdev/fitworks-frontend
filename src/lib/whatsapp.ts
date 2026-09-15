@@ -7,15 +7,45 @@ export interface WhatsAppTrainer {
   personal?: { fullName?: string; phone?: string };
   slug?: string;
   activation?: { isActive?: boolean };
+  verificationStatus?: string;
+  verificationDocuments?: string[];
 }
 
 /**
- * Message sent to a trainer the moment an admin approves them.
+ * Messages an admin sends a trainer from the trainers table.
  *
- * Edit freely — this is the only place the copy lives. `{name}` and `{link}`
- * are substituted; everything else is sent verbatim, newlines included.
+ * Edit freely — this is the only place the copy lives. `{name}`, `{link}` and
+ * `{activation}` are substituted; everything else is sent verbatim, newlines
+ * included. `{activation}` is the ₹99 pitch, and is dropped for anyone who has
+ * already paid.
  */
 export const WHATSAPP_TEMPLATES = {
+  /** Pending, nothing uploaded yet — ask for documents. */
+  upload: `Hi {name}! 👋
+Thanks for registering with FitWorks.
+
+To get your trainer profile verified ✅, please upload your documents — a fitness certificate and a government ID (Aadhaar or PAN).
+
+{activation}
+
+Log in and open "Verification" to upload:
+🔗 {link}
+
+Gyms across India are posting vacancies for trainers on FitWorks 💪`,
+
+  /** Pending, documents already in — don't ask for them again. */
+  review: `Hi {name}! 👋
+Thanks for registering with FitWorks.
+
+We've received your documents and our team is reviewing them for verification ✅
+
+{activation}
+
+Log in here:
+🔗 {link}
+
+Gyms across India are posting vacancies for trainers on FitWorks 💪`,
+
   /** Verified but hasn't paid — the nudge that earns the one-time ₹99. */
   activate: `Hi {name}! 👋
 Thanks for registering with FitWorks.
@@ -41,6 +71,20 @@ Log in here to browse open vacancies:
 
 Welcome to FitWorks! 💪
 We look forward to helping you discover new opportunities.`,
+};
+
+export type WhatsAppTemplate = keyof typeof WHATSAPP_TEMPLATES;
+
+/**
+ * Which message fits this trainer's situation. Asking someone to upload
+ * documents they already sent, or to pay for something they bought, is exactly
+ * the kind of message that makes a trainer stop trusting what we tell them.
+ */
+export const pickTemplate = (trainer: WhatsAppTrainer): WhatsAppTemplate => {
+  if (trainer.verificationStatus === "pending") {
+    return (trainer.verificationDocuments?.length ?? 0) > 0 ? "review" : "upload";
+  }
+  return trainer.activation?.isActive ? "live" : "activate";
 };
 
 /** First name only — "Hi Trilokeswari!" reads warmer than the full name. */
@@ -69,9 +113,17 @@ export const buildWhatsAppUrl = (trainer: WhatsAppTrainer): string | null => {
   // guess whether the phone it lands on is already signed in.
   const link = `${SITE}/auth`;
 
-  const text = (isActive ? WHATSAPP_TEMPLATES.live : WHATSAPP_TEMPLATES.activate)
+  const template = pickTemplate(trainer);
+  const activation = isActive
+    ? ""
+    : "Activate your profile for just ₹99 one-time — no monthly fee — and start applying to gym vacancies right away.";
+
+  const text = WHATSAPP_TEMPLATES[template]
     .replace("{name}", firstName(trainer.personal?.fullName))
-    .replace("{link}", link);
+    .replace("{link}", link)
+    .replace("{activation}", activation)
+    // An empty {activation} leaves a double gap behind; close it up.
+    .replace(/\n{3,}/g, "\n\n");
 
   return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
 };

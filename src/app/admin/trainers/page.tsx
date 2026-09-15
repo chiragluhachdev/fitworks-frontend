@@ -406,7 +406,7 @@ export default function AdminTrainers() {
                           Approve
                         </button>
                       )}
-                      {trainer.verificationStatus === "verified" && (
+                      {trainer.verificationStatus !== "rejected" && (
                         <WhatsAppButton trainer={trainer} />
                       )}
 
@@ -714,11 +714,13 @@ export default function AdminTrainers() {
               
               <div className="flex flex-wrap items-center gap-2">
                 {/* Reaching out is the natural next action right after approving. */}
-                {selectedTrainer.verificationStatus === "verified" && (
+                {selectedTrainer.verificationStatus !== "rejected" && (
                   <WhatsAppButton
                     trainer={{
                       personal: selectedTrainer.personal,
                       slug: selectedTrainer.slug,
+                      verificationStatus: selectedTrainer.verificationStatus,
+                      verificationDocuments: selectedTrainer.verificationDocuments,
                       activation: detail?.activation ?? selectedTrainer.activation,
                     }}
                     variant="full"

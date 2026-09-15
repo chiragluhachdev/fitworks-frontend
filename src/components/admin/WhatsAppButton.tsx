@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { buildWhatsAppUrl, type WhatsAppTrainer } from "@/lib/whatsapp";
+import { buildWhatsAppUrl, pickTemplate, type WhatsAppTrainer } from "@/lib/whatsapp";
 
 /** WhatsApp's glyph — lucide has no brand icons. */
 function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
@@ -29,9 +29,12 @@ export default function WhatsAppButton({
   variant?: "icon" | "full";
 }) {
   const href = buildWhatsAppUrl(trainer);
-  const label = trainer.activation?.isActive
-    ? "Message on WhatsApp"
-    : "Send activation message";
+  const label = {
+    upload: "Ask for documents",
+    review: "Send review update",
+    activate: "Send activation message",
+    live: "Message on WhatsApp",
+  }[pickTemplate(trainer)];
 
   if (!href) {
     return (
