@@ -13,6 +13,9 @@ export interface WhatsAppTrainer {
 /**
  * Messages an admin sends a trainer from the trainers table.
  *
+ * No emoji. WhatsApp Desktop turns emoji in pre-filled link text into "�",
+ * while ₹ and — come through intact, so stick to plain characters.
+ *
  * Edit freely — this is the only place the copy lives. `{name}`, `{link}` and
  * `{activation}` are substituted; everything else is sent verbatim, newlines
  * included. `{activation}` is the ₹99 pitch, and is dropped for anyone who has
@@ -20,40 +23,40 @@ export interface WhatsAppTrainer {
  */
 export const WHATSAPP_TEMPLATES = {
   /** Pending — ask them to upload documents so they can be verified. */
-  upload: `Hi {name}! 👋
+  upload: `Hi {name}!
 Thanks for registering with FitWorks.
 
-To get your trainer profile verified ✅, please upload your documents — a fitness certificate and a government ID (Aadhaar or PAN){activation}
+To get your trainer profile verified, please upload your documents — a fitness certificate and a government ID (Aadhaar or PAN){activation}
 
 Log in and open "Verification" to upload:
-🔗 {link}
+{link}
 
-We connect you with gyms searching for trainers 💪`,
+We connect you with gyms searching for trainers.`,
 
   /** Verified but hasn't paid — the nudge that earns the one-time ₹99. */
-  activate: `Hi {name}! 👋
+  activate: `Hi {name}!
 Thanks for registering with FitWorks.
 
-Your trainer account is verified! ✅
+Your trainer account is verified!
 Just one step left — a one-time ₹99 to activate your profile and start applying to gym vacancies. No monthly fee.
 
 Log in here to activate:
-🔗 {link}
+{link}
 
-Welcome to FitWorks! 💪
+Welcome to FitWorks!
 We look forward to helping you discover new opportunities.`,
 
   /** Verified and already activated — nothing to sell, so don't. */
-  live: `Hi {name}! 👋
+  live: `Hi {name}!
 
-Good news — your FitWorks profile is verified ✅ and activated.
+Good news — your FitWorks profile is verified and activated.
 
 You can now browse and apply to gym vacancies. Gyms see your full profile with each application.
 
 Log in here to browse open vacancies:
-🔗 {link}
+{link}
 
-Welcome to FitWorks! 💪
+Welcome to FitWorks!
 We look forward to helping you discover new opportunities.`,
 };
 
