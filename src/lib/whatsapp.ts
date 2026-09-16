@@ -21,14 +21,19 @@ export interface WhatsAppTrainer {
 export const WHATSAPP_TEMPLATES = {
   /** Pending — ask them to upload documents so they can be verified. */
   upload: `Hi {name}!
-Thanks for registering with FitWorks.
 
-To get your trainer profile verified, please upload your documents — a fitness certificate and a government ID (Aadhaar or PAN). FitWorks is free for trainers, so you can browse and apply to gym vacancies right away.
+Thanks for registering with FitWorks!
 
-Log in and open "Verification" to upload:
+To get your trainer profile verified, please upload your fitness certificate or a government ID (Aadhaar or PAN).
+
+Once verified, we'll help connect you with gyms and fitness centres looking for trainers, based on your profile and location. Whenever a relevant opportunity comes up, our team will reach out to you.
+
+Log in and open "Verification" to upload your documents:
 {link}
 
-We connect you with gyms searching for trainers.`,
+Keep your profile updated and stay ready for your next fitness opportunity.
+
+Team FitWorks`,
 
   /** Approved — congratulate, then set the expectation of what happens next. */
   live: `Hi {name}!
