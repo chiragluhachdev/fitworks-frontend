@@ -33,14 +33,15 @@ We connect you with gyms searching for trainers.`,
   /** Approved — congratulate, then set the expectation of what happens next. */
   live: `Hi {name}!
 
-Thanks for registering with FitWorks — your profile has been approved and is now active.
+Your FitWorks profile has been approved and is now active!
 
-You can start applying to gym vacancies right away, and we'll also reach out as soon as we have openings that match your profile and your city.
+From here, we'll work to connect you with gyms looking for trainers and fitness professionals. When a suitable opportunity matches your profile and location, we'll reach out to you directly.
 
-Log in here:
+Keep your profile updated and stay ready for your next opportunity.
+
 {link}
 
-Stay tuned, and welcome aboard.
+Your next fitness career opportunity could be closer than you think.
 Team FitWorks`,
 };
 
