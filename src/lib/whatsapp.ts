@@ -55,6 +55,7 @@ Keep your profile updated and stay ready for your next opportunity.
 {link}
 
 Your next fitness career opportunity could be closer than you think.
+
 Team FitWorks`,
 };
 
