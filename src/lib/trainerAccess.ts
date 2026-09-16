@@ -15,10 +15,19 @@ export interface LockableTrainer {
 /**
  * Client-side mirror of the server's getJobAccess.
  *
- * FitWorks is free for trainers, so the only thing that blocks access is an
- * explicit rejection. A pending review does not.
+ * Verification is the gate, and it is free: an approved profile is active, and
+ * anything before approval is not.
  */
 export const getTrainerLock = (verificationStatus: string | undefined): LockInfo | null => {
+  if (verificationStatus === "pending") {
+    return {
+      reason: "pending_review",
+      title: "Your profile is under review",
+      message:
+        "Our team is checking the documents you uploaded. Once approved, your profile goes active and every gym vacancy unlocks here — usually within 24 hours.",
+    };
+  }
+
   if (verificationStatus === "rejected") {
     return {
       reason: "rejected",

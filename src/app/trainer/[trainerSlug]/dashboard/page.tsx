@@ -124,8 +124,8 @@ export default function TrainerDashboardPage() {
   const verification = status ? VERIFICATION_PILL[status] : undefined;
   // "Active" means approved AND paid. Verification alone never makes a profile
   // live, so it must never be presented as if it does.
-  // Free platform: a profile is live unless it was rejected.
-  const accountActive = status !== "rejected";
+  // Verification is the gate: approved means active, nothing else does.
+  const accountActive = status === "verified";
   const pendingInvites = connections.filter((c: any) => c.status === "pending").length;
 
   return (
@@ -148,7 +148,9 @@ export default function TrainerDashboardPage() {
               )}
             </div>
             <p className="text-[13px] sm:text-sm text-gray-500 leading-relaxed">
-              {status === "rejected"
+              {status === "pending"
+                ? "Your documents are under review. Your profile goes active once approved."
+                : status === "rejected"
                 ? "Your documents weren't approved. Re-upload them to get verified."
                 : pendingInvites > 0
                 ? `You have ${pendingInvites} gym invitation${pendingInvites > 1 ? "s" : ""} waiting for a reply.`
@@ -192,9 +194,9 @@ export default function TrainerDashboardPage() {
           </p>
           <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 leading-relaxed">
             {accountActive
-              ? status === "verified"
-                ? "Verified — apply to any open vacancy, and gyms see your profile with each application."
-                : "You can apply to any open vacancy. Your verified badge appears once our team approves your documents."
+              ? "Verified — apply to any open vacancy, and gyms see your profile with each application."
+              : status === "pending"
+              ? "Our team is reviewing your documents. Nothing to pay — your profile goes active once approved."
               : "Your documents were not approved. Re-upload them from the Verification page."}
           </p>
         </div>
@@ -226,10 +228,10 @@ export default function TrainerDashboardPage() {
         />
         <StatCard
           label="Profile"
-          value={status === "rejected" ? "Action needed" : status === "verified" ? "Verified" : "Active"}
+          value={status === "verified" ? "Active" : status === "rejected" ? "Action needed" : "Pending"}
           icon={CalendarClock}
-          tone={status === "rejected" ? "red" : "green"}
-          hint={status === "verified" ? "verified badge" : "free to use"}
+          tone={status === "verified" ? "green" : status === "rejected" ? "red" : "amber"}
+          hint={status === "verified" ? "live · free" : "activates on approval"}
           href={`/trainer/${trainerSlug}/verification`}
         />
       </div>
@@ -249,7 +251,11 @@ export default function TrainerDashboardPage() {
                explains why instead of showing an empty list. */
             <div className="p-5 sm:p-6 rounded-2xl bg-gray-50/80 border border-gray-100 text-center">
               <span className="w-12 h-12 rounded-2xl bg-white border border-gray-200 text-[#d91a24] flex items-center justify-center mx-auto mb-3.5">
-                <Lock className="w-6 h-6" />
+                {jobAccess.reason === "pending_review" ? (
+                  <Clock className="w-6 h-6 text-amber-500" />
+                ) : (
+                  <Lock className="w-6 h-6" />
+                )}
               </span>
               <h3 className="text-sm font-extrabold text-gray-900 mb-1.5">{jobAccess.title}</h3>
               <p className="text-[12px] sm:text-[13px] text-gray-500 leading-relaxed mb-5 max-w-sm mx-auto">
