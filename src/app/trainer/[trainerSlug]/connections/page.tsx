@@ -41,7 +41,7 @@ export default function TrainerConnectionsPage() {
 
   const [connections, setConnections] = useState<ConnectionItem[]>([]);
   const [loading, setLoading] = useState(true);
-  // Set when the profile isn't approved or the membership isn't paid.
+  // Set when the profile was rejected.
   const [lock, setLock] = useState<LockInfo | null>(null);
   const [trainer, setTrainer] = useState<LockableTrainer | null>(null);
   const [actionId, setActionId] = useState<string | null>(null);
@@ -58,7 +58,7 @@ export default function TrainerConnectionsPage() {
         setTrainer(trainerData.data);
 
         // Same two gates as the jobs page, from the record already in hand.
-        const blocked = getTrainerLock(trainerData.data.verificationStatus, trainerData.activation);
+        const blocked = getTrainerLock(trainerData.data.verificationStatus);
         setLock(blocked);
         if (blocked) {
           setLoading(false);
@@ -115,12 +115,8 @@ export default function TrainerConnectionsPage() {
       <LockedPage
         lock={lock}
         trainerSlug={trainerSlug}
-        trainerName={trainer?.personal?.fullName}
-        trainerEmail={trainer?.personal?.email}
-        trainerPhone={trainer?.personal?.phone}
         heading="Gym Interview Invitations"
         subheading="Accept connection requests from verified gyms interested in interviewing you."
-        onUnlocked={fetchConnections}
       />
     );
   }

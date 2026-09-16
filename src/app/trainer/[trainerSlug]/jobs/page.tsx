@@ -3,28 +3,25 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { 
-  Search, 
-  MapPin, 
-  Briefcase, 
-  IndianRupee, 
-  Send, 
-  Loader2, 
-  CheckCircle2, 
+import {
+  Search,
+  MapPin,
+  Briefcase,
+  IndianRupee,
+  Send,
+  Loader2,
+  CheckCircle2,
   X,
   Building2,
-  Calendar,
   Globe,
   ExternalLink,
-  Users,
   Eye,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { type LockInfo } from "@/components/dashboard/AccessLocked";
 import LockedPage from "@/components/dashboard/LockedPage";
 import { getTrainerLock, type LockableTrainer } from "@/lib/trainerAccess";
-import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 import { toast } from "react-hot-toast";
 
 interface Job {
@@ -66,10 +63,9 @@ export default function TrainerFindJobsPage() {
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
-  // Set when the API refuses access: unverified profile or inactive membership.
+  // Set when the API refuses access — only a rejected profile does that now.
   const [lock, setLock] = useState<LockInfo | null>(null);
   const [trainer, setTrainer] = useState<LockableTrainer | null>(null);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("");
 
@@ -95,7 +91,7 @@ export default function TrainerFindJobsPage() {
       const profile = await profileRes.json();
       if (profile.success && profile.data) {
         setTrainer(profile.data);
-        const blocked = getTrainerLock(profile.data.verificationStatus, profile.activation);
+        const blocked = getTrainerLock(profile.data.verificationStatus);
         if (blocked) {
           setLock(blocked);
           setJobs([]);
@@ -112,13 +108,12 @@ export default function TrainerFindJobsPage() {
       const json = await res.json();
 
       // The server stays the authority — it can refuse for a reason the profile
-      // check couldn't see, such as the membership lapsing mid-session.
+      // check couldn't see, such as a rejection landing mid-session.
       if (res.status === 403 && json.locked) {
         setLock({
           reason: json.reason,
           title: json.title,
           message: json.message,
-          isActivated: json.isActivated,
         });
         setJobs([]);
       } else if (json.success) {
@@ -198,12 +193,8 @@ export default function TrainerFindJobsPage() {
       <LockedPage
         lock={lock}
         trainerSlug={trainerSlug}
-        trainerName={trainer?.personal?.fullName}
-        trainerEmail={trainer?.personal?.email}
-        trainerPhone={trainer?.personal?.phone}
         heading="Gym vacancies"
         subheading="Open roles from partner gyms across India."
-        onUnlocked={fetchJobs}
       />
     );
   }

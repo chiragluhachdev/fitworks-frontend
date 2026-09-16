@@ -29,11 +29,7 @@ export default function WhatsAppButton({
   variant?: "icon" | "full";
 }) {
   const href = buildWhatsAppUrl(trainer);
-  const label = {
-    upload: "Ask for documents",
-    activate: "Send activation message",
-    live: "Message on WhatsApp",
-  }[pickTemplate(trainer)];
+  const label = pickTemplate(trainer) === "live" ? "Message on WhatsApp" : "Ask for documents";
 
   if (!href) {
     return (

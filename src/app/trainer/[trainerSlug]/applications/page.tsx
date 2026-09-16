@@ -46,7 +46,7 @@ export default function TrainerApplicationsPage() {
 
   const [applications, setApplications] = useState<TrainerApplication[]>([]);
   const [loading, setLoading] = useState(true);
-  // Set when the profile isn't approved or the membership isn't paid.
+  // Set when the profile was rejected.
   const [lock, setLock] = useState<LockInfo | null>(null);
   const [trainer, setTrainer] = useState<LockableTrainer | null>(null);
   const [filter, setFilter] = useState<string>("all");
@@ -64,7 +64,7 @@ export default function TrainerApplicationsPage() {
         setTrainer(trainerData.data);
 
         // Same two gates as the jobs page, from the record already in hand.
-        const blocked = getTrainerLock(trainerData.data.verificationStatus, trainerData.activation);
+        const blocked = getTrainerLock(trainerData.data.verificationStatus);
         setLock(blocked);
         if (blocked) {
           setLoading(false);
@@ -127,12 +127,8 @@ export default function TrainerApplicationsPage() {
       <LockedPage
         lock={lock}
         trainerSlug={trainerSlug}
-        trainerName={trainer?.personal?.fullName}
-        trainerEmail={trainer?.personal?.email}
-        trainerPhone={trainer?.personal?.phone}
         heading="My Job Applications"
         subheading="Track the hiring status of your submitted gym applications or withdraw them."
-        onUnlocked={fetchApplications}
       />
     );
   }

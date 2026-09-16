@@ -47,14 +47,14 @@ const fmt = (iso?: string | null) =>
   iso ? new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
 
 const STATUS = {
-  active: { label: "Activated", cls: "bg-emerald-50 text-emerald-700 border-emerald-200/70", Icon: CheckCircle2 },
-  inactive: { label: "Not paid", cls: "bg-gray-100 text-gray-600 border-gray-200", Icon: Lock },
+  active: { label: "Paid ₹99", cls: "bg-emerald-50 text-emerald-700 border-emerald-200/70", Icon: CheckCircle2 },
+  inactive: { label: "Never charged", cls: "bg-gray-100 text-gray-600 border-gray-200", Icon: Lock },
 } as const;
 
 const FILTERS = [
   { id: "all", label: "All" },
-  { id: "active", label: "Activated" },
-  { id: "inactive", label: "Not paid" },
+  { id: "active", label: "Paid" },
+  { id: "inactive", label: "Never charged" },
 ] as const;
 
 export default function AdminSubscriptionsPage() {
@@ -112,15 +112,9 @@ export default function AdminSubscriptionsPage() {
   }
 
   const tiles = [
-    { label: "Activated", value: summary?.active ?? 0, Icon: CheckCircle2, tone: "bg-emerald-50 text-emerald-600" },
-    { label: "Not paid yet", value: summary?.neverPaid ?? 0, Icon: Lock, tone: "bg-gray-100 text-gray-600" },
+    { label: "Trainers who paid", value: summary?.active ?? 0, Icon: CheckCircle2, tone: "bg-emerald-50 text-emerald-600" },
+    { label: "Never charged", value: summary?.neverPaid ?? 0, Icon: Lock, tone: "bg-gray-100 text-gray-600" },
     { label: "Trainers total", value: summary?.total ?? 0, Icon: Users, tone: "bg-blue-50 text-blue-600" },
-    {
-      label: "Uncollected ₹",
-      value: summary?.pipelineValue ?? 0,
-      Icon: TrendingUp,
-      tone: "bg-amber-50 text-amber-600",
-    },
   ];
 
   return (
@@ -128,9 +122,10 @@ export default function AdminSubscriptionsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Activations</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Payments</h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            One-time ₹99 trainer activations — who has paid, and who still hasn&apos;t.
+            FitWorks is free for trainers now. This is the record of the ₹99 activations collected
+            while trainers were charged.
           </p>
         </div>
       </div>
@@ -148,21 +143,18 @@ export default function AdminSubscriptionsPage() {
               {(summary?.lifetimeRevenue ?? 0).toLocaleString("en-IN")}
             </p>
             <p className="text-[11px] text-gray-400 mt-1.5">
-              From {summary?.active ?? 0} activated trainer{summary?.active === 1 ? "" : "s"}
+              From {summary?.active ?? 0} trainer{summary?.active === 1 ? "" : "s"} who paid
             </p>
           </div>
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
           <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
-            <TrendingUp className="w-3.5 h-3.5" /> Still uncollected
+            <TrendingUp className="w-3.5 h-3.5" /> Charging status
           </p>
-          <p className="flex items-baseline gap-0.5 text-3xl font-extrabold tracking-tight text-gray-900">
-            <IndianRupee className="w-6 h-6 self-center" />
-            {(summary?.pipelineValue ?? 0).toLocaleString("en-IN")}
-          </p>
+          <p className="text-2xl font-extrabold tracking-tight text-gray-900">Free</p>
           <p className="text-[11px] text-gray-400 mt-1.5">
-            If the {summary?.neverPaid ?? 0} unpaid trainer{summary?.neverPaid === 1 ? "" : "s"} activate
+            Trainers are not charged; these are historical payments
           </p>
         </div>
       </div>
@@ -272,7 +264,7 @@ export default function AdminSubscriptionsPage() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-gray-50/80 border-b border-gray-100">
-                    {["Trainer", "Activation", "Paid on", "Verification", "Expires", "Total paid"].map((h) => (
+                    {["Trainer", "Payment", "Paid on", "Verification", "Access", "Total paid"].map((h) => (
                       <th
                         key={h}
                         className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap"
@@ -318,7 +310,7 @@ export default function AdminSubscriptionsPage() {
                           {r.verificationStatus}
                         </td>
                         <td className="px-5 py-3.5 text-xs font-bold text-gray-900">
-                          {r.activation.isActive ? "Never" : "—"}
+                          Free
                         </td>
                         <td className="px-5 py-3.5 text-xs font-bold text-gray-900">₹{r.totalPaid}</td>
                       </tr>

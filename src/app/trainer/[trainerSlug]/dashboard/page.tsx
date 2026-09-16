@@ -19,9 +19,7 @@ import {
   Lock,
   AlertCircle,
 } from "lucide-react";
-import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 import StatCard from "@/components/dashboard/StatCard";
-import ActivationBanner, { ActivationPill, type ActivationState } from "@/components/dashboard/ActivationBanner";
 import SectionCard from "@/components/dashboard/SectionCard";
 import EmptyState from "@/components/dashboard/EmptyState";
 import type { LockInfo } from "@/components/dashboard/AccessLocked";
@@ -59,7 +57,6 @@ export default function TrainerDashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const fetchDashboard = async () => {
     try {
@@ -83,8 +80,6 @@ export default function TrainerDashboardPage() {
     }
   };
 
-  // Razorpay Checkout verifies inline via the modal's handler, so there is no
-  // redirect to reconcile here. The webhook is the backstop if that never runs.
   useEffect(() => {
     fetchDashboard();
   }, [trainerSlug]);
@@ -124,20 +119,17 @@ export default function TrainerDashboardPage() {
   }
 
   const { trainer, stats, applications = [], connections = [], recommendedJobs = [] } = data;
-  const activation: ActivationState | null = data?.activation ?? null;
   const jobAccess: (LockInfo & { allowed: boolean }) | null = data?.jobAccess ?? null;
   const status = trainer?.verificationStatus;
   const verification = status ? VERIFICATION_PILL[status] : undefined;
   // "Active" means approved AND paid. Verification alone never makes a profile
   // live, so it must never be presented as if it does.
-  const accountActive = status === "verified" && Boolean(activation?.isActive);
+  // Free platform: a profile is live unless it was rejected.
+  const accountActive = status !== "rejected";
   const pendingInvites = connections.filter((c: any) => c.status === "pending").length;
 
   return (
     <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-300">
-
-      {/* ── Activated, or not. No renewal to chase any more. ── */}
-      <ActivationBanner activation={activation} onActivate={() => setShowPaymentModal(true)} />
 
       {/* ── Greeting ── */}
       <header className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
@@ -154,13 +146,10 @@ export default function TrainerDashboardPage() {
                   <verification.Icon className="w-3.5 h-3.5" /> {verification.label}
                 </span>
               )}
-              <ActivationPill activation={activation} />
             </div>
             <p className="text-[13px] sm:text-sm text-gray-500 leading-relaxed">
-              {!activation?.isActive
-                ? "Activate your profile for ₹99 to start applying to gym vacancies."
-                : status !== "verified"
-                ? "Your ₹99 is paid. Your profile goes live to gyms as soon as our team approves your documents."
+              {status === "rejected"
+                ? "Your documents weren't approved. Re-upload them to get verified."
                 : pendingInvites > 0
                 ? `You have ${pendingInvites} gym invitation${pendingInvites > 1 ? "s" : ""} waiting for a reply.`
                 : "Track your applications and incoming gym invitations here."}
@@ -184,19 +173,6 @@ export default function TrainerDashboardPage() {
         </div>
       </header>
 
-      <RazorpayPaymentModal
-        isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
-        trainerSlug={trainerSlug}
-        trainerName={trainer?.personal?.fullName}
-        trainerEmail={trainer?.personal?.email}
-        trainerPhone={trainer?.personal?.phone}
-        onSuccess={() => {
-          setShowPaymentModal(false);
-          fetchDashboard();
-        }}
-      />
-
       {/* ── Is this profile actually live? Approved AND paid, never one alone. ── */}
       <div
         className={`flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl border ${
@@ -212,28 +188,16 @@ export default function TrainerDashboardPage() {
         </span>
         <div className="min-w-0 flex-1">
           <p className={`text-sm font-bold ${accountActive ? "text-emerald-900" : "text-gray-900"}`}>
-            {accountActive ? "Your profile is active" : "Your profile isn't active yet"}
+            {accountActive ? "Your profile is active" : "Your profile needs attention"}
           </p>
           <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 leading-relaxed">
             {accountActive
-              ? "You can apply to any open vacancy — gyms see your profile with each application."
-              : !activation?.isActive && status !== "verified"
-              ? "Two things left: a one-time ₹99 activation, and getting your documents approved."
-              : !activation?.isActive
-              ? "Your profile isn't activated. A one-time ₹99 unlocks applying to vacancies."
-              : status === "rejected"
-              ? "Your documents were not approved. Re-upload them from the Verification page."
-              : "Our team is still reviewing your documents."}
+              ? status === "verified"
+                ? "Verified — apply to any open vacancy, and gyms see your profile with each application."
+                : "You can apply to any open vacancy. Your verified badge appears once our team approves your documents."
+              : "Your documents were not approved. Re-upload them from the Verification page."}
           </p>
         </div>
-        {!activation?.isActive && (
-          <button
-            onClick={() => setShowPaymentModal(true)}
-            className="h-10 px-4 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-xs font-bold shrink-0 active:scale-[0.98] transition-all cursor-pointer"
-          >
-            Activate ₹99
-          </button>
-        )}
       </div>
 
       {/* ── Stats: 2-up on mobile ── */}
@@ -261,11 +225,12 @@ export default function TrainerDashboardPage() {
           href={`/trainer/${trainerSlug}/verification`}
         />
         <StatCard
-          label="Activation"
-          value={activation?.isActive ? "Active" : "Pending"}
+          label="Profile"
+          value={status === "rejected" ? "Action needed" : status === "verified" ? "Verified" : "Active"}
           icon={CalendarClock}
-          tone={activation?.isActive ? "green" : "red"}
-          hint={activation?.isActive ? "one-time · paid" : "one-time ₹99"}
+          tone={status === "rejected" ? "red" : "green"}
+          hint={status === "verified" ? "verified badge" : "free to use"}
+          href={`/trainer/${trainerSlug}/verification`}
         />
       </div>
 
@@ -284,31 +249,18 @@ export default function TrainerDashboardPage() {
                explains why instead of showing an empty list. */
             <div className="p-5 sm:p-6 rounded-2xl bg-gray-50/80 border border-gray-100 text-center">
               <span className="w-12 h-12 rounded-2xl bg-white border border-gray-200 text-[#d91a24] flex items-center justify-center mx-auto mb-3.5">
-                {jobAccess.reason === "pending_review" ? (
-                  <Clock className="w-6 h-6 text-amber-500" />
-                ) : (
-                  <Lock className="w-6 h-6" />
-                )}
+                <Lock className="w-6 h-6" />
               </span>
               <h3 className="text-sm font-extrabold text-gray-900 mb-1.5">{jobAccess.title}</h3>
               <p className="text-[12px] sm:text-[13px] text-gray-500 leading-relaxed mb-5 max-w-sm mx-auto">
                 {jobAccess.message}
               </p>
-              {jobAccess.reason === "not_activated" ? (
-                <button
-                  onClick={() => setShowPaymentModal(true)}
-                  className="w-full sm:w-auto h-11 px-6 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-sm font-bold shadow-[0_8px_20px_rgb(217,26,36,0.2)] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  Activate for ₹99 <ArrowRight className="w-4 h-4" />
-                </button>
-              ) : (
-                <Link
-                  href={`/trainer/${trainerSlug}/verification`}
-                  className="w-full sm:w-auto h-11 px-6 rounded-xl border border-gray-200 bg-white text-gray-800 text-sm font-bold hover:bg-gray-50 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2"
-                >
-                  Go to Verification <ArrowRight className="w-4 h-4" />
-                </Link>
-              )}
+              <Link
+                href={`/trainer/${trainerSlug}/verification`}
+                className="w-full sm:w-auto h-11 px-6 rounded-xl border border-gray-200 bg-white text-gray-800 text-sm font-bold hover:bg-gray-50 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2"
+              >
+                Go to Verification <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           ) : recommendedJobs.length === 0 ? (
             <EmptyState

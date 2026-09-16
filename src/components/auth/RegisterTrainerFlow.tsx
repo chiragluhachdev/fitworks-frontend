@@ -2,23 +2,19 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  CheckCircle2, 
-  UploadCloud, 
-  Loader2, 
-  FileCheck, 
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  UploadCloud,
+  Loader2,
   CreditCard,
   Award,
   Trash2,
   AlertCircle,
-  ShieldCheck,
-  Lock
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import RazorpayPaymentModal from "@/components/RazorpayPaymentModal";
 import OtpVerification from "@/components/auth/OtpVerification";
 
 interface RegisterTrainerFlowProps {
@@ -359,8 +355,6 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
     }
   };
 
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-
   if (showOtp) {
     return (
       <div className="w-full flex flex-col h-full justify-center p-5 sm:p-8 md:p-10 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -392,79 +386,26 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
           Profile Created Successfully!
         </h2>
         <p className="text-gray-500 text-xs md:text-sm mb-6 max-w-md">
-          Welcome to FitWorks. One step left — a one-time ₹99 to activate your
-          profile. Pay once and you can start applying to gym vacancies right
-          away, with no monthly fee and nothing more to pay later.
+          Welcome to FitWorks. Your profile is live and free — you can start
+          browsing and applying to gym vacancies right away. Upload your
+          documents whenever you like to earn your verified badge.
         </p>
 
-        {/* One-time ₹99 activation card */}
-        <div className="w-full max-w-md bg-gradient-to-br from-red-50/70 to-orange-50/50 border border-red-200/80 rounded-2xl p-5 mb-5 text-left shadow-xs">
-          <div className="flex items-center justify-between gap-3 mb-3">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="w-7 h-7 rounded-lg bg-[#d91a24] text-white flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-4 h-4" />
-              </span>
-              <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-gray-900">
-                Trainer Membership
-              </span>
-            </div>
-            <div className="flex items-baseline gap-1 shrink-0">
-              <span className="text-xl font-black text-[#d91a24]">₹99</span>
-              <span className="text-[11px] font-semibold text-gray-500">/mo</span>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-2 p-2.5 mb-3 rounded-xl bg-white/70 border border-red-100">
-            <Lock className="w-3.5 h-3.5 text-[#d91a24] shrink-0 mt-0.5" />
-            <p className="text-[11px] font-semibold text-gray-700 leading-relaxed">
-              You can&apos;t apply to vacancies until your profile is activated.
-            </p>
-          </div>
-
-          <ul className="space-y-1.5 text-xs text-gray-600 mb-4 font-medium">
-            <li className="flex items-start gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
-              Apply to every open gym vacancy
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
-              Unlimited applications to open vacancies
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
-              Verified badge once your documents are reviewed
-            </li>
-          </ul>
-
-          <Button
-            onClick={() => setShowPaymentModal(true)}
-            className="w-full h-12 bg-[#d91a24] hover:bg-[#c2141d] active:scale-[0.99] text-white py-5 rounded-xl font-bold text-sm shadow-md shadow-red-500/20 flex items-center justify-center gap-2 cursor-pointer transition-all"
-          >
-            <Lock className="w-4 h-4" /> Activate for ₹99
-          </Button>
-
-          <p className="text-[10px] text-gray-400 text-center mt-2.5 leading-relaxed">
-            Charged once. No monthly fee and no renewal, ever.
-          </p>
+        <div className="w-full max-w-md flex flex-col sm:flex-row gap-2.5">
+          <Link href={`/trainer/${createdSlug}/dashboard`} className="flex-1">
+            <Button className="w-full h-12 bg-[#d91a24] hover:bg-[#c2141d] active:scale-[0.99] text-white rounded-xl font-bold text-sm shadow-md shadow-red-500/20 cursor-pointer transition-all">
+              Go to my dashboard
+            </Button>
+          </Link>
+          <Link href={`/trainer/${createdSlug}/verification`} className="flex-1">
+            <Button
+              variant="outline"
+              className="w-full h-12 rounded-xl font-bold text-sm border-gray-200 hover:bg-gray-50 cursor-pointer"
+            >
+              Upload documents
+            </Button>
+          </Link>
         </div>
-
-        {/* Skip Option */}
-        <Link 
-          href={`/trainer/${createdSlug}/dashboard`} 
-          className="text-xs font-semibold text-gray-500 hover:text-gray-900 transition-colors"
-        >
-          I&apos;ll activate later →
-        </Link>
-
-        {/* Payment Modal */}
-        <RazorpayPaymentModal
-          isOpen={showPaymentModal}
-          onClose={() => setShowPaymentModal(false)}
-          trainerSlug={createdSlug}
-          trainerName={formData.personal.fullName}
-          trainerEmail={formData.email}
-          skipHref={`/trainer/${createdSlug}/dashboard`}
-        />
 
       </div>
     );

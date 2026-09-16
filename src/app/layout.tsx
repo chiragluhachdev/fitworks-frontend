@@ -125,7 +125,6 @@ export default function RootLayout({
       >
         <AppShell>{children}</AppShell>
         <Toaster position="bottom-right" />
-        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
         {pixelId && (
           <>
             <Script

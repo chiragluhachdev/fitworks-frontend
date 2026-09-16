@@ -2,21 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { 
-  AlertCircle, 
-  CheckCircle2, 
-  XCircle, 
-  Search, 
-  MapPin, 
-  Briefcase, 
-  ShieldCheck, 
+import {
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+  Search,
+  MapPin,
+  Briefcase,
+  ShieldCheck,
   Award,
   X,
-  User,
   GraduationCap,
   FileCheck,
-  Calendar,
-  IndianRupee,
   Eye,
   Check,
   ExternalLink,
@@ -24,17 +21,9 @@ import {
   CreditCard,
   Loader2,
   Trash2,
-  Lock,
-  Clock
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import WhatsAppButton from "@/components/admin/WhatsAppButton";
-
-/** Activation badge shown per row, so paid vs unpaid is visible at a glance. */
-const ACTIVATION: Record<string, { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
-  active: { label: "Paid ₹99", cls: "bg-emerald-50 text-emerald-700 border-emerald-200", Icon: CheckCircle2 },
-  inactive: { label: "Not paid", cls: "bg-gray-100 text-gray-600 border-gray-200", Icon: Lock },
-};
 
 export default function AdminTrainers() {
   const [trainers, setTrainers] = useState<any[]>([]);
@@ -42,7 +31,7 @@ export default function AdminTrainers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [selectedTrainer, setSelectedTrainer] = useState<any | null>(null);
-  // Full record (account, membership, billing, activity) fetched on open.
+  // Full record (account, documents, activity) fetched on open.
   const [detail, setDetail] = useState<any | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
 
@@ -70,7 +59,6 @@ export default function AdminTrainers() {
   // Deletion removes the profile, its login and everything attached — confirm it.
   const [deletingTrainer, setDeletingTrainer] = useState<any | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [filterMembership, setFilterMembership] = useState<string>("all");
 
   const handleDelete = async (id: string) => {
     setDeleting(true);
@@ -159,20 +147,12 @@ export default function AdminTrainers() {
                           city.includes(searchTerm.toLowerCase());
     
     const matchesStatus = filterStatus === "all" || t.verificationStatus === filterStatus;
-    const matchesMembership =
-      filterMembership === "all"
-        ? true
-        : filterMembership === "paid"
-        ? t.activation?.isActive
-        : !t.activation?.isActive;
 
-    return matchesSearch && matchesStatus && matchesMembership;
+    return matchesSearch && matchesStatus;
   });
 
   const pendingCount = trainers.filter(t => t.verificationStatus === "pending").length;
   const verifiedCount = trainers.filter(t => t.verificationStatus === "verified").length;
-  const paidCount = trainers.filter(t => t.activation?.isActive).length;
-  const unpaidCount = trainers.length - paidCount;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -191,12 +171,6 @@ export default function AdminTrainers() {
           </span>
           <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-green-50 text-green-800 border border-green-200/60">
             {verifiedCount} Verified
-          </span>
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200/60">
-            {paidCount} Paid
-          </span>
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-gray-100 text-gray-700 border border-gray-200">
-            {unpaidCount} Unpaid
           </span>
         </div>
       </div>
@@ -236,27 +210,6 @@ export default function AdminTrainers() {
               </button>
             ))}
           </div>
-
-          {/* Who has actually paid the ₹99 — the other half of "is this profile live?" */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 sm:border-l sm:border-gray-200 sm:pl-2">
-            {[
-              { id: "all", label: "Any membership" },
-              { id: "paid", label: `Paid (${paidCount})` },
-              { id: "unpaid", label: `Unpaid (${unpaidCount})` },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setFilterMembership(tab.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
-                  filterMembership === tab.id
-                    ? "bg-gray-900 text-white shadow-xs"
-                    : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -276,7 +229,6 @@ export default function AdminTrainers() {
                   <th className="px-6 py-4">Location & Experience</th>
                   <th className="px-6 py-4">Specializations</th>
                   <th className="px-6 py-4">Verification</th>
-                  <th className="px-6 py-4">Activation (₹99 once)</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -356,38 +308,6 @@ export default function AdminTrainers() {
                       )}
                     </td>
 
-                    {/* Activation — has this trainer paid the one-time ₹99? */}
-                    <td className="px-6 py-4">
-                      {(() => {
-                        const act = trainer.activation;
-                        const m = ACTIVATION[act?.isActive ? "active" : "inactive"];
-                        return (
-                          <div className="space-y-1">
-                            <span
-                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${m.cls}`}
-                            >
-                              <m.Icon className="w-3.5 h-3.5" />
-                              {m.label}
-                            </span>
-                            <div className="text-[11px] text-gray-500 font-medium">
-                              {act?.isActive
-                                ? `Activated ${new Date(act.activatedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`
-                                : "Can't apply yet"}
-                            </div>
-                            {trainer.accountActive ? (
-                              <div className="text-[10px] font-bold text-emerald-700 uppercase tracking-wide">
-                                Live on FitWorks
-                              </div>
-                            ) : (
-                              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">
-                                Not live
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })()}
-                    </td>
-
                     {/* Actions */}
                     <td className="px-6 py-4 text-right space-x-1.5 whitespace-nowrap">
                       <button
@@ -433,7 +353,7 @@ export default function AdminTrainers() {
 
                 {filteredTrainers.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-16 text-center">
+                    <td colSpan={5} className="px-6 py-16 text-center">
                       <div className="max-w-xs mx-auto text-center space-y-2">
                         <Award className="w-10 h-10 text-gray-300 mx-auto" />
                         <p className="text-sm font-bold text-gray-700">No trainers match your filter</p>
@@ -491,10 +411,10 @@ export default function AdminTrainers() {
             {/* Modal Scrollable Body */}
             <div className="p-6 overflow-y-auto space-y-6 text-sm text-gray-700">
 
-              {/* Account & membership */}
+              {/* Account */}
               <div>
                 <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
-                  Account &amp; Membership
+                  Account
                 </h4>
                 {detailLoading ? (
                   <div className="flex items-center gap-2 p-4 rounded-2xl bg-gray-50 border border-gray-100 text-xs text-gray-500">
@@ -524,51 +444,6 @@ export default function AdminTrainers() {
                         <span className="text-xs font-bold text-gray-900 mt-0.5 block">{detail?.counts?.connections ?? 0}</span>
                       </div>
                     </div>
-
-                    {(() => {
-                      const act = detail?.activation;
-                      const isOn = Boolean(act?.isActive);
-                      const d = (v: any) => v ? new Date(v).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
-                      return (
-                        <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                          <div className="flex flex-wrap items-center gap-2 mb-3">
-                            <span className="text-xs font-bold text-gray-900">₹99 one-time activation</span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                              isOn ? "bg-emerald-50 text-emerald-700 border-emerald-200/70" : "bg-gray-100 text-gray-600 border-gray-200"
-                            }`}>
-                              {isOn ? "Paid" : "Not paid"}
-                            </span>
-                          </div>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                            <div>
-                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Activated on</span>
-                              <span className="font-bold text-gray-800">{d(act?.activatedAt)}</span>
-                            </div>
-                            <div>
-                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Total paid</span>
-                              <span className="font-bold text-gray-800">₹{act?.totalPaid ?? 0}</span>
-                            </div>
-                            <div>
-                              <span className="text-[10px] font-bold uppercase text-gray-400 block">Expires</span>
-                              <span className="font-bold text-gray-800">Never</span>
-                            </div>
-                          </div>
-
-                          {detail?.billingHistory?.length > 0 && (
-                            <div className="mt-3 pt-3 border-t border-gray-200/70 space-y-1.5">
-                              <span className="text-[10px] font-bold uppercase text-gray-400 block mb-1">Payments</span>
-                              {detail.billingHistory.map((h: any) => (
-                                <div key={h.paymentId} className="flex items-center justify-between text-[11px] bg-white rounded-lg px-2.5 py-1.5 border border-gray-100">
-                                  <span className="font-semibold text-gray-800">₹{h.amount}</span>
-                                  <span className="text-gray-500">{d(h.periodStart)} → {d(h.periodEnd)}</span>
-                                  <span className="font-mono text-gray-400 truncate max-w-[120px]">{h.paymentId}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })()}
                   </>
                 )}
               </div>
@@ -720,7 +595,6 @@ export default function AdminTrainers() {
                       personal: selectedTrainer.personal,
                       slug: selectedTrainer.slug,
                       verificationStatus: selectedTrainer.verificationStatus,
-                      activation: detail?.activation ?? selectedTrainer.activation,
                     }}
                     variant="full"
                   />

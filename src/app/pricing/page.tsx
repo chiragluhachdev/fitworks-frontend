@@ -7,14 +7,14 @@ import { Button } from "@/components/ui/button";
 export const metadata: Metadata = {
   title: "Pricing Plans for Gyms & Fitness Trainers",
   description:
-    "Transparent FitWorks pricing. Trainers pay a one-time 99 rupees to activate their profile — no monthly fee. Gyms hire free during beta.",
+    "Transparent FitWorks pricing. Free for trainers — create a profile and apply to gym vacancies at no cost. Gyms hire free during beta too.",
   alternates: {
     canonical: "/pricing",
   },
   openGraph: {
     title: "Pricing Plans for Gyms & Fitness Trainers | FitWorks",
     description:
-      "A one-time 99 rupee activation for trainers, and free hiring for gyms across India while we are in beta.",
+      "Free for trainers, and free hiring for gyms across India while we are in beta.",
     url: "https://fitworks.in/pricing",
   },
 };
@@ -33,7 +33,7 @@ export default function PricingPage() {
             Simple plans for <span className="text-[#d91a24]">everyone</span>.
           </h1>
           <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-            A one-time ₹99 for trainers — no monthly fee. Free hiring for gyms while we&apos;re in beta.
+            Free for trainers. Free hiring for gyms while we&apos;re in beta.
           </p>
         </div>
 
@@ -51,11 +51,10 @@ export default function PricingPage() {
                 <p className="text-xs text-gray-500 mt-1">Apply to gym vacancies across India.</p>
               </div>
               <div className="pt-2">
-                <span className="text-4xl font-extrabold text-gray-900">₹99</span>
-                <span className="text-xs text-gray-400 font-semibold ml-1">one-time</span>
+                <span className="text-4xl font-extrabold text-gray-900">₹0</span>
+                <span className="text-xs text-gray-400 font-semibold ml-1">/ Free</span>
                 <p className="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
-                  Pay once to activate. No monthly fee, no renewal. Creating your profile and getting
-                  verified is free.
+                  No fee to create a profile, get verified, or apply to vacancies.
                 </p>
               </div>
               <ul className="space-y-3 pt-4 border-t border-gray-100 text-xs text-gray-600">
@@ -77,14 +76,14 @@ export default function PricingPage() {
                 </li>
                 <li className="flex items-center gap-2.5">
                   <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>No monthly fee — pay once</span>
+                  <span>Completely free — no fees at all</span>
                 </li>
               </ul>
             </div>
 
             <Link href="/auth" className="w-full block">
               <Button variant="outline" className="w-full h-11 rounded-xl text-xs font-bold border-gray-200 hover:bg-gray-50">
-                Join free, activate for ₹99
+                Join as a Trainer
               </Button>
             </Link>
           </div>
