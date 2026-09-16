@@ -288,6 +288,19 @@ export default function TrainerVerificationPage() {
             )}
           </div>
 
+          <p className="text-[10px] text-gray-400 leading-relaxed">
+            Your documents are used only for profile verification and job matching. We never sell or
+            share your information with unrelated parties.{" "}
+            <a
+              href="/about#privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-gray-500 hover:text-[#d91a24] underline underline-offset-2"
+            >
+              Privacy policy
+            </a>
+          </p>
+
           <div className="flex justify-end pt-2">
             <Button
               type="submit"
