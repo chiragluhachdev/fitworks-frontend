@@ -1,7 +1,18 @@
 const SITE = "https://fitworks.in";
 
-/** Indian numbers are stored bare (10 digits); wa.me needs the country code. */
+/** Indian numbers are stored bare (10 digits); WhatsApp needs the country code. */
 const WA_COUNTRY_CODE = "91";
+
+/**
+ * Link straight to api.whatsapp.com rather than the shorter wa.me.
+ *
+ * wa.me 302-redirects here and mangles the text on the way: a correctly encoded
+ * 👋 (%F0%9F%91%8B) comes back out as %EF%BF%BD, the replacement character —
+ * which is why emoji arrived as "�". api.whatsapp.com takes the same parameters
+ * and leaves them intact, and still opens the desktop app or the phone.
+ */
+const waLink = (number: string, text: string) =>
+  `https://api.whatsapp.com/send?phone=${number}&text=${encodeURIComponent(text)}`;
 
 export interface WhatsAppTrainer {
   personal?: { fullName?: string; phone?: string };
@@ -12,21 +23,18 @@ export interface WhatsAppTrainer {
 /**
  * Messages an admin sends a trainer from the trainers table.
  *
- * No emoji. WhatsApp Desktop turns emoji in pre-filled link text into "�",
- * while ₹ and — come through intact, so stick to plain characters.
- *
  * Edit freely — this is the only place the copy lives. `{name}` and `{link}`
  * are substituted; everything else is sent verbatim, newlines included.
  */
 export const WHATSAPP_TEMPLATES = {
   /** Pending — ask them to upload documents so they can be verified. */
-  upload: `Hi {name}!
+  upload: `Hi {name}! 👋
 
 Thanks for registering with FitWorks!
 
 To get your trainer profile verified, please upload your fitness certificate or a government ID (Aadhaar or PAN).
 
-Once verified, we'll help connect you with gyms and fitness centres looking for trainers, based on your profile and location. Whenever a relevant opportunity comes up, our team will reach out to you.
+Once verified, we'll help connect you with gyms and fitness centres looking for trainers, based on your profile and location. Whenever a relevant opportunity comes up, our team will reach out to you. 💪
 
 Log in and open "Verification" to upload your documents:
 {link}
@@ -36,9 +44,9 @@ Keep your profile updated and stay ready for your next fitness opportunity.
 Team FitWorks`,
 
   /** Approved — congratulate, then set the expectation of what happens next. */
-  live: `Hi {name}!
+  live: `Hi {name}! 👋
 
-Your FitWorks profile has been approved and is now active!
+Your FitWorks profile has been approved and is now active! ✅
 
 From here, we'll work to connect you with gyms looking for trainers and fitness professionals. When a suitable opportunity matches your profile and location, we'll reach out to you directly.
 
@@ -66,8 +74,8 @@ export const whatsappNumber = (phone?: string): string | null => {
 };
 
 /**
- * A wa.me link that opens the desktop app or WhatsApp Web on a computer and the
- * app on a phone, with the message prefilled for the admin to review and send.
+ * A WhatsApp link that opens the desktop app on a computer and the app on a
+ * phone, with the message prefilled for the admin to review and send.
  *
  * Returns null when the number can't be dialled, so the caller can disable the
  * button rather than open a broken chat.
@@ -85,7 +93,7 @@ export const buildWhatsAppUrl = (trainer: WhatsAppTrainer): string | null => {
     .replace("{name}", firstName(trainer.personal?.fullName))
     .replace("{link}", link);
 
-  return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+  return waLink(number, text);
 };
 
 /* ─────────────────── Meta instant-form leads ─────────────────── */
@@ -104,7 +112,7 @@ export interface WhatsAppLead {
  */
 export const LEAD_TEMPLATES = {
   /** Never registered — invite them to create a profile. */
-  invite: `Hi {name}!
+  invite: `Hi {name}! 👋
 Thanks for your interest in FitWorks.
 
 You filled in our form for gym trainer jobs. FitWorks is completely free for trainers — create your profile, upload your documents, and start applying to gym vacancies across India.
@@ -115,7 +123,7 @@ Create your profile here:
 We connect you with gyms searching for trainers.`,
 
   /** Already signed up — nudge them to finish instead of starting again. */
-  registered: `Hi {name}!
+  registered: `Hi {name}! 👋
 Thanks for registering with FitWorks.
 
 Your profile is created. Upload your documents to get verified, and you can start applying to gym vacancies right away. It is completely free.
@@ -136,5 +144,5 @@ export const buildLeadWhatsAppUrl = (lead: WhatsAppLead): string | null => {
     .replace("{signupLink}", `${SITE}/auth/trainer-signup`)
     .replace("{loginLink}", `${SITE}/auth`);
 
-  return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+  return waLink(number, text);
 };
