@@ -81,3 +81,54 @@ export const buildWhatsAppUrl = (trainer: WhatsAppTrainer): string | null => {
 
   return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
 };
+
+/* ─────────────────── Meta instant-form leads ─────────────────── */
+
+export interface WhatsAppLead {
+  fullName?: string;
+  phone?: string;
+  /** Set when this person has since registered — changes what we ask of them. */
+  registeredTrainer?: { slug?: string } | null;
+}
+
+/**
+ * Messages for people who filled in a Meta instant form but are not trainers
+ * on the platform yet. Separate from the trainer templates above: a lead has no
+ * account, so the ask is to create one.
+ */
+export const LEAD_TEMPLATES = {
+  /** Never registered — invite them to create a profile. */
+  invite: `Hi {name}!
+Thanks for your interest in FitWorks.
+
+You filled in our form for gym trainer jobs. FitWorks is completely free for trainers — create your profile, upload your documents, and start applying to gym vacancies across India.
+
+Create your profile here:
+{signupLink}
+
+We connect you with gyms searching for trainers.`,
+
+  /** Already signed up — nudge them to finish instead of starting again. */
+  registered: `Hi {name}!
+Thanks for registering with FitWorks.
+
+Your profile is created. Upload your documents to get verified, and you can start applying to gym vacancies right away. It is completely free.
+
+Log in here:
+{loginLink}
+
+We connect you with gyms searching for trainers.`,
+};
+
+export const buildLeadWhatsAppUrl = (lead: WhatsAppLead): string | null => {
+  const number = whatsappNumber(lead.phone);
+  if (!number) return null;
+
+  const template = lead.registeredTrainer ? LEAD_TEMPLATES.registered : LEAD_TEMPLATES.invite;
+  const text = template
+    .replace("{name}", firstName(lead.fullName))
+    .replace("{signupLink}", `${SITE}/auth/trainer-signup`)
+    .replace("{loginLink}", `${SITE}/auth`);
+
+  return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+};
