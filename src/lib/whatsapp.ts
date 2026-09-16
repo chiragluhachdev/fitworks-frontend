@@ -30,18 +30,18 @@ Log in and open "Verification" to upload:
 
 We connect you with gyms searching for trainers.`,
 
-  /** Verified — nothing to ask for. */
+  /** Approved — congratulate, then set the expectation of what happens next. */
   live: `Hi {name}!
 
-Good news — your FitWorks profile is verified.
+Thanks for registering with FitWorks — your profile has been approved and is now active.
 
-You can now browse and apply to gym vacancies. Gyms see your full profile with each application.
+You can start applying to gym vacancies right away, and we'll also reach out as soon as we have openings that match your profile and your city.
 
-Log in here to browse open vacancies:
+Log in here:
 {link}
 
-Welcome to FitWorks!
-We look forward to helping you discover new opportunities.`,
+Stay tuned, and welcome aboard.
+Team FitWorks`,
 };
 
 export type WhatsAppTemplate = keyof typeof WHATSAPP_TEMPLATES;
