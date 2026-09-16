@@ -25,11 +25,17 @@ import {
 import { toast } from "react-hot-toast";
 import WhatsAppButton from "@/components/admin/WhatsAppButton";
 
+/** How many verification documents a trainer has uploaded. */
+const docCount = (t: { verificationDocuments?: string[] }) => t.verificationDocuments?.length ?? 0;
+
 export default function AdminTrainers() {
   const [trainers, setTrainers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  // Within Pending, split by whether documents are waiting to be reviewed —
+  // those are the ones that can actually be approved right now.
+  const [filterDocs, setFilterDocs] = useState<string>("all");
   const [selectedTrainer, setSelectedTrainer] = useState<any | null>(null);
   // Full record (account, documents, activity) fetched on open.
   const [detail, setDetail] = useState<any | null>(null);
@@ -147,11 +153,20 @@ export default function AdminTrainers() {
                           city.includes(searchTerm.toLowerCase());
     
     const matchesStatus = filterStatus === "all" || t.verificationStatus === filterStatus;
+    const matchesDocs =
+      filterStatus !== "pending" || filterDocs === "all"
+        ? true
+        : filterDocs === "with"
+        ? docCount(t) > 0
+        : docCount(t) === 0;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesDocs;
   });
 
-  const pendingCount = trainers.filter(t => t.verificationStatus === "pending").length;
+  const pendingTrainers = trainers.filter(t => t.verificationStatus === "pending");
+  const pendingCount = pendingTrainers.length;
+  const withDocsCount = pendingTrainers.filter(t => docCount(t) > 0).length;
+  const noDocsCount = pendingCount - withDocsCount;
   const verifiedCount = trainers.filter(t => t.verificationStatus === "verified").length;
 
   return (
@@ -199,7 +214,10 @@ export default function AdminTrainers() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setFilterStatus(tab.id)}
+                onClick={() => {
+                  setFilterStatus(tab.id);
+                  if (tab.id !== "pending") setFilterDocs("all");
+                }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
                   filterStatus === tab.id
                     ? "bg-[#d91a24] text-white shadow-xs"
@@ -210,6 +228,29 @@ export default function AdminTrainers() {
               </button>
             ))}
           </div>
+
+          {/* Only meaningful inside Pending: who is actually ready to approve. */}
+          {filterStatus === "pending" && (
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 sm:border-l sm:border-gray-200 sm:pl-2">
+              {[
+                { id: "all", label: `All pending (${pendingCount})` },
+                { id: "with", label: `Docs submitted (${withDocsCount})` },
+                { id: "without", label: `No docs (${noDocsCount})` },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setFilterDocs(tab.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
+                    filterDocs === tab.id
+                      ? "bg-gray-900 text-white shadow-xs"
+                      : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -295,10 +336,21 @@ export default function AdminTrainers() {
                         </span>
                       )}
                       {trainer.verificationStatus === "pending" && (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 animate-pulse">
-                          <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
-                          Pending Review
-                        </span>
+                        <div className="space-y-1">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                            <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                            Pending Review
+                          </span>
+                          <div
+                            className={`text-[11px] font-semibold ${
+                              docCount(trainer) > 0 ? "text-emerald-700" : "text-gray-400"
+                            }`}
+                          >
+                            {docCount(trainer) > 0
+                              ? `${docCount(trainer)} document${docCount(trainer) === 1 ? "" : "s"} submitted`
+                              : "No documents yet"}
+                          </div>
+                        </div>
                       )}
                       {trainer.verificationStatus === "rejected" && (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">
