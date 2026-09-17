@@ -116,7 +116,7 @@ export const LEAD_TEMPLATES = {
   invite: `Hi {name}! 👋
 Thanks for your interest in FitWorks.
 
-You filled in our form for gym trainer jobs. FitWorks is completely free for trainers — create your profile, upload your documents, and start applying to gym vacancies across India.
+You filled in our form for gym trainer jobs. FitWorks is completely free for trainers — create your profile and upload your documents, and once you're verified you can start applying to gym vacancies across India.
 
 Create your profile here:
 {signupLink}
@@ -127,7 +127,7 @@ We connect you with gyms searching for trainers.`,
   registered: `Hi {name}! 👋
 Thanks for registering with FitWorks.
 
-Your profile is created. Upload your documents to get verified, and you can start applying to gym vacancies right away. It is completely free.
+Your profile is created. Upload your documents to get verified — once approved, you can start applying to gym vacancies. It is completely free.
 
 Log in here:
 {loginLink}
