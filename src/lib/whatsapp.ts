@@ -127,12 +127,12 @@ We connect trainers with gyms looking for the right talent. 💪`,
   registered: `Hi {name}! 👋
 Thanks for registering with FitWorks.
 
-Your profile is created. Upload your documents to get verified — once approved, you can start applying to gym vacancies. It is completely free.
+Your profile is created. Just upload your documents to get verified, and we'll connect you with training opportunities that match your profile and location. It's completely free.
 
 Log in here:
 {loginLink}
 
-We connect you with gyms searching for trainers.`,
+We connect trainers with gyms looking for the right talent. 💪`,
 };
 
 export const buildLeadWhatsAppUrl = (lead: WhatsAppLead): string | null => {
