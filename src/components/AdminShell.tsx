@@ -18,7 +18,8 @@ import {
   Building2, 
   ExternalLink,
   CreditCard,
-  ClipboardList
+  ClipboardList,
+  Settings
 } from "lucide-react";
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
@@ -74,6 +75,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     { name: "Payments", href: "/admin/subscriptions", icon: CreditCard },
     { name: "Instant Forms", href: "/admin/instant-forms", icon: ClipboardList },
     { name: "Users", href: "/admin/users", icon: Users },
+    { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
   return (

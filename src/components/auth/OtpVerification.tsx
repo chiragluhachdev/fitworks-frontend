@@ -73,6 +73,12 @@ export default function OtpVerification({
     });
 
     if (ok && data.success) {
+      if ((data as any).bypassed && (data as any).verificationToken) {
+        toast.success("OTP Verification bypassed");
+        onVerified((data as any).verificationToken);
+        setResending(false);
+        return;
+      }
       toast.success(data.message || "OTP sent");
       setCooldown(data.resendAfterSeconds ?? 60);
     } else {
