@@ -5,7 +5,7 @@ import { ArrowLeft, Loader2, ShieldCheck, RefreshCw } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { apiFetch } from "@/lib/api";
 
-const OTP_LENGTH = 6;
+const OTP_LENGTH = 4;
 
 export interface OtpVerificationProps {
   phone: string;
@@ -169,7 +169,7 @@ export default function OtpVerification({
           Verify your mobile number
         </h2>
         <p className="text-[13px] sm:text-sm text-gray-500 leading-relaxed">
-          We sent a 6-digit code to{" "}
+          We sent a 4-digit code to{" "}
           <span className="font-bold text-gray-800 whitespace-nowrap">{pretty(phone)}</span>
         </p>
       </div>
