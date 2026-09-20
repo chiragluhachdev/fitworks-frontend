@@ -13,6 +13,7 @@ import {
   XCircle,
   Eye,
   X,
+  CalendarDays,
   Users,
   Award,
   Globe,
@@ -20,12 +21,49 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
+const DATE_PRESETS = [
+  { id: "all", label: "All time", days: 0 },
+  { id: "today", label: "Today", days: 1 },
+  { id: "7", label: "Last 7 days", days: 7 },
+  { id: "30", label: "Last 30 days", days: 30 },
+] as const;
+
+const toInputDate = (d: Date) => {
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+};
+
 export default function AdminVacancies() {
   const [vacancies, setVacancies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedJob, setSelectedJob] = useState<any | null>(null);
+
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [preset, setPreset] = useState<string>("all");
+
+  const applyPreset = (id: string, days: number) => {
+    setPreset(id);
+    if (!days) {
+      setFrom("");
+      setTo("");
+      return;
+    }
+    const end = new Date();
+    const start = new Date();
+    start.setDate(start.getDate() - (days - 1));
+    setFrom(toInputDate(start));
+    setTo(toInputDate(end));
+  };
+
+  const clearDates = () => {
+    setPreset("all");
+    setFrom("");
+    setTo("");
+  };
+  const datesActive = Boolean(from || to);
 
   const fetchVacancies = async () => {
     try {
@@ -57,8 +95,24 @@ export default function AdminVacancies() {
                           gym.includes(searchTerm.toLowerCase()) || 
                           location.includes(searchTerm.toLowerCase());
     
-    if (statusFilter === "all") return matchesSearch;
-    return matchesSearch && job.status === statusFilter;
+    let matchesStatus = true;
+    if (statusFilter !== "all") {
+      matchesStatus = job.status === statusFilter;
+    }
+
+    let matchesDate = true;
+    if (from || to) {
+      const when = job.createdAt;
+      if (when) {
+        const ts = new Date(when).getTime();
+        const fromTs = from ? new Date(`${from}T00:00:00`).getTime() : null;
+        const toTs = to ? new Date(`${to}T23:59:59.999`).getTime() : null;
+        if (fromTs && ts < fromTs) matchesDate = false;
+        if (toTs && ts > toTs) matchesDate = false;
+      }
+    }
+
+    return matchesSearch && matchesStatus && matchesDate;
   });
 
   const openCount = vacancies.filter(v => v.status === "open").length;
@@ -117,6 +171,56 @@ export default function AdminVacancies() {
               {tab.label}
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Date Filter */}
+      <div className="bg-white rounded-2xl border border-gray-200/80 p-4 shadow-xs flex flex-col lg:flex-row lg:items-center gap-3">
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-400 shrink-0">
+          <CalendarDays className="w-3.5 h-3.5" /> Posted Date
+        </span>
+
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0">
+          {DATE_PRESETS.map((d) => (
+            <button
+              key={d.id}
+              onClick={() => applyPreset(d.id, d.days)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
+                preset === d.id && (d.id === "all" ? !datesActive : true)
+                  ? "bg-gray-900 text-white shadow-xs"
+                  : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              {d.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 lg:ml-auto">
+          <input
+            type="date"
+            value={from}
+            max={to || undefined}
+            onChange={(e) => { setFrom(e.target.value); setPreset("custom"); }}
+            className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:border-[#d91a24]"
+          />
+          <span className="text-xs text-gray-400">to</span>
+          <input
+            type="date"
+            value={to}
+            min={from || undefined}
+            onChange={(e) => { setTo(e.target.value); setPreset("custom"); }}
+            className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:border-[#d91a24]"
+          />
+          {datesActive && (
+            <button
+              onClick={clearDates}
+              title="Clear dates"
+              className="w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
