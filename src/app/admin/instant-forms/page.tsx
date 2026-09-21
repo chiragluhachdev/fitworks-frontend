@@ -56,7 +56,6 @@ const FILTERS = [
   { id: "all", label: "All" },
   { id: "new", label: "New" },
   { id: "contacted", label: "Contacted" },
-  { id: "registered", label: "Registered" },
   { id: "not_interested", label: "Not interested" },
 ] as const;
 
@@ -245,7 +244,6 @@ export default function AdminInstantFormsPage() {
     { label: "Total leads", value: summary?.total ?? 0, Icon: ClipboardList, tone: "bg-blue-50 text-blue-600" },
     { label: "Not contacted", value: summary?.new ?? 0, Icon: Clock, tone: "bg-amber-50 text-amber-600" },
     { label: "Contacted", value: summary?.contacted ?? 0, Icon: CheckCircle2, tone: "bg-gray-100 text-gray-600" },
-    { label: "Signed up", value: summary?.registered ?? 0, Icon: UserCheck, tone: "bg-emerald-50 text-emerald-600" },
   ];
 
   return (
@@ -258,7 +256,7 @@ export default function AdminInstantFormsPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
         {tiles.map(({ label, value, Icon, tone }) => (
           <div
             key={label}
@@ -461,7 +459,6 @@ export default function AdminInstantFormsPage() {
                   >
                     <option value="new">New</option>
                     <option value="contacted">Contacted</option>
-                    <option value="registered">Registered</option>
                     <option value="not_interested">Not interested</option>
                   </select>
 
