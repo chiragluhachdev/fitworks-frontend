@@ -3,15 +3,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { 
-  Plus, 
-  Briefcase, 
-  CreditCard, 
+import {
+  Plus,
+  Briefcase,
+  CreditCard,
   ArrowRight,
   PlayCircle,
   User,
   Settings,
-  Crown
+  Crown,
+  type LucideIcon,
 } from "lucide-react";
 import Button from "@/components/workspace/Button";
 import { PageSkeleton, ErrorState } from "@/components/workspace/States";
@@ -19,6 +20,78 @@ import { VacancyRowItem } from "@/components/gym/VacancyCard";
 import HowItWorksPlayer from "@/components/workspace/HowItWorksPlayer";
 import { api } from "@/lib/api";
 import { findPlan, shortDate } from "@/lib/hiring";
+
+/**
+ * The accents the tiles are built from.
+ *
+ * Each card gets one colour and uses it three ways — the icon chip, the glow
+ * that warms the corner on hover, and the ring. Nothing else on the card is
+ * coloured, so four tiles side by side read as one set rather than four.
+ */
+const ACCENTS = {
+  red: { chip: "bg-[#FFF1F2] text-[#E92E3D]", glow: "bg-[#E92E3D]", ring: "group-hover:ring-red-200/80" },
+  blue: { chip: "bg-blue-50 text-blue-600", glow: "bg-blue-500", ring: "group-hover:ring-blue-200/80" },
+  amber: { chip: "bg-amber-50 text-amber-600", glow: "bg-amber-500", ring: "group-hover:ring-amber-200/80" },
+  slate: { chip: "bg-gray-100 text-gray-600", glow: "bg-gray-500", ring: "group-hover:ring-gray-300" },
+} as const;
+
+/**
+ * One tile on the overview grid.
+ *
+ * The state sits top-right and the arrow bottom-right. They used to share the
+ * top-right corner, where "Inactive" ran straight into the chevron.
+ */
+function Tile({
+  href,
+  icon: Icon,
+  accent,
+  label,
+  hint,
+  state,
+}: {
+  href: string;
+  icon: LucideIcon;
+  accent: keyof typeof ACCENTS;
+  label: string;
+  hint: React.ReactNode;
+  /** The figure or status this card is reporting. Omitted when it has none. */
+  state?: React.ReactNode;
+}) {
+  const a = ACCENTS[accent];
+
+  return (
+    <Link
+      href={href}
+      className={`group relative overflow-hidden bg-white rounded-[20px] p-5 ring-1 ring-gray-200/70 ${a.ring}
+        min-h-[152px] flex flex-col justify-between
+        shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:shadow-[0_16px_34px_-14px_rgba(16,24,40,0.22)]
+        hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200`}
+    >
+      {/* Warms the corner on hover, in the card's own colour. */}
+      <span
+        aria-hidden
+        className={`absolute -top-10 -right-10 w-28 h-28 rounded-full blur-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none ${a.glow}`}
+      />
+
+      <div className="relative flex items-start justify-between gap-3">
+        <span
+          className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 ${a.chip}`}
+        >
+          <Icon className="w-5 h-5" />
+        </span>
+        {state && <div className="text-right shrink-0 pt-0.5">{state}</div>}
+      </div>
+
+      <div className="relative flex items-end justify-between gap-3 mt-4">
+        <div className="min-w-0">
+          <p className="text-[13.5px] font-bold text-gray-900 leading-tight">{label}</p>
+          <p className="text-[11.5px] text-gray-500 mt-1 leading-snug">{hint}</p>
+        </div>
+        <ArrowRight className="w-4 h-4 text-gray-300 shrink-0 group-hover:text-gray-700 group-hover:translate-x-0.5 transition-all duration-200" />
+      </div>
+    </Link>
+  );
+}
 
 export default function GymOverviewPage() {
   const params = useParams();
@@ -48,7 +121,7 @@ export default function GymOverviewPage() {
   if (loading) return <PageSkeleton />;
   if (!data) return <ErrorState message={error} onRetry={load} />;
 
-  const { gym, stats, subscription, activeVacancies = [] } = data;
+  const { gym, stats, subscription, completion, activeVacancies = [] } = data;
   const firstName = (gym?.contactPerson?.name || "").split(" ")[0];
   const hasVacancies = (stats?.totalVacancies ?? 0) > 0;
   const plan = findPlan(subscription?.plan);
@@ -101,70 +174,73 @@ export default function GymOverviewPage() {
         </div>
       </section>
 
-      {/* ── 4-Column Action/Stats Grid ── */}
+      {/* ── Overview grid ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        
-        {/* Stat: Active Vacancies */}
-        <Link href={`/gym/${gymSlug}/vacancies`} className="group bg-white rounded-[20px] p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative flex flex-col justify-between min-h-[140px]">
-          <div className="flex justify-between items-start mb-2">
-            <div className="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center text-[#E92E3D]">
-              <Briefcase className="w-5 h-5" />
-            </div>
-            <div className="text-[22px] font-bold text-gray-900">{stats?.activeVacancies ?? 0}</div>
-          </div>
-          <div>
-            <div className="font-semibold text-[13px] text-gray-900">Active Vacancies</div>
-            <div className="text-[11px] text-gray-500 mt-1">{stats?.totalVacancies ?? 0} posted in total</div>
-          </div>
-          <ArrowRight className="absolute top-6 right-5 w-4 h-4 text-gray-300 group-hover:text-gray-600 transition-colors" />
-        </Link>
+        <Tile
+          href={`/gym/${gymSlug}/vacancies`}
+          icon={Briefcase}
+          accent="red"
+          label="Active Vacancies"
+          hint={`${stats?.totalVacancies ?? 0} posted in total`}
+          state={
+            <span className="text-[26px] font-extrabold text-gray-900 leading-none tracking-[-0.02em] tabular-nums">
+              {stats?.activeVacancies ?? 0}
+            </span>
+          }
+        />
 
-        {/* Action: Edit Profile */}
-        <Link href={`/gym/${gymSlug}/profile?tab=profile`} className="group bg-white rounded-[20px] p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative flex flex-col justify-between min-h-[140px]">
-          <div className="flex justify-between items-start mb-2">
-            <div className="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-              <User className="w-5 h-5" />
-            </div>
-          </div>
-          <div>
-            <div className="font-semibold text-[13px] text-gray-900">Edit Profile</div>
-            <div className="text-[11px] text-gray-500 mt-1">Update gym details & photos</div>
-          </div>
-          <ArrowRight className="absolute top-6 right-5 w-4 h-4 text-gray-300 group-hover:text-gray-600 transition-colors" />
-        </Link>
+        <Tile
+          href={`/gym/${gymSlug}/profile?tab=profile`}
+          icon={User}
+          accent="blue"
+          label="Edit Profile"
+          hint="Update gym details & photos"
+          state={
+            typeof completion?.percent === "number" ? (
+              <span
+                className={`text-[26px] font-extrabold leading-none tracking-[-0.02em] tabular-nums ${
+                  completion.percent >= 100 ? "text-emerald-600" : "text-gray-900"
+                }`}
+              >
+                {completion.percent}
+                <span className="text-[14px] font-bold text-gray-400">%</span>
+              </span>
+            ) : undefined
+          }
+        />
 
-        {/* Stat: Subscription */}
-        <Link href={`/gym/${gymSlug}/subscription`} className="group bg-white rounded-[20px] p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative flex flex-col justify-between min-h-[140px]">
-          <div className="flex justify-between items-start mb-2">
-            <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500">
-              <Crown className="w-5 h-5" />
-            </div>
-            <div className="text-[16px] font-bold text-gray-900 text-right">
-              {subscription?.isActive ? plan?.name || "Active" : "Inactive"}
-            </div>
-          </div>
-          <div>
-            <div className="font-semibold text-[13px] text-gray-900">Subscription</div>
-            <div className="text-[11px] text-gray-500 mt-1">
-              {subscription?.isActive ? `Renews ${shortDate(subscription.expiresAt)}` : "Choose a plan to keep hiring"}
-            </div>
-          </div>
-          <ArrowRight className="absolute top-6 right-5 w-4 h-4 text-gray-300 group-hover:text-gray-600 transition-colors" />
-        </Link>
+        <Tile
+          href={`/gym/${gymSlug}/subscription`}
+          icon={Crown}
+          accent="amber"
+          label="Subscription"
+          hint={
+            subscription?.isActive
+              ? `Renews ${shortDate(subscription.expiresAt)}`
+              : "Choose a plan to keep hiring"
+          }
+          state={
+            subscription?.isActive ? (
+              <span className="inline-flex items-center gap-1.5 text-[11.5px] font-bold text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200/70 px-2.5 py-1 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                {plan?.name?.replace("FitWorks ", "") || "Active"}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-[11.5px] font-bold text-gray-500 bg-gray-100 ring-1 ring-gray-200 px-2.5 py-1 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                Inactive
+              </span>
+            )
+          }
+        />
 
-        {/* Action: Settings */}
-        <Link href={`/gym/${gymSlug}/profile?tab=account`} className="group bg-white rounded-[20px] p-5 border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative flex flex-col justify-between min-h-[140px]">
-          <div className="flex justify-between items-start mb-2">
-            <div className="w-11 h-11 rounded-xl bg-gray-50 flex items-center justify-center text-gray-700">
-              <Settings className="w-5 h-5" />
-            </div>
-          </div>
-          <div>
-            <div className="font-semibold text-[13px] text-gray-900">Settings</div>
-            <div className="text-[11px] text-gray-500 mt-1">Manage your preferences</div>
-          </div>
-          <ArrowRight className="absolute top-6 right-5 w-4 h-4 text-gray-300 group-hover:text-gray-600 transition-colors" />
-        </Link>
+        <Tile
+          href={`/gym/${gymSlug}/profile?tab=account`}
+          icon={Settings}
+          accent="slate"
+          label="Settings"
+          hint="Password, email and sign out"
+        />
       </div>
 
       {/* ── Subscription Banner ── */}
