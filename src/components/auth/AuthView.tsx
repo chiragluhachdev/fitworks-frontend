@@ -184,7 +184,7 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
   if (checkingSession) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-gray-50">
-        <Loader2 className="w-7 h-7 text-[#d91a24] animate-spin" />
+        <Loader2 className="w-7 h-7 text-[#E92E3D] animate-spin" />
         <p className="text-xs font-semibold text-gray-500">Checking your session…</p>
       </div>
     );
@@ -233,7 +233,7 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
 
           <h1 className="text-4xl xl:text-[44px] font-extrabold text-white leading-[1.15] tracking-tight mb-5 max-w-[400px]">
             Stronger connections. <br />
-            <span className="text-[#d91a24]">Better</span> results.
+            <span className="text-[#E92E3D]">Better</span> results.
           </h1>
           <p className="text-gray-300 text-base xl:text-lg leading-relaxed max-w-[420px]">
             FitWorks connects gyms with verified fitness professionals and helps trainers find the right opportunities to grow their career.
@@ -246,17 +246,17 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
           {/* Glassmorphism Stats Card */}
           <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 flex items-center justify-between shadow-2xl mb-8">
             <div className="flex flex-col items-center justify-center text-center px-4 border-r border-white/10 w-1/3">
-              <ShieldCheck className="w-6 h-6 text-[#d91a24] mb-2" />
+              <ShieldCheck className="w-6 h-6 text-[#E92E3D] mb-2" />
               <p className="text-white font-bold text-sm">100% Verified</p>
               <p className="text-gray-400 text-[11px] mt-0.5">Trusted profiles</p>
             </div>
             <div className="flex flex-col items-center justify-center text-center px-4 border-r border-white/10 w-1/3">
-              <Users className="w-6 h-6 text-[#d91a24] mb-2" />
+              <Users className="w-6 h-6 text-[#E92E3D] mb-2" />
               <p className="text-white font-bold text-sm">Partner Gyms</p>
               <p className="text-gray-400 text-[11px] mt-0.5">HOPE &amp; ANYDAY</p>
             </div>
             <div className="flex flex-col items-center justify-center text-center px-4 w-1/3">
-              <Star className="w-6 h-6 text-[#d91a24] mb-2" />
+              <Star className="w-6 h-6 text-[#E92E3D] mb-2" />
               <p className="text-white font-bold text-sm">Direct Match</p>
               <p className="text-gray-400 text-[11px] mt-0.5">Verified connections</p>
             </div>
@@ -264,11 +264,11 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
 
           {/* Quote */}
           <div className="flex gap-4 items-start max-w-[480px]">
-            <span className="text-[#d91a24] text-4xl font-serif leading-none mt-1">"</span>
+            <span className="text-[#E92E3D] text-4xl font-serif leading-none mt-1">"</span>
             <p className="text-white/90 text-lg font-medium leading-snug">
               The right match can transform a gym. The right opportunity can transform a career.
             </p>
-            <span className="text-[#d91a24] text-4xl font-serif leading-none self-end rotate-180">"</span>
+            <span className="text-[#E92E3D] text-4xl font-serif leading-none self-end rotate-180">"</span>
           </div>
 
         </div>
@@ -320,11 +320,11 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
                   onClick={() => setRole("gym")}
                   className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
                     role === "gym" 
-                      ? "bg-white text-[#d91a24] shadow-[0_2px_8px_rgb(0,0,0,0.06)] border border-gray-100" 
+                      ? "bg-white text-[#E92E3D] shadow-[0_2px_8px_rgb(0,0,0,0.06)] border border-gray-100" 
                       : "text-gray-500 hover:text-gray-700"
                   }`}
                 >
-                  <Building2 className={`w-4 h-4 shrink-0 ${role === "gym" ? "text-[#d91a24]" : "text-gray-400"}`} />
+                  <Building2 className={`w-4 h-4 shrink-0 ${role === "gym" ? "text-[#E92E3D]" : "text-gray-400"}`} />
                   <span className="whitespace-nowrap">Gym Owner</span>
                 </button>
                 <button
@@ -332,11 +332,11 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
                   onClick={() => setRole("trainer")}
                   className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
                     role === "trainer" 
-                      ? "bg-white text-[#d91a24] shadow-[0_2px_8px_rgb(0,0,0,0.06)] border border-gray-100" 
+                      ? "bg-white text-[#E92E3D] shadow-[0_2px_8px_rgb(0,0,0,0.06)] border border-gray-100" 
                       : "text-gray-500 hover:text-gray-700"
                   }`}
                 >
-                  <User className={`w-4 h-4 shrink-0 ${role === "trainer" ? "text-[#d91a24]" : "text-gray-400"}`} />
+                  <User className={`w-4 h-4 shrink-0 ${role === "trainer" ? "text-[#E92E3D]" : "text-gray-400"}`} />
                   <span className="whitespace-nowrap">Trainer</span>
                 </button>
               </div>
@@ -344,7 +344,7 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
               {/* Error Message */}
               {error && (
                 <div className="mb-5 p-3.5 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs font-semibold flex items-center gap-2.5 animate-in fade-in">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-[#d91a24]" />
+                  <AlertCircle className="w-4 h-4 shrink-0 text-[#E92E3D]" />
                   <span>{error}</span>
                 </div>
               )}
@@ -369,7 +369,7 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
                       placeholder="98765 43210 or you@example.com"
-                      className="block w-full h-12 pl-10 pr-4 bg-white border border-gray-200 rounded-xl text-sm outline-none transition-all focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 placeholder:text-gray-400"
+                      className="block w-full h-12 pl-10 pr-4 bg-white border border-gray-200 rounded-xl text-sm outline-none transition-all focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10 placeholder:text-gray-400"
                     />
                   </div>
                 </div>
@@ -378,7 +378,7 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between ml-1 pr-1">
                     <label className="text-xs font-semibold text-gray-700">Password</label>
-                    <Link href="#" className="text-xs font-semibold text-[#d91a24] hover:text-[#cc1616]">Forgot?</Link>
+                    <Link href="#" className="text-xs font-semibold text-[#E92E3D] hover:text-[#d42936]">Forgot?</Link>
                   </div>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -390,7 +390,7 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter your password"
-                      className="block w-full h-12 pl-10 pr-10 bg-white border border-gray-200 rounded-xl text-sm outline-none transition-all focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 placeholder:text-gray-400"
+                      className="block w-full h-12 pl-10 pr-10 bg-white border border-gray-200 rounded-xl text-sm outline-none transition-all focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10 placeholder:text-gray-400"
                     />
                     <button
                       type="button"
@@ -406,7 +406,7 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
                 <Button 
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.98] transition-all duration-200 text-white h-12 rounded-xl text-sm font-bold shadow-[0_8px_20px_rgb(217,26,36,0.2)] mt-5 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+                  className="w-full bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.98] transition-all duration-200 text-white h-12 rounded-xl text-sm font-bold shadow-[0_8px_20px_rgb(217,26,36,0.2)] mt-5 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
                 >
                   {loading ? (
                     <>
@@ -442,7 +442,7 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
               </button>
 
               <div className="text-center mt-6 text-xs sm:text-sm text-gray-500">
-                New to FitWorks? <button onClick={() => go("register_select")} className="text-[#d91a24] hover:text-[#cc1616] font-bold transition-colors bg-transparent border-none p-0 cursor-pointer">Create an account</button>
+                New to FitWorks? <button onClick={() => go("register_select")} className="text-[#E92E3D] hover:text-[#d42936] font-bold transition-colors bg-transparent border-none p-0 cursor-pointer">Create an account</button>
               </div>
 
               <div className="text-center mt-8 text-[11px] font-medium text-gray-400 flex items-center justify-center gap-1.5 leading-tight">
@@ -468,30 +468,30 @@ export default function AuthView({ mode }: { mode: AuthMode }) {
               <div className="space-y-3.5">
                 <button
                   onClick={() => go("register_gym")}
-                  className="w-full flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl border border-gray-200/80 hover:border-[#d91a24] hover:shadow-[0_8px_20px_rgb(217,26,36,0.08)] transition-all group text-left bg-white"
+                  className="w-full flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl border border-gray-200/80 hover:border-[#E92E3D] hover:shadow-[0_8px_20px_rgb(217,26,36,0.08)] transition-all group text-left bg-white"
                 >
                   <div className="w-11 h-11 rounded-xl bg-red-50/70 group-hover:bg-red-50 flex items-center justify-center transition-colors shrink-0">
-                    <Building2 className="w-5 h-5 text-[#d91a24] transition-colors" />
+                    <Building2 className="w-5 h-5 text-[#E92E3D] transition-colors" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-sm sm:text-base text-gray-900 mb-0.5">I'm a Gym Owner</h3>
                     <p className="text-xs text-gray-500 line-clamp-1">Hire verified trainers for my gym.</p>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#d91a24] shrink-0 transition-colors" />
+                  <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#E92E3D] shrink-0 transition-colors" />
                 </button>
 
                 <button
                   onClick={() => go("register_trainer")}
-                  className="w-full flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl border border-gray-200/80 hover:border-[#d91a24] hover:shadow-[0_8px_20px_rgb(217,26,36,0.08)] transition-all group text-left bg-white"
+                  className="w-full flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl border border-gray-200/80 hover:border-[#E92E3D] hover:shadow-[0_8px_20px_rgb(217,26,36,0.08)] transition-all group text-left bg-white"
                 >
                   <div className="w-11 h-11 rounded-xl bg-red-50/70 group-hover:bg-red-50 flex items-center justify-center transition-colors shrink-0">
-                    <User className="w-5 h-5 text-[#d91a24] transition-colors" />
+                    <User className="w-5 h-5 text-[#E92E3D] transition-colors" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-sm sm:text-base text-gray-900 mb-0.5">I'm a Trainer</h3>
                     <p className="text-xs text-gray-500 line-clamp-1">Find top coaching opportunities.</p>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#d91a24] shrink-0 transition-colors" />
+                  <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#E92E3D] shrink-0 transition-colors" />
                 </button>
               </div>
 

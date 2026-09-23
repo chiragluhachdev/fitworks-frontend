@@ -88,7 +88,7 @@ export default function AdminVacancyBoard() {
           {queue > 0 && (
             <>
               {" "}
-              <span className="font-bold text-[#d91a24]">
+              <span className="font-bold text-[#E92E3D]">
                 {queue} need{queue === 1 ? "s" : ""} attention.
               </span>
             </>
@@ -178,7 +178,7 @@ export default function AdminVacancyBoard() {
                           {relativeDate(row.createdAt)}
                         </span>
                       </div>
-                      <p className="text-[15px] font-bold text-gray-900 mt-1.5 truncate group-hover:text-[#d91a24] transition-colors">
+                      <p className="text-[15px] font-bold text-gray-900 mt-1.5 truncate group-hover:text-[#E92E3D] transition-colors">
                         {row.position}
                       </p>
                       <div className="flex items-center gap-x-3.5 gap-y-1 flex-wrap text-[12px] text-gray-500 font-medium mt-1">
@@ -209,7 +209,7 @@ export default function AdminVacancyBoard() {
                       <span className="text-[11px] font-semibold text-gray-400 mt-0.5">shortlisted</span>
                     </div>
 
-                    <ChevronRight className="w-4 h-4 text-gray-300 shrink-0 group-hover:text-[#d91a24] transition-colors" />
+                    <ChevronRight className="w-4 h-4 text-gray-300 shrink-0 group-hover:text-[#E92E3D] transition-colors" />
                   </Link>
                 );
               })}

@@ -9,17 +9,21 @@ type Size = "sm" | "md" | "lg";
 
 const VARIANTS: Record<Variant, string> = {
   primary:
-    "bg-[#d91a24] text-white hover:bg-[#c11620] shadow-[0_1px_2px_rgba(217,26,36,0.35),0_8px_20px_-8px_rgba(217,26,36,0.6)]",
-  secondary: "bg-white text-gray-800 border border-gray-200 hover:border-gray-300 hover:bg-gray-50",
+    "bg-brand text-white hover:bg-brand-dark shadow-[0_1px_2px_rgba(233,46,61,0.3),0_8px_22px_-10px_rgba(233,46,61,0.75)]",
+  secondary: "bg-white text-gray-800 ring-1 ring-gray-200 hover:ring-gray-300 hover:bg-gray-50",
   ghost: "text-gray-600 hover:text-gray-900 hover:bg-gray-100",
-  danger: "bg-white text-[#d91a24] border border-red-200 hover:bg-red-50",
+  danger: "bg-white text-brand ring-1 ring-red-200 hover:bg-brand-tint",
 };
 
-// 44px is the smallest comfortable tap target; the phone sizes never go under it.
+/**
+ * Every size clears 44px, the smallest comfortable tap target, and the phone
+ * sizes sit a touch taller than the desktop ones because a thumb is blunter
+ * than a cursor.
+ */
 const SIZES: Record<Size, string> = {
-  sm: "h-9 px-3.5 text-[13px] gap-1.5 rounded-lg",
-  md: "h-11 px-4.5 text-sm gap-2 rounded-xl",
-  lg: "h-12 px-6 text-[15px] gap-2 rounded-xl",
+  sm: "h-9 px-3.5 text-[12.5px] sm:text-[13px] gap-1.5 rounded-lg",
+  md: "h-11 px-4 sm:px-4.5 text-[13.5px] sm:text-sm gap-2 rounded-xl",
+  lg: "h-12 px-5 sm:px-6 text-[14.5px] sm:text-[15px] gap-2 rounded-xl",
 };
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -42,9 +46,9 @@ export default function Button({
   ...rest
 }: ButtonProps) {
   const classes = [
-    "inline-flex items-center justify-center font-bold transition-all duration-150",
+    "inline-flex items-center justify-center font-bold whitespace-nowrap transition-all duration-150",
     "active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none",
-    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d91a24]",
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand",
     VARIANTS[variant],
     SIZES[size],
     block ? "w-full" : "",

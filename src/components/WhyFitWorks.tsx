@@ -61,7 +61,7 @@ export default function WhyFitWorks() {
               {/* Overlaid proof strip — inside the frame, so nothing overflows on mobile */}
               <div className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6 grid grid-cols-2 gap-2.5 sm:gap-3">
                 <div className="flex items-center gap-2.5 rounded-2xl bg-white/95 backdrop-blur-md px-3 py-2.5 sm:px-4 sm:py-3 shadow-lg">
-                  <span className="w-9 h-9 rounded-xl bg-red-50 text-[#d91a24] flex items-center justify-center shrink-0">
+                  <span className="w-9 h-9 rounded-xl bg-red-50 text-[#E92E3D] flex items-center justify-center shrink-0">
                     <ShieldCheck className="w-[18px] h-[18px]" />
                   </span>
                   <div className="min-w-0">
@@ -99,15 +99,15 @@ export default function WhyFitWorks() {
               transition={{ duration: 0.45 }}
             >
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-100 mb-5">
-                <Zap className="w-3.5 h-3.5 text-[#d91a24]" />
-                <span className="text-[11px] sm:text-xs font-bold text-[#d91a24] uppercase tracking-widest">
+                <Zap className="w-3.5 h-3.5 text-[#E92E3D]" />
+                <span className="text-[11px] sm:text-xs font-bold text-[#E92E3D] uppercase tracking-widest">
                   Why Choose Us
                 </span>
               </div>
               <h2 className="text-[27px] leading-[1.15] sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-[-0.02em] mb-4">
-                Built for <span className="text-[#d91a24]">trust.</span>{" "}
+                Built for <span className="text-[#E92E3D]">trust.</span>{" "}
                 <br className="hidden sm:block" />
-                Designed for <span className="text-[#d91a24]">results.</span>
+                Designed for <span className="text-[#E92E3D]">results.</span>
               </h2>
               <p className="text-[15px] sm:text-base text-gray-500 mb-8 sm:mb-10 max-w-lg leading-relaxed">
                 FitWorks is more than a listing platform. It&apos;s a vetted
@@ -127,10 +127,10 @@ export default function WhyFitWorks() {
                   className="group flex sm:block items-start gap-4"
                 >
                   <div className="w-11 h-11 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center shrink-0 sm:mb-4 group-hover:-translate-y-1 group-hover:shadow-md group-hover:border-red-100 transition-all duration-300">
-                    <feature.icon className="w-5 h-5 text-[#d91a24]" />
+                    <feature.icon className="w-5 h-5 text-[#E92E3D]" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-[15px] sm:text-base font-bold text-gray-900 mb-1.5 group-hover:text-[#d91a24] transition-colors">
+                    <h3 className="text-[15px] sm:text-base font-bold text-gray-900 mb-1.5 group-hover:text-[#E92E3D] transition-colors">
                       {feature.title}
                     </h3>
                     <p className="text-[13px] text-gray-500 leading-relaxed sm:pr-4">

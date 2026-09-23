@@ -136,7 +136,7 @@ export default function AdminSettingsPage() {
           <button
             onClick={reset}
             type="button"
-            className="inline-flex items-center gap-1.5 text-[12px] font-bold text-gray-500 hover:text-[#d91a24] transition-colors cursor-pointer shrink-0"
+            className="inline-flex items-center gap-1.5 text-[12px] font-bold text-gray-500 hover:text-[#E92E3D] transition-colors cursor-pointer shrink-0"
           >
             <RotateCcw className="w-3.5 h-3.5" /> Reset to defaults
           </button>
@@ -216,7 +216,7 @@ export default function AdminSettingsPage() {
           <p>
             A new price applies to the next payment only. Gyms already on a plan keep the term they
             paid for, and their receipts keep the amount they were actually charged.
-            {dirty && <span className="font-bold text-[#d91a24]"> You have unsaved changes.</span>}
+            {dirty && <span className="font-bold text-[#E92E3D]"> You have unsaved changes.</span>}
           </p>
         </div>
       </Panel>
@@ -245,7 +245,7 @@ export default function AdminSettingsPage() {
               checked={otpEnabled}
               onChange={(e) => setOtpEnabled(e.target.checked)}
             />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#d91a24]" />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#E92E3D]" />
             <span className="ml-3 text-[13px] font-bold text-gray-700 w-9">
               {otpEnabled ? "ON" : "OFF"}
             </span>

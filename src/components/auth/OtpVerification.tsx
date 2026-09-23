@@ -162,7 +162,7 @@ export default function OtpVerification({
       </button>
 
       <div className="text-center mb-7">
-        <span className="w-14 h-14 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center mx-auto mb-4">
+        <span className="w-14 h-14 rounded-2xl bg-red-50 text-[#E92E3D] flex items-center justify-center mx-auto mb-4">
           <ShieldCheck className="w-7 h-7" />
         </span>
         <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 mb-1.5">
@@ -194,17 +194,17 @@ export default function OtpVerification({
             onFocus={(e) => e.target.select()}
             className={`w-12 h-14 sm:w-[52px] sm:h-16 text-center text-xl sm:text-2xl font-extrabold text-gray-900 bg-white border-2 rounded-2xl outline-none transition-all disabled:opacity-60 ${
               error
-                ? "border-red-300 focus:border-[#d91a24]"
+                ? "border-red-300 focus:border-[#E92E3D]"
                 : d
-                ? "border-[#d91a24]"
-                : "border-gray-200 focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10"
+                ? "border-[#E92E3D]"
+                : "border-gray-200 focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10"
             }`}
           />
         ))}
       </div>
 
       {error && (
-        <p className="text-center text-xs font-semibold text-[#d91a24] mb-4" role="alert">
+        <p className="text-center text-xs font-semibold text-[#E92E3D] mb-4" role="alert">
           {error}
         </p>
       )}
@@ -212,7 +212,7 @@ export default function OtpVerification({
       <button
         onClick={() => submit(code)}
         disabled={code.length !== OTP_LENGTH || verifying}
-        className="w-full h-14 sm:h-12 bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.98] text-white rounded-xl text-sm font-bold shadow-[0_8px_20px_rgb(217,26,36,0.2)] flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:shadow-none cursor-pointer"
+        className="w-full h-14 sm:h-12 bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.98] text-white rounded-xl text-sm font-bold shadow-[0_8px_20px_rgb(217,26,36,0.2)] flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:shadow-none cursor-pointer"
       >
         {verifying ? (
           <>
@@ -232,7 +232,7 @@ export default function OtpVerification({
           <button
             onClick={sendOtp}
             disabled={resending}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#d91a24] hover:text-[#cc1616] transition-colors disabled:opacity-60 cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#E92E3D] hover:text-[#d42936] transition-colors disabled:opacity-60 cursor-pointer"
           >
             {resending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
             Resend OTP

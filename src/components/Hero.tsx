@@ -57,7 +57,7 @@ export default function Hero() {
       </div>
 
       {/* Warm brand tint in the corner */}
-      <div className="absolute -top-32 -right-24 w-[420px] h-[420px] rounded-full bg-[#d91a24]/[0.07] blur-[110px] pointer-events-none z-0" />
+      <div className="absolute -top-32 -right-24 w-[420px] h-[420px] rounded-full bg-[#E92E3D]/[0.07] blur-[110px] pointer-events-none z-0" />
 
       {/* Decorative brand rings — desktop only */}
       <div className="hidden lg:block absolute top-[8%] right-[6%] w-[460px] h-[460px] rounded-full border border-[#c5121c]/10 pointer-events-none z-0" />
@@ -106,7 +106,7 @@ export default function Hero() {
                 aria-hidden="true"
                 viewBox="0 0 200 12"
                 preserveAspectRatio="none"
-                className="absolute left-0 -bottom-1 w-full h-[8px] text-[#d91a24]/25"
+                className="absolute left-0 -bottom-1 w-full h-[8px] text-[#E92E3D]/25"
               >
                 <path
                   d="M2 8C50 3 150 3 198 8"
@@ -139,7 +139,7 @@ export default function Hero() {
             className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-0 md:mb-10"
           >
             <Link href="/auth" className="w-full sm:w-auto">
-              <Button className="w-full sm:w-auto bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white h-[52px] sm:h-[48px] px-7 rounded-xl text-[15px] font-semibold shadow-[0_10px_24px_rgb(197,18,28,0.24)] flex items-center justify-center">
+              <Button className="w-full sm:w-auto bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white h-[52px] sm:h-[48px] px-7 rounded-xl text-[15px] font-semibold shadow-[0_10px_24px_rgb(197,18,28,0.24)] flex items-center justify-center">
                 Get Hired <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -197,7 +197,7 @@ export default function Hero() {
               </div>
 
               <Link href="/auth" className="pl-3 shrink-0">
-                <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.98] transition-all duration-200 text-white h-[46px] px-6 rounded-xl text-[15px] font-semibold shadow-[0_6px_16px_rgb(217,26,36,0.24)] flex items-center justify-center">
+                <Button className="bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.98] transition-all duration-200 text-white h-[46px] px-6 rounded-xl text-[15px] font-semibold shadow-[0_6px_16px_rgb(217,26,36,0.24)] flex items-center justify-center">
                   <Search className="w-4 h-4 mr-2" />
                   Search
                 </Button>

@@ -18,7 +18,7 @@ export default function StatusPill({
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full border font-bold whitespace-nowrap ${chip} ${
-        size === "sm" ? "text-[10.5px] px-2 py-0.5" : "text-[11.5px] px-2.5 py-1"
+        size === "sm" ? "text-[10px] sm:text-[10.5px] px-2 py-0.5" : "text-[11px] sm:text-[11.5px] px-2.5 py-1"
       }`}
     >
       {dot && <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dot}`} />}

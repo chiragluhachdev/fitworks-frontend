@@ -28,7 +28,7 @@ export default function TrustedBy() {
               key={idx}
               className="flex items-center gap-2.5 sm:gap-3.5 mx-6 sm:mx-10 md:mx-12 shrink-0 opacity-75 hover:opacity-100 transition-opacity"
             >
-              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#d91a24] shrink-0" />
+              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#E92E3D] shrink-0" />
               <span className="text-base sm:text-lg md:text-xl font-extrabold tracking-tight text-gray-900 uppercase whitespace-nowrap">
                 {gym.name}
               </span>

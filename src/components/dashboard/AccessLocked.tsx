@@ -42,7 +42,7 @@ export default function AccessLocked({ lock, trainerSlug }: { lock: LockInfo; tr
         <div className="text-center mb-8">
           <span
             className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
-              isReview ? "bg-amber-50 text-amber-600" : "bg-red-50 text-[#d91a24]"
+              isReview ? "bg-amber-50 text-amber-600" : "bg-red-50 text-[#E92E3D]"
             }`}
           >
             <Icon className="w-8 h-8" />
@@ -79,7 +79,7 @@ export default function AccessLocked({ lock, trainerSlug }: { lock: LockInfo; tr
                         : current
                         ? isReview
                           ? "bg-amber-50 border-amber-300 text-amber-700"
-                          : "bg-red-50 border-red-300 text-[#d91a24]"
+                          : "bg-red-50 border-red-300 text-[#E92E3D]"
                         : "bg-white border-gray-200 text-gray-400"
                     }`}
                   >
@@ -98,7 +98,7 @@ export default function AccessLocked({ lock, trainerSlug }: { lock: LockInfo; tr
                     {current && (
                       <span
                         className={`ml-2 text-[10px] font-bold uppercase tracking-wide ${
-                          isReview ? "text-amber-600" : "text-[#d91a24]"
+                          isReview ? "text-amber-600" : "text-[#E92E3D]"
                         }`}
                       >
                         {isReview ? "· Now" : "· Start here"}
@@ -122,7 +122,7 @@ export default function AccessLocked({ lock, trainerSlug }: { lock: LockInfo; tr
         ) : (
           <Link
             href={`/trainer/${trainerSlug}/verification`}
-            className="w-full h-13 min-h-[52px] rounded-2xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-sm font-bold shadow-[0_10px_26px_rgb(217,26,36,0.22)] active:scale-[0.99] transition-all inline-flex items-center justify-center gap-2"
+            className="w-full h-13 min-h-[52px] rounded-2xl bg-[#E92E3D] hover:bg-[#d42936] text-white text-sm font-bold shadow-[0_10px_26px_rgb(217,26,36,0.22)] active:scale-[0.99] transition-all inline-flex items-center justify-center gap-2"
           >
             <FileUp className="w-4 h-4" /> Re-upload my documents
           </Link>

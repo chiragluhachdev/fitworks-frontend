@@ -51,7 +51,7 @@ export default function VerifiedTrainers() {
           </p>
           <h2 className="text-[27px] leading-[1.15] sm:text-3xl md:text-4xl font-extrabold text-gray-900 tracking-[-0.02em] mb-3.5">
             Get verified trainers,{" "}
-            <span className="text-[#d91a24]">not guesswork.</span>
+            <span className="text-[#E92E3D]">not guesswork.</span>
           </h2>
           <p className="text-gray-500 text-[15px] sm:text-base leading-relaxed">
             Hiring a trainer off a WhatsApp group means trusting a claim. On
@@ -72,13 +72,13 @@ export default function VerifiedTrainers() {
               className="group relative bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 shadow-[0_1px_3px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_32px_rgb(0,0,0,0.07)] hover:border-red-100 transition-all duration-300"
             >
               <div className="flex items-start gap-4">
-                <span className="w-11 h-11 rounded-xl bg-red-50 text-[#c5121c] flex items-center justify-center shrink-0 group-hover:bg-[#d91a24] group-hover:text-white transition-colors duration-300">
+                <span className="w-11 h-11 rounded-xl bg-red-50 text-[#c5121c] flex items-center justify-center shrink-0 group-hover:bg-[#E92E3D] group-hover:text-white transition-colors duration-300">
                   <Icon className="w-5 h-5" />
                 </span>
                 <div className="min-w-0">
                   <h3 className="text-[15px] sm:text-base font-bold text-gray-900 mb-1.5 flex items-center gap-1.5">
                     {title}
-                    <BadgeCheck className="w-4 h-4 text-[#d91a24] shrink-0" />
+                    <BadgeCheck className="w-4 h-4 text-[#E92E3D] shrink-0" />
                   </h3>
                   <p className="text-[13px] sm:text-sm text-gray-500 leading-relaxed">
                     {description}
@@ -97,7 +97,7 @@ export default function VerifiedTrainers() {
           transition={{ duration: 0.45 }}
           className="relative rounded-3xl overflow-hidden bg-gray-900 p-6 sm:p-9 md:p-11"
         >
-          <div className="absolute -top-24 -right-16 w-80 h-80 rounded-full bg-[#d91a24] blur-[110px] opacity-35 pointer-events-none" />
+          <div className="absolute -top-24 -right-16 w-80 h-80 rounded-full bg-[#E92E3D] blur-[110px] opacity-35 pointer-events-none" />
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-7 lg:gap-10">
@@ -119,7 +119,7 @@ export default function VerifiedTrainers() {
 
             <div className="flex flex-col gap-3 w-full lg:w-[280px] shrink-0">
               <Link href="/auth" className="w-full">
-                <span className="flex items-center justify-between gap-2 w-full h-[52px] px-5 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-[15px] font-bold shadow-[0_8px_20px_rgb(217,26,36,0.3)] active:scale-[0.98] transition-all duration-200 group">
+                <span className="flex items-center justify-between gap-2 w-full h-[52px] px-5 rounded-xl bg-[#E92E3D] hover:bg-[#d42936] text-white text-[15px] font-bold shadow-[0_8px_20px_rgb(217,26,36,0.3)] active:scale-[0.98] transition-all duration-200 group">
                   <span className="inline-flex items-center gap-2">
                     <Building2 className="w-[18px] h-[18px]" />
                     Hire as a Gym

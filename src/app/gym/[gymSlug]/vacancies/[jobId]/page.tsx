@@ -30,7 +30,7 @@ function Detail({ icon: Icon, label, value }: { icon: any; label: string; value?
   if (!value) return null;
   return (
     <div className="flex items-start gap-3">
-      <span className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-200/80 flex items-center justify-center shrink-0">
+      <span className="w-9 h-9 rounded-xl bg-gray-50 ring-1 ring-gray-200/70 flex items-center justify-center shrink-0">
         <Icon className="w-4 h-4 text-gray-500" />
       </span>
       <div className="min-w-0">
@@ -117,15 +117,15 @@ export default function GymVacancyDetailPage() {
           </span>
         }
         actions={
-          <>
-            <Button variant="secondary" size="sm" loading={busy} onClick={toggleOpen}>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button variant="secondary" size="sm" loading={busy} onClick={toggleOpen} className="flex-1 sm:flex-none">
               {closed ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
               {closed ? "Reopen" : "Close"}
             </Button>
-            <Button variant="danger" size="sm" loading={busy} onClick={remove} aria-label="Remove vacancy">
+            <Button variant="danger" size="sm" loading={busy} onClick={remove} aria-label="Remove vacancy" className="shrink-0 px-3">
               <Trash2 className="w-3.5 h-3.5" />
             </Button>
-          </>
+          </div>
         }
       />
 

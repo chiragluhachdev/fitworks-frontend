@@ -174,20 +174,20 @@ export default function PostVacancyPage() {
   if (done) {
     return (
       <div className="max-w-xl mx-auto animate-in fade-in duration-300 pt-6 sm:pt-12">
-        <div className="bg-white rounded-3xl border border-gray-200/80 p-7 sm:p-10 text-center">
+        <div className="bg-white rounded-[20px] sm:rounded-3xl ring-1 ring-gray-200/70 shadow-[0_1px_2px_rgba(16,24,40,0.04)] p-5 sm:p-10 text-center">
           <span className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-5">
             <CheckCircle2 className="w-8 h-8" />
           </span>
-          <h1 className="text-[24px] sm:text-[27px] font-extrabold text-gray-900 tracking-[-0.02em]">
+          <h1 className="text-[21px] sm:text-[27px] font-extrabold text-gray-900 tracking-[-0.02em]">
             Vacancy submitted successfully
           </h1>
           <p className="text-[14px] text-gray-500 mt-3 leading-relaxed">
             Our FitWorks team will review your requirement and start finding suitable trainers for you.
           </p>
 
-          <div className="mt-7 p-4 sm:p-5 bg-gray-50 rounded-2xl border border-gray-200/80 text-left">
+          <div className="mt-7 p-4 sm:p-5 bg-gray-50 rounded-[20px] ring-1 ring-gray-200/70 text-left">
             <p className="text-[13px] font-bold text-gray-900 mb-3 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#d91a24]" /> What happens next
+              <Sparkles className="w-4 h-4 text-brand" /> What happens next
             </p>
             <ol className="space-y-2.5">
               {[
@@ -254,7 +254,7 @@ export default function PostVacancyPage() {
                     state === "done"
                       ? "bg-emerald-500 text-white"
                       : state === "current"
-                      ? "bg-[#d91a24] text-white"
+                      ? "bg-brand text-white"
                       : "bg-white text-gray-400 border border-gray-200"
                   }`}
                 >
@@ -280,15 +280,15 @@ export default function PostVacancyPage() {
         </div>
         <div className="h-1 w-full rounded-full bg-gray-100 overflow-hidden">
           <div
-            className="h-full bg-[#d91a24] rounded-full transition-all duration-400"
+            className="h-full bg-brand rounded-full transition-all duration-400"
             style={{ width: `${Math.max(6, progress)}%` }}
           />
         </div>
       </div>
 
-      <form onSubmit={submit} className="bg-white rounded-2xl border border-gray-200/80 p-5 sm:p-7">
+      <form onSubmit={submit} className="bg-white rounded-[20px] ring-1 ring-gray-200/70 shadow-[0_1px_2px_rgba(16,24,40,0.04)] p-4 sm:p-7">
         {step === 1 && (
-          <div className="space-y-5 animate-in fade-in slide-in-from-right-2 duration-200">
+          <div className="space-y-4 sm:space-y-5 animate-in fade-in slide-in-from-right-2 duration-200">
             <Field
               label="Vacancy title"
               required
@@ -305,7 +305,7 @@ export default function PostVacancyPage() {
               />
             </Field>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
               <Field label="Trainer type / role" htmlFor="trainerType">
                 <Select id="trainerType" value={form.trainerType} onChange={set("trainerType")}>
                   {TRAINER_TYPES.map((t) => (
@@ -350,7 +350,7 @@ export default function PostVacancyPage() {
         )}
 
         {step === 2 && (
-          <div className="space-y-5 animate-in fade-in slide-in-from-right-2 duration-200">
+          <div className="space-y-4 sm:space-y-5 animate-in fade-in slide-in-from-right-2 duration-200">
             <Field
               label="Location"
               required
@@ -380,7 +380,7 @@ export default function PostVacancyPage() {
               />
             </Field>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
               <Field
                 label="Salary range"
                 required
@@ -416,7 +416,7 @@ export default function PostVacancyPage() {
         )}
 
         {step === 3 && (
-          <div className="space-y-5 animate-in fade-in slide-in-from-right-2 duration-200">
+          <div className="space-y-4 sm:space-y-5 animate-in fade-in slide-in-from-right-2 duration-200">
             <Field
               label="What the job involves"
               required
@@ -464,15 +464,15 @@ export default function PostVacancyPage() {
 
             {submitError && (
               <div className="flex items-start gap-2.5 p-4 rounded-xl bg-red-50 border border-red-200/70">
-                <AlertCircle className="w-4 h-4 text-[#d91a24] shrink-0 mt-0.5" />
-                <p className="text-[13px] font-semibold text-[#d91a24]">{submitError}</p>
+                <AlertCircle className="w-4 h-4 text-brand shrink-0 mt-0.5" />
+                <p className="text-[13px] font-semibold text-brand">{submitError}</p>
               </div>
             )}
           </div>
         )}
 
         {/* ── Navigation ── */}
-        <div className="flex items-center gap-2.5 mt-7 pt-6 border-t border-gray-100">
+        <div className="flex items-center gap-2 mt-6 sm:mt-7 pt-5 sm:pt-6 border-t border-gray-100">
           {step > 1 ? (
             <Button type="button" variant="secondary" onClick={back}>
               <ArrowLeft className="w-4 h-4" /> Back

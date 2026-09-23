@@ -29,7 +29,7 @@ import { findPlan, shortDate } from "@/lib/hiring";
  * coloured, so four tiles side by side read as one set rather than four.
  */
 const ACCENTS = {
-  red: { chip: "bg-[#FFF1F2] text-[#E92E3D]", glow: "bg-[#E92E3D]", ring: "group-hover:ring-red-200/80" },
+  red: { chip: "bg-brand-tint text-brand", glow: "bg-brand", ring: "group-hover:ring-red-200/80" },
   blue: { chip: "bg-blue-50 text-blue-600", glow: "bg-blue-500", ring: "group-hover:ring-blue-200/80" },
   amber: { chip: "bg-amber-50 text-amber-600", glow: "bg-amber-500", ring: "group-hover:ring-amber-200/80" },
   slate: { chip: "bg-gray-100 text-gray-600", glow: "bg-gray-500", ring: "group-hover:ring-gray-300" },
@@ -130,7 +130,7 @@ export default function GymOverviewPage() {
     <div className="max-w-[1200px] w-full mx-auto animate-in fade-in duration-300 pb-10">
       
       {/* ── Hero Section ── */}
-      <section className="relative overflow-hidden bg-[#0a0a0a] rounded-[24px] px-6 py-10 sm:px-12 sm:py-14 mb-6 shadow-sm flex flex-col justify-center min-h-[340px]">
+      <section className="relative overflow-hidden bg-[#0a0a0a] rounded-[20px] sm:rounded-[24px] px-5 py-8 sm:px-12 sm:py-14 mb-4 sm:mb-6 shadow-sm flex flex-col justify-center min-h-[268px] sm:min-h-[340px]">
         {/* Background Image Masked to the right */}
         <div 
           className="absolute inset-y-0 right-0 w-[80%] sm:w-[60%] bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-[center_top_-4rem] opacity-60 mix-blend-lighten pointer-events-none"
@@ -139,24 +139,24 @@ export default function GymOverviewPage() {
         
         <div className="relative z-10 max-w-xl">
           {firstName && (
-            <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-400 mb-4">
+            <p className="text-[10.5px] sm:text-[11px] font-bold uppercase tracking-[0.15em] text-gray-400 mb-3 sm:mb-4">
               Welcome back, {firstName}
             </p>
           )}
           
-          <h1 className="text-[32px] sm:text-[42px] font-bold text-white leading-[1.15] mb-4">
+          <h1 className="text-[27px] sm:text-[42px] font-bold text-white leading-[1.14] tracking-[-0.02em] mb-3 sm:mb-4">
             Find the right fitness <br className="hidden sm:block" />
-            professionals <span className="text-[#E92E3D]">for your gym.</span>
+            professionals <span className="text-brand">for your gym.</span>
           </h1>
           
-          <p className="text-[14px] sm:text-[15px] text-gray-300 mb-8 max-w-[400px] leading-relaxed">
+          <p className="text-[13px] sm:text-[15px] text-gray-300 mb-6 sm:mb-8 max-w-[400px] leading-relaxed">
             Post your hiring requirements and let the FitWorks team help you find suitable trainers.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
             <Link 
               href={`/gym/${gymSlug}/vacancies/new`} 
-              className="inline-flex items-center justify-center bg-[#E92E3D] hover:bg-red-600 text-white font-medium rounded-xl px-6 h-12 transition-colors shadow-md shadow-red-900/20"
+              className="inline-flex items-center justify-center bg-brand hover:bg-brand-dark text-white text-[14.5px] sm:text-[15px] font-semibold rounded-xl px-5 sm:px-6 h-12 transition-colors shadow-[0_8px_24px_-10px_rgba(233,46,61,0.9)]"
             >
               <Plus className="w-4 h-4 mr-1.5" /> Post a Vacancy
             </Link>
@@ -166,7 +166,7 @@ export default function GymOverviewPage() {
                 taking up room on the page. */}
             <button
               onClick={() => setExplainerOpen(true)}
-              className="inline-flex items-center justify-center bg-transparent border border-gray-400 hover:border-white hover:bg-white/10 text-white font-medium rounded-xl px-6 h-12 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center bg-transparent ring-1 ring-white/35 hover:ring-white hover:bg-white/10 text-white text-[14.5px] sm:text-[15px] font-semibold rounded-xl px-5 sm:px-6 h-12 transition-all cursor-pointer"
             >
               <PlayCircle className="w-4 h-4 mr-1.5" /> How it works
             </button>
@@ -175,7 +175,7 @@ export default function GymOverviewPage() {
       </section>
 
       {/* ── Overview grid ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
         <Tile
           href={`/gym/${gymSlug}/vacancies`}
           icon={Briefcase}
@@ -245,10 +245,10 @@ export default function GymOverviewPage() {
 
       {/* ── Subscription Banner ── */}
       {!subscription?.isActive && (
-        <div className="bg-[#FFF5F6] border border-[#FFE2E5] rounded-[20px] p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 shadow-sm">
+        <div className="bg-brand-tint ring-1 ring-[#FFE2E5] rounded-[20px] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 sm:mb-6">
           <div className="flex items-center gap-4">
             <div className="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0">
-              <CreditCard className="text-[#E92E3D] w-5 h-5" />
+              <CreditCard className="text-brand w-5 h-5" />
             </div>
             <div>
               <h3 className="text-[15px] font-bold text-gray-900">Activate your FitWorks plan</h3>
@@ -259,7 +259,7 @@ export default function GymOverviewPage() {
           </div>
           <Link 
             href={`/gym/${gymSlug}/subscription`} 
-            className="inline-flex items-center justify-center bg-[#E92E3D] hover:bg-red-600 text-white font-medium rounded-xl mt-4 sm:mt-0 px-6 whitespace-nowrap h-11 transition-colors"
+            className="inline-flex items-center justify-center bg-brand hover:bg-red-600 text-white font-medium rounded-xl mt-4 sm:mt-0 px-6 whitespace-nowrap h-11 transition-colors"
           >
             View Plans <ArrowRight className="w-4 h-4 ml-1.5" />
           </Link>
@@ -271,7 +271,7 @@ export default function GymOverviewPage() {
         
         {/* Left: Active Vacancies */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden h-full flex flex-col min-h-[400px]">
+          <div className="bg-white rounded-[20px] sm:rounded-[24px] ring-1 ring-gray-200/70 shadow-[0_1px_2px_rgba(16,24,40,0.04)] overflow-hidden h-full flex flex-col min-h-[400px]">
             <div className="px-6 py-5 border-b border-gray-50 flex justify-between items-center">
               <h2 className="text-[16px] font-bold text-gray-900">Your Active Vacancies</h2>
               {hasVacancies && (
@@ -295,7 +295,7 @@ export default function GymOverviewPage() {
                   </p>
                   <Link 
                     href={`/gym/${gymSlug}/vacancies/new`} 
-                    className="inline-flex items-center justify-center bg-[#E92E3D] hover:bg-red-600 text-white font-medium rounded-xl h-11 px-6 shadow-sm transition-colors"
+                    className="inline-flex items-center justify-center bg-brand hover:bg-red-600 text-white font-medium rounded-xl h-11 px-6 shadow-sm transition-colors"
                   >
                     <Plus className="w-4 h-4 mr-1.5" /> Post a Vacancy
                   </Link>
@@ -315,7 +315,7 @@ export default function GymOverviewPage() {
 
         {/* Right: How FitWorks Works */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-[24px] border border-gray-100 shadow-sm p-6 h-full flex flex-col min-h-[400px]">
+          <div className="bg-white rounded-[20px] sm:rounded-[24px] ring-1 ring-gray-200/70 shadow-[0_1px_2px_rgba(16,24,40,0.04)] p-4 sm:p-6 h-full flex flex-col">
             <h2 className="text-[16px] font-bold text-gray-900 mb-6">How FitWorks Works</h2>
             
             {/* The same three steps, playing. Nobody reads a 1-2-3 list twice;
@@ -327,7 +327,7 @@ export default function GymOverviewPage() {
             {/* Contact Support Footer */}
             <div className="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#FFF5F6] flex items-center justify-center text-[#E92E3D]">
+                <div className="w-10 h-10 rounded-full bg-brand-tint flex items-center justify-center text-brand">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
                 </div>
                 <div>
@@ -335,7 +335,7 @@ export default function GymOverviewPage() {
                   <p className="text-[11px] text-gray-500">Our team is here to support you.</p>
                 </div>
               </div>
-              <Link href={`/gym/${gymSlug}/profile?tab=support`} className="text-[12px] font-bold text-[#E92E3D] bg-[#FFF5F6] px-3 py-2 rounded-lg hover:bg-red-50 transition-colors whitespace-nowrap">
+              <Link href={`/gym/${gymSlug}/profile?tab=support`} className="text-[12px] font-bold text-brand bg-brand-tint px-3 py-2 rounded-lg hover:bg-red-50 transition-colors whitespace-nowrap">
                 Contact Support
               </Link>
             </div>

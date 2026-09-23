@@ -242,7 +242,7 @@ export default function AdminGyms() {
             placeholder="Search gyms by name, city, or contact person..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
           />
         </div>
       </div>
@@ -251,7 +251,7 @@ export default function AdminGyms() {
       <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs overflow-hidden">
         {loading ? (
           <div className="flex flex-col h-64 items-center justify-center gap-3">
-            <div className="w-8 h-8 border-3 border-[#d91a24] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-3 border-[#E92E3D] border-t-transparent rounded-full animate-spin"></div>
             <p className="text-xs text-gray-500 font-medium">Loading gyms directory...</p>
           </div>
         ) : (
@@ -288,7 +288,7 @@ export default function AdminGyms() {
                             />
                           </div>
                         ) : (
-                          <div className="w-11 h-11 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-base shrink-0 shadow-2xs">
+                          <div className="w-11 h-11 rounded-2xl bg-red-50 text-[#E92E3D] border border-red-100 flex items-center justify-center font-black text-base shrink-0 shadow-2xs">
                             {gym.gymName?.charAt(0) || "G"}
                           </div>
                         )}
@@ -299,7 +299,7 @@ export default function AdminGyms() {
                           <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
                             <span>{gym.numberOfLocations || 1} Location(s)</span>
                             {gym.website && (
-                              <span className="text-[#d91a24] flex items-center gap-0.5 font-medium">
+                              <span className="text-[#E92E3D] flex items-center gap-0.5 font-medium">
                                 <Globe className="w-3 h-3" /> Website
                               </span>
                             )}
@@ -335,7 +335,7 @@ export default function AdminGyms() {
                       <div className="text-xs font-semibold text-gray-900">
                         {gym.hiringInformation?.salaryBudget || "Market Rate"}
                       </div>
-                      <div className="text-[11px] text-[#d91a24] font-medium mt-0.5">
+                      <div className="text-[11px] text-[#E92E3D] font-medium mt-0.5">
                         {gym.hiringInformation?.preferredExperience || "1-3 Years"} Exp Preferred
                       </div>
                     </td>
@@ -390,7 +390,7 @@ export default function AdminGyms() {
                               disabled={planBusy === gym._id}
                               onChange={(e) => e.target.value && setPlan(gym, e.target.value)}
                               title="Support override — grants a term without taking payment"
-                              className="h-8 text-[11px] font-semibold border border-gray-200 rounded-lg px-2 bg-white text-gray-600 cursor-pointer outline-none focus:border-[#d91a24] disabled:opacity-50"
+                              className="h-8 text-[11px] font-semibold border border-gray-200 rounded-lg px-2 bg-white text-gray-600 cursor-pointer outline-none focus:border-[#E92E3D] disabled:opacity-50"
                             >
                               <option value="">{planBusy === gym._id ? "Saving…" : "Override…"}</option>
                               {plans.map((p) => (
@@ -466,7 +466,7 @@ export default function AdminGyms() {
                     />
                   </div>
                 ) : (
-                  <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-xl shrink-0">
+                  <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#E92E3D] border border-red-100 flex items-center justify-center font-black text-xl shrink-0">
                     {selectedGym.gymName?.charAt(0) || "G"}
                   </div>
                 )}
@@ -572,7 +572,7 @@ export default function AdminGyms() {
                           href={selectedGym.website.startsWith("http") ? selectedGym.website : `https://${selectedGym.website}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-[#d91a24] font-bold hover:underline flex items-center gap-1"
+                          className="text-[#E92E3D] font-bold hover:underline flex items-center gap-1"
                         >
                           {selectedGym.website}
                           <ExternalLink className="w-3 h-3" />
@@ -588,7 +588,7 @@ export default function AdminGyms() {
                   {/* Admin Gym Logo Edit */}
                   <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200/80 space-y-3">
                     <div className="flex items-center gap-2">
-                      <Camera className="w-4 h-4 text-[#d91a24]" />
+                      <Camera className="w-4 h-4 text-[#E92E3D]" />
                       <label className="text-xs font-bold uppercase tracking-wider text-gray-900">
                         Gym Brand Logo & Picture
                       </label>
@@ -600,7 +600,7 @@ export default function AdminGyms() {
                           <Image src={editFormData.gymLogo} alt="Logo" fill className="object-cover" />
                         </div>
                       ) : (
-                        <div className="w-16 h-16 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-xl shrink-0">
+                        <div className="w-16 h-16 rounded-2xl bg-red-50 text-[#E92E3D] border border-red-100 flex items-center justify-center font-black text-xl shrink-0">
                           {editFormData.gymName?.charAt(0) || "G"}
                         </div>
                       )}
@@ -611,7 +611,7 @@ export default function AdminGyms() {
                           <input
                             type="url"
                             placeholder="Paste brand logo image URL..."
-                            className="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                            className="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
                             value={editFormData.gymLogo}
                             onChange={(e) => setEditFormData({ ...editFormData, gymLogo: e.target.value })}
                           />
@@ -626,7 +626,7 @@ export default function AdminGyms() {
                               type="button"
                               onClick={() => setEditFormData({ ...editFormData, gymLogo: url })}
                               className={`w-7 h-7 rounded-lg overflow-hidden border transition-all cursor-pointer relative ${
-                                editFormData.gymLogo === url ? "border-[#d91a24] scale-105" : "border-gray-200 opacity-60 hover:opacity-100"
+                                editFormData.gymLogo === url ? "border-[#E92E3D] scale-105" : "border-gray-200 opacity-60 hover:opacity-100"
                               }`}
                             >
                               <Image src={url} alt={`Preset ${idx + 1}`} fill className="object-cover" />
@@ -643,7 +643,7 @@ export default function AdminGyms() {
                     </label>
                     <input
                       type="text"
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
                       value={editFormData.gymName}
                       onChange={(e) => setEditFormData({ ...editFormData, gymName: e.target.value })}
                     />
@@ -655,7 +655,7 @@ export default function AdminGyms() {
                     </label>
                     <textarea
                       rows={3}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
                       value={editFormData.gymDescription}
                       onChange={(e) => setEditFormData({ ...editFormData, gymDescription: e.target.value })}
                     />
@@ -668,7 +668,7 @@ export default function AdminGyms() {
                       </label>
                       <input
                         type="text"
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
                         value={editFormData.website}
                         onChange={(e) => setEditFormData({ ...editFormData, website: e.target.value })}
                       />
@@ -679,7 +679,7 @@ export default function AdminGyms() {
                       </label>
                       <input
                         type="text"
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
                         value={editFormData.address?.city}
                         onChange={(e) => setEditFormData({
                           ...editFormData,
@@ -696,7 +696,7 @@ export default function AdminGyms() {
                       </label>
                       <input
                         type="text"
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
                         value={editFormData.contactPerson?.name}
                         onChange={(e) => setEditFormData({
                           ...editFormData,
@@ -710,7 +710,7 @@ export default function AdminGyms() {
                       </label>
                       <input
                         type="text"
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
                         value={editFormData.contactPerson?.designation}
                         onChange={(e) => setEditFormData({
                           ...editFormData,
@@ -727,7 +727,7 @@ export default function AdminGyms() {
                       </label>
                       <input
                         type="text"
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
                         value={editFormData.hiringInformation?.salaryBudget}
                         onChange={(e) => setEditFormData({
                           ...editFormData,
@@ -741,7 +741,7 @@ export default function AdminGyms() {
                       </label>
                       <input
                         type="number"
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs md:text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
                         value={editFormData.numberOfLocations}
                         onChange={(e) => setEditFormData({ ...editFormData, numberOfLocations: Number(e.target.value) || 1 })}
                       />
@@ -767,7 +767,7 @@ export default function AdminGyms() {
                   <Button
                     onClick={handleSaveGymEdit}
                     disabled={savingEdit}
-                    className="bg-[#d91a24] hover:bg-[#cc1616] text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-xs cursor-pointer flex items-center gap-1.5"
+                    className="bg-[#E92E3D] hover:bg-[#d42936] text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-xs cursor-pointer flex items-center gap-1.5"
                   >
                     {savingEdit ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

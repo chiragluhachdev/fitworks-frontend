@@ -36,13 +36,13 @@ export default function ForTrainersView() {
 
           {/* Left Content */}
           <div className="relative z-10 w-full md:w-[60%] lg:w-[50%] flex flex-col justify-center px-6 md:pl-12 lg:pl-16 py-8 md:py-10">
-            <p className="text-[12px] font-bold text-[#d91a24] uppercase tracking-[0.15em] mb-3">
+            <p className="text-[12px] font-bold text-[#E92E3D] uppercase tracking-[0.15em] mb-3">
               For Fitness Professionals
             </p>
             <h1 className="text-[38px] md:text-[50px] lg:text-[56px] xl:text-[60px] font-extrabold tracking-tight text-gray-900 leading-[1.08] mb-4 max-w-[600px]">
               Find the right <br className="hidden sm:block" />
               opportunities. <br className="hidden sm:block" />
-              <span className="text-[#d91a24]">Grow</span> your career.
+              <span className="text-[#E92E3D]">Grow</span> your career.
             </h1>
             <p className="text-base lg:text-[17px] text-gray-500 mb-7 max-w-[480px] leading-relaxed">
               Join India&apos;s trusted platform for fitness professionals.
@@ -53,7 +53,7 @@ export default function ForTrainersView() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-8">
               <Link href="/auth/trainer-signup">
-                <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white h-[46px] px-[26px] rounded-lg text-[15px] font-semibold shadow-[0_8px_20px_rgb(217,26,36,0.25)] w-full sm:w-auto">
+                <Button className="bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white h-[46px] px-[26px] rounded-lg text-[15px] font-semibold shadow-[0_8px_20px_rgb(217,26,36,0.25)] w-full sm:w-auto">
                   Create Your Profile <ArrowRight className="w-4 h-4 ml-1.5" />
                 </Button>
               </Link>
@@ -72,28 +72,28 @@ export default function ForTrainersView() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-2 max-w-[600px]">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-[#d91a24] shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-[#E92E3D] shrink-0" />
                   <span className="text-[13px] font-bold text-gray-900 leading-none">100% Free</span>
                 </div>
                 <span className="text-[11px] text-gray-500 leading-tight">No fees for trainers</span>
               </div>
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1.5">
-                  <Target className="w-4 h-4 text-[#d91a24] shrink-0" />
+                  <Target className="w-4 h-4 text-[#E92E3D] shrink-0" />
                   <span className="text-[13px] font-bold text-gray-900 leading-none">Verified Gyms</span>
                 </div>
                 <span className="text-[11px] text-gray-500 leading-tight">Work with trusted gyms</span>
               </div>
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-[#d91a24] shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-[#E92E3D] shrink-0" />
                   <span className="text-[13px] font-bold text-gray-900 leading-none">Better Opportunities</span>
                 </div>
                 <span className="text-[11px] text-gray-500 leading-tight">Find roles that fit you</span>
               </div>
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1.5">
-                  <TrendingUp className="w-4 h-4 text-[#d91a24] shrink-0" />
+                  <TrendingUp className="w-4 h-4 text-[#E92E3D] shrink-0" />
                   <span className="text-[13px] font-bold text-gray-900 leading-none">Career Growth</span>
                 </div>
                 <span className="text-[11px] text-gray-500 leading-tight">Build. Learn. Grow.</span>
@@ -130,7 +130,7 @@ export default function ForTrainersView() {
                       </div>
                     ))}
                   </div>
-                  <div className="w-8 h-8 rounded-full bg-[#d91a24] border-2 border-white flex items-center justify-center text-[9px] font-bold text-white -ml-2 shadow-sm relative z-[11]">
+                  <div className="w-8 h-8 rounded-full bg-[#E92E3D] border-2 border-white flex items-center justify-center text-[9px] font-bold text-white -ml-2 shadow-sm relative z-[11]">
                     +850
                   </div>
                 </div>
@@ -177,7 +177,7 @@ export default function ForTrainersView() {
       <section className="max-w-[1360px] mx-auto px-6 pt-3 md:pt-5 pb-8 md:pb-10">
         <div className="text-center mb-4 md:mb-5">
           <h2 className="text-base md:text-lg font-bold uppercase tracking-[0.08em] text-gray-900">
-            Get Hired in <span className="text-[#d91a24]">4</span> Simple Steps
+            Get Hired in <span className="text-[#E92E3D]">4</span> Simple Steps
           </h2>
         </div>
 
@@ -217,16 +217,16 @@ export default function ForTrainersView() {
               className="relative z-10 bg-white hover:bg-red-50/20 rounded-2xl p-4 lg:p-5 border border-gray-100 hover:border-red-100 hover:shadow-md transition-all duration-200 flex flex-col items-center lg:items-start text-center lg:text-left group"
             >
               <div className="relative mb-3">
-                <div className="w-[68px] h-[68px] rounded-full bg-white border-2 border-red-100 flex items-center justify-center shadow-xs group-hover:scale-105 group-hover:border-[#d91a24]/40 transition-all duration-300">
+                <div className="w-[68px] h-[68px] rounded-full bg-white border-2 border-red-100 flex items-center justify-center shadow-xs group-hover:scale-105 group-hover:border-[#E92E3D]/40 transition-all duration-300">
                   <div className="w-[50px] h-[50px] rounded-full bg-red-50 flex items-center justify-center">
-                    <s.icon className="w-6 h-6 text-[#d91a24]" />
+                    <s.icon className="w-6 h-6 text-[#E92E3D]" />
                   </div>
                 </div>
-                <span className="absolute -top-1 -right-1 bg-[#d91a24] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-xs">
+                <span className="absolute -top-1 -right-1 bg-[#E92E3D] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-xs">
                   {s.step}
                 </span>
               </div>
-              <h3 className="text-base md:text-[17px] font-bold text-gray-900 mb-1 group-hover:text-[#d91a24] transition-colors">
+              <h3 className="text-base md:text-[17px] font-bold text-gray-900 mb-1 group-hover:text-[#E92E3D] transition-colors">
                 {s.title}
               </h3>
               <p className="text-xs md:text-[13px] text-gray-500 leading-relaxed max-w-[280px]">
@@ -242,7 +242,7 @@ export default function ForTrainersView() {
         <div className="bg-red-50/80 rounded-[1.75rem] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 border border-red-100/50">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-center md:text-left">
             <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white flex items-center justify-center shadow-xs shrink-0">
-              <Rocket className="w-7 h-7 md:w-8 md:h-8 text-[#d91a24] -rotate-12" />
+              <Rocket className="w-7 h-7 md:w-8 md:h-8 text-[#E92E3D] -rotate-12" />
             </div>
             <div>
               <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-1 tracking-tight">
@@ -254,7 +254,7 @@ export default function ForTrainersView() {
             </div>
           </div>
           <Link href="/auth">
-            <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white h-[44px] md:h-[46px] px-[24px] rounded-xl text-[14px] md:text-[15px] font-semibold shadow-md shrink-0">
+            <Button className="bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white h-[44px] md:h-[46px] px-[24px] rounded-xl text-[14px] md:text-[15px] font-semibold shadow-md shrink-0">
               Create Your Profile <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>
           </Link>

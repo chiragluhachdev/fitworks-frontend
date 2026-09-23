@@ -83,7 +83,7 @@ export default function AdminConnections() {
             placeholder="Search by gym or trainer name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
           />
         </div>
 
@@ -100,7 +100,7 @@ export default function AdminConnections() {
               onClick={() => setStatusFilter(tab.id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
                 statusFilter === tab.id
-                  ? "bg-[#d91a24] text-white shadow-xs"
+                  ? "bg-[#E92E3D] text-white shadow-xs"
                   : "bg-gray-50 text-gray-600 hover:bg-gray-100"
               }`}
             >
@@ -114,7 +114,7 @@ export default function AdminConnections() {
       <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs overflow-hidden">
         {loading ? (
           <div className="flex flex-col h-64 items-center justify-center gap-3">
-            <div className="w-8 h-8 border-3 border-[#d91a24] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-3 border-[#E92E3D] border-t-transparent rounded-full animate-spin"></div>
             <p className="text-xs text-gray-500 font-medium">Loading direct connections...</p>
           </div>
         ) : (
@@ -163,7 +163,7 @@ export default function AdminConnections() {
                             <Image src={conn.trainerId.personal.profilePhoto} alt="Trainer" fill className="object-cover" />
                           </div>
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                          <div className="w-8 h-8 rounded-full bg-red-50 text-[#E92E3D] border border-red-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                             {conn.trainerId?.personal?.fullName?.charAt(0) || "T"}
                           </div>
                         )}

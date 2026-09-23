@@ -42,11 +42,11 @@ export default async function PricingPage() {
       <div className="max-w-6xl mx-auto">
         {/* ── Header ── */}
         <div className="text-center max-w-2xl mx-auto">
-          <span className="text-[11px] font-bold text-[#d91a24] uppercase tracking-[0.12em] bg-red-50 border border-red-100 px-3 py-1 rounded-full inline-block">
+          <span className="text-[11px] font-bold text-[#E92E3D] uppercase tracking-[0.12em] bg-red-50 border border-red-100 px-3 py-1 rounded-full inline-block">
             Transparent pricing
           </span>
-          <h1 className="text-[32px] sm:text-[44px] font-extrabold text-gray-900 tracking-[-0.03em] leading-[1.1] mt-4">
-            Simple plans for <span className="text-[#d91a24]">everyone</span>.
+          <h1 className="text-[28px] sm:text-[44px] font-extrabold text-gray-900 tracking-[-0.03em] leading-[1.1] mt-4">
+            Simple plans for <span className="text-[#E92E3D]">everyone</span>.
           </h1>
           <p className="text-[15px] text-gray-500 mt-4 leading-relaxed">
             Free for trainers, always. Gyms pay a small membership — and our team does the hiring
@@ -57,7 +57,7 @@ export default async function PricingPage() {
         {/* ── Gym plans ── */}
         <div className="mt-14">
           <div className="flex items-center gap-2.5 mb-5">
-            <span className="w-9 h-9 rounded-xl bg-red-50 text-[#d91a24] flex items-center justify-center shrink-0">
+            <span className="w-9 h-9 rounded-xl bg-red-50 text-[#E92E3D] flex items-center justify-center shrink-0">
               <Building2 className="w-[18px] h-[18px]" />
             </span>
             <div>
@@ -72,8 +72,10 @@ export default async function PricingPage() {
             {plans.map((plan) => (
               <div
                 key={plan.id}
-                className={`relative flex flex-col rounded-3xl bg-white p-7 border ${
-                  plan.best ? "border-gray-900 shadow-[0_0_0_1px_rgb(17,24,39)]" : "border-gray-200/80"
+                className={`relative flex flex-col rounded-[20px] sm:rounded-3xl bg-white p-5 sm:p-7 ring-1 ${
+                  plan.best
+                    ? "ring-2 ring-gray-900 shadow-[0_16px_40px_-18px_rgba(16,24,40,0.28)]"
+                    : "ring-gray-200/70 shadow-[0_1px_2px_rgba(16,24,40,0.04)]"
                 }`}
               >
                 {plan.best && (
@@ -84,7 +86,7 @@ export default async function PricingPage() {
 
                 <h3 className="text-[15px] font-bold text-gray-900">{plan.name}</h3>
                 <div className="flex items-baseline gap-1.5 mt-2.5">
-                  <span className="text-[38px] font-extrabold text-gray-900 tracking-[-0.03em] leading-none">
+                  <span className="text-[31px] sm:text-[38px] font-extrabold text-gray-900 tracking-[-0.03em] leading-none">
                     {rupees(plan.price)}
                   </span>
                   <span className="text-[13px] font-semibold text-gray-400">{plan.cadence}</span>
@@ -113,7 +115,7 @@ export default async function PricingPage() {
                   href="/auth/gym-signup"
                   className={`mt-7 h-12 rounded-xl text-sm font-bold flex items-center justify-center transition-all active:scale-[0.98] ${
                     plan.best
-                      ? "bg-[#d91a24] text-white hover:bg-[#c11620]"
+                      ? "bg-[#E92E3D] text-white hover:bg-[#d42936]"
                       : "bg-white text-gray-800 border border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                   }`}
                 >
@@ -138,10 +140,10 @@ export default async function PricingPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl border border-gray-200/80 p-7 sm:p-9 flex flex-col md:flex-row md:items-center gap-8">
+          <div className="bg-white rounded-[20px] sm:rounded-3xl ring-1 ring-gray-200/70 p-5 sm:p-9 flex flex-col md:flex-row md:items-center gap-7 sm:gap-8">
             <div className="md:w-72 shrink-0">
               <div className="flex items-baseline gap-2">
-                <span className="text-[44px] font-extrabold text-gray-900 tracking-[-0.03em] leading-none">
+                <span className="text-[36px] sm:text-[44px] font-extrabold text-gray-900 tracking-[-0.03em] leading-none">
                   ₹0
                 </span>
                 <span className="text-[13px] font-semibold text-gray-400">forever</span>
@@ -188,7 +190,7 @@ export default async function PricingPage() {
               body: "Unlimited vacancies and unlimited hiring requirements, whichever term you pick.",
             },
           ].map(({ icon: Icon, title, body }) => (
-            <div key={title} className="bg-white rounded-2xl border border-gray-200/80 p-6">
+            <div key={title} className="bg-white rounded-[20px] ring-1 ring-gray-200/70 p-5 sm:p-6">
               <span className="w-10 h-10 rounded-xl bg-gray-100 text-gray-700 flex items-center justify-center mb-4">
                 <Icon className="w-[18px] h-[18px]" />
               </span>

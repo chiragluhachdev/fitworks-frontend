@@ -84,7 +84,7 @@ export default function AdminDashboard() {
         >
           <span
             className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
-              toReview ? "bg-red-50 text-[#d91a24]" : "bg-gray-100 text-gray-400"
+              toReview ? "bg-red-50 text-[#E92E3D]" : "bg-gray-100 text-gray-400"
             }`}
           >
             <Briefcase className="w-5 h-5" />
@@ -97,7 +97,7 @@ export default function AdminDashboard() {
               new requirement{toReview === 1 ? "" : "s"} to review
             </p>
           </div>
-          <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#d91a24] group-hover:translate-x-0.5 transition-all shrink-0" />
+          <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#E92E3D] group-hover:translate-x-0.5 transition-all shrink-0" />
         </Link>
 
         <Link
@@ -119,7 +119,7 @@ export default function AdminDashboard() {
               trainer{toVerify === 1 ? "" : "s"} awaiting verification
             </p>
           </div>
-          <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#d91a24] group-hover:translate-x-0.5 transition-all shrink-0" />
+          <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#E92E3D] group-hover:translate-x-0.5 transition-all shrink-0" />
         </Link>
       </div>
 
@@ -128,6 +128,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <Stat
           label="In progress"
+          accent="blue"
           value={stats.inProgress || 0}
           icon={Search}
           href="/admin/vacancies"
@@ -135,6 +136,7 @@ export default function AdminDashboard() {
         />
         <Stat
           label="Trainers in review"
+          accent="brand"
           value={stats.trainersInReview || 0}
           icon={Users}
           href="/admin/vacancies"
@@ -142,6 +144,7 @@ export default function AdminDashboard() {
         />
         <Stat
           label="Roles filled"
+          accent="emerald"
           value={stats.filledVacancies || 0}
           icon={Handshake}
           href="/admin/vacancies"
@@ -149,6 +152,7 @@ export default function AdminDashboard() {
         />
         <Stat
           label="Active vacancies"
+          accent="slate"
           value={stats.activeVacancies || 0}
           icon={Briefcase}
           href="/admin/vacancies"
@@ -161,6 +165,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <Stat
           label="Gyms"
+          accent="blue"
           value={stats.totalGyms || 0}
           icon={Building2}
           href="/admin/gyms"
@@ -168,6 +173,7 @@ export default function AdminDashboard() {
         />
         <Stat
           label="Trainers"
+          accent="brand"
           value={stats.totalTrainers || 0}
           icon={Dumbbell}
           href="/admin/trainers"
@@ -177,12 +183,13 @@ export default function AdminDashboard() {
           label="Lapsed memberships"
           value={stats.lapsedGyms || 0}
           icon={CreditCard}
-          accent={(stats.lapsedGyms || 0) > 0}
+          accent="amber"
           href="/admin/gyms"
           hint="Gyms whose plan has run out"
         />
         <Stat
           label="Pending invitations"
+          accent="slate"
           value={stats.pendingConnections || 0}
           icon={Clock}
           href="/admin/connections"

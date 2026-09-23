@@ -68,7 +68,7 @@ export default function AdminUsers() {
           <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-blue-50 text-blue-800 border border-blue-200/60">
             {gymCount} Gyms
           </span>
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-red-50 text-[#d91a24] border border-red-200/60">
+          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-red-50 text-[#E92E3D] border border-red-200/60">
             {trainerCount} Trainers
           </span>
         </div>
@@ -83,7 +83,7 @@ export default function AdminUsers() {
             placeholder="Search accounts by email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
           />
         </div>
 
@@ -100,7 +100,7 @@ export default function AdminUsers() {
               onClick={() => setRoleFilter(tab.id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
                 roleFilter === tab.id
-                  ? "bg-[#d91a24] text-white shadow-xs"
+                  ? "bg-[#E92E3D] text-white shadow-xs"
                   : "bg-gray-50 text-gray-600 hover:bg-gray-100"
               }`}
             >
@@ -114,7 +114,7 @@ export default function AdminUsers() {
       <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs overflow-hidden">
         {loading ? (
           <div className="flex flex-col h-64 items-center justify-center gap-3">
-            <div className="w-8 h-8 border-3 border-[#d91a24] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-3 border-[#E92E3D] border-t-transparent rounded-full animate-spin"></div>
             <p className="text-xs text-gray-500 font-medium">Loading user accounts...</p>
           </div>
         ) : (
@@ -164,8 +164,8 @@ export default function AdminUsers() {
                         </span>
                       )}
                       {user.role === "trainer" && (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-[#d91a24] border border-red-200">
-                          <Dumbbell className="w-3.5 h-3.5 text-[#d91a24]" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-[#E92E3D] border border-red-200">
+                          <Dumbbell className="w-3.5 h-3.5 text-[#E92E3D]" />
                           Fitness Trainer
                         </span>
                       )}

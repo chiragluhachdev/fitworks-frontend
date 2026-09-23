@@ -95,7 +95,7 @@ export default function Testimonials() {
                   aria-current={i === activeIndex}
                   onClick={() => setActiveIndex(i)}
                   className={`h-2 rounded-full transition-all duration-300 ${
-                    i === activeIndex ? "w-6 bg-[#d91a24]" : "w-2 bg-gray-300"
+                    i === activeIndex ? "w-6 bg-[#E92E3D]" : "w-2 bg-gray-300"
                   }`}
                 />
               ))}

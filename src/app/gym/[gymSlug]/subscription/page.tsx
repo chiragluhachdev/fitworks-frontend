@@ -68,8 +68,10 @@ function PlanCard({
 }) {
   return (
     <div
-      className={`relative flex flex-col rounded-2xl border bg-white p-5 sm:p-6 transition-all ${
-        plan.best ? "border-gray-900 shadow-[0_0_0_1px_rgb(17,24,39)]" : "border-gray-200/80"
+      className={`relative flex flex-col rounded-[20px] bg-white p-4 sm:p-6 ring-1 transition-all ${
+        plan.best
+          ? "ring-2 ring-gray-900 shadow-[0_16px_40px_-18px_rgba(16,24,40,0.28)]"
+          : "ring-gray-200/70 shadow-[0_1px_2px_rgba(16,24,40,0.04)]"
       }`}
     >
       {plan.best && (
@@ -81,7 +83,7 @@ function PlanCard({
       <div className="mb-5">
         <h3 className="text-[15px] font-bold text-gray-900">{plan.name}</h3>
         <div className="flex items-baseline gap-1.5 mt-2.5">
-          <span className="text-[34px] font-extrabold text-gray-900 tracking-[-0.03em] leading-none">
+          <span className="text-[29px] sm:text-[34px] font-extrabold text-gray-900 tracking-[-0.03em] leading-none">
             {rupees(plan.price)}
           </span>
           <span className="text-[13px] font-semibold text-gray-400">{plan.cadence}</span>
@@ -112,13 +114,13 @@ function PlanCard({
       <div className="mt-6">
         {current ? (
           <>
-            <div className="h-11 rounded-xl bg-emerald-50 border border-emerald-200/70 text-emerald-700 text-sm font-bold flex items-center justify-center gap-2">
+            <div className="h-11 rounded-xl bg-emerald-50 ring-1 ring-emerald-200/70 text-emerald-700 text-[13.5px] sm:text-sm font-bold flex items-center justify-center gap-2">
               <Check className="w-4 h-4" /> Current plan
             </div>
             <button
               onClick={onChoose}
               disabled={busy || disabled}
-              className="w-full text-[12.5px] font-bold text-gray-500 hover:text-[#d91a24] mt-2.5 transition-colors cursor-pointer disabled:opacity-50"
+              className="w-full text-[12.5px] font-bold text-gray-500 hover:text-brand mt-2.5 transition-colors cursor-pointer disabled:opacity-50"
             >
               {busy ? "Opening…" : "Extend this plan"}
             </button>
@@ -216,7 +218,7 @@ export default function GymSubscriptionPage() {
           contact: d.contactPhone || undefined,
         },
         notes: { gym: d.gymName || gymSlug },
-        theme: { color: "#d91a24" },
+        theme: { color: "#E92E3D" },
         modal: {
           // Closing the window is not a failure — just stop the spinner.
           ondismiss: () => setBusy(null),
@@ -272,7 +274,7 @@ export default function GymSubscriptionPage() {
               href={supportWhatsAppUrl("Hi FitWorks! 👋\n\nI'd like to set up a plan for my gym.")}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center h-9 px-3.5 rounded-lg bg-white border border-gray-200 text-[13px] font-bold text-gray-800 hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center justify-center h-9 px-3.5 rounded-lg bg-white ring-1 ring-gray-200 text-[13px] font-bold text-gray-800 hover:bg-gray-50 transition-colors"
             >
               Message us
             </a>
@@ -346,7 +348,7 @@ export default function GymSubscriptionPage() {
             </dt>
             <dd
               className={`text-[14px] font-bold mt-1.5 tabular-nums ${
-                expiringSoon ? "text-[#d91a24]" : "text-gray-900"
+                expiringSoon ? "text-brand" : "text-gray-900"
               }`}
             >
               {active && sub.daysLeft != null ? sub.daysLeft : "—"}
@@ -356,7 +358,7 @@ export default function GymSubscriptionPage() {
       </Panel>
 
       {/* ── The three plans ── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 md:mt-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 md:mt-8">
         {plans.map((plan) => (
           <PlanCard
             key={plan.id}
@@ -397,7 +399,7 @@ export default function GymSubscriptionPage() {
         </Panel>
       )}
 
-      <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3 p-5 rounded-2xl bg-white border border-gray-200/80">
+      <div className="mt-5 sm:mt-6 flex flex-col sm:flex-row sm:items-center gap-3 p-4 sm:p-5 rounded-[20px] bg-white ring-1 ring-gray-200/70">
         <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
         <p className="text-[13px] text-gray-600 leading-relaxed flex-1">
           Payments are handled by Razorpay. FitWorks never sees or stores your card details, and there is

@@ -147,7 +147,7 @@ export default function DashboardShell({
       </div>
     ) : (
       <div
-        className={`${size} ${rounded} bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black shrink-0`}
+        className={`${size} ${rounded} bg-red-50 text-[#E92E3D] border border-red-100 flex items-center justify-center font-black shrink-0`}
       >
         {profile.initial}
       </div>
@@ -157,7 +157,7 @@ export default function DashboardShell({
     <div className="min-h-screen bg-[#f7f8fa] md:flex">
       {/* ───────── Mobile top bar ───────── */}
       <header className="md:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100">
-        <div className="flex items-center justify-between px-4 h-14">
+        <div className="flex items-center justify-between px-3.5 h-14">
           <Link href="/" aria-label="FitWorks home" className="relative w-[104px] h-[30px] shrink-0">
             <Image src="/images/logo.png" alt="FitWorks" fill className="object-contain object-left" priority />
           </Link>
@@ -320,7 +320,7 @@ export default function DashboardShell({
         </header>
 
         <main className="flex-1 min-w-0">
-          <div className="px-4 py-5 pb-28 sm:px-6 md:px-8 md:pt-2 md:pb-10">{children}</div>
+          <div className="px-3 pt-4 pb-28 sm:px-6 sm:pt-5 md:px-8 md:pt-2 md:pb-10">{children}</div>
         </main>
       </div>
 
@@ -341,7 +341,7 @@ export default function DashboardShell({
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={`flex flex-col items-center justify-center gap-1 py-2.5 min-h-[58px] transition-colors ${
-                  active ? "text-[#d91a24]" : "text-gray-400 active:text-gray-600"
+                  active ? "text-[#E92E3D]" : "text-gray-400 active:text-gray-600"
                 }`}
               >
                 <Icon className={`w-[22px] h-[22px] ${active ? "stroke-[2.4]" : ""}`} />
@@ -357,7 +357,7 @@ export default function DashboardShell({
               onClick={() => setMoreOpen(true)}
               aria-label="More menu"
               className={`flex flex-col items-center justify-center gap-1 py-2.5 min-h-[58px] transition-colors ${
-                secondaryActive ? "text-[#d91a24]" : "text-gray-400 active:text-gray-600"
+                secondaryActive ? "text-[#E92E3D]" : "text-gray-400 active:text-gray-600"
               }`}
             >
               <MoreHorizontal className="w-[22px] h-[22px]" />
@@ -395,7 +395,7 @@ export default function DashboardShell({
                     href={href}
                     onClick={() => setMoreOpen(false)}
                     className={`flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-[15px] font-semibold transition-colors ${
-                      active ? "bg-[#d91a24] text-white" : "text-gray-700 active:bg-gray-100"
+                      active ? "bg-[#E92E3D] text-white" : "text-gray-700 active:bg-gray-100"
                     }`}
                   >
                     <Icon className={`w-5 h-5 shrink-0 ${active ? "text-white" : "text-gray-400"}`} />
@@ -406,7 +406,7 @@ export default function DashboardShell({
 
               <button
                 onClick={onLogout}
-                className="flex items-center gap-3.5 px-4 py-3.5 w-full rounded-2xl text-[15px] font-semibold text-[#d91a24] active:bg-red-50 transition-colors"
+                className="flex items-center gap-3.5 px-4 py-3.5 w-full rounded-2xl text-[15px] font-semibold text-[#E92E3D] active:bg-red-50 transition-colors"
               >
                 <LogOut className="w-5 h-5 shrink-0" />
                 Log Out

@@ -212,7 +212,7 @@ export default function TrainerProfilePage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
-        <Loader2 className="w-8 h-8 text-[#d91a24] animate-spin" />
+        <Loader2 className="w-8 h-8 text-[#E92E3D] animate-spin" />
         <p className="text-xs font-semibold text-gray-500">Loading trainer profile...</p>
       </div>
     );
@@ -232,7 +232,7 @@ export default function TrainerProfilePage() {
           type="submit" 
           form="trainer-profile-form" 
           disabled={saving}
-          className="bg-[#d91a24] hover:bg-[#cc1616] text-white px-6 h-11 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-2 cursor-pointer"
+          className="bg-[#E92E3D] hover:bg-[#d42936] text-white px-6 h-11 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-2 cursor-pointer"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           {saving ? "Saving Changes..." : "Save Profile"}
@@ -258,7 +258,7 @@ export default function TrainerProfilePage() {
         {/* Profile Photo Section */}
         <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-5">
           <div className="flex items-center gap-2.5">
-            <Camera className="w-5 h-5 text-[#d91a24]" />
+            <Camera className="w-5 h-5 text-[#E92E3D]" />
             <h2 className="text-lg font-bold text-gray-900">Profile Photo & Avatar</h2>
           </div>
 
@@ -275,7 +275,7 @@ export default function TrainerProfilePage() {
                   />
                 </div>
               ) : (
-                <div className="w-24 h-24 rounded-3xl bg-red-50 text-[#d91a24] border-2 border-red-100 flex items-center justify-center font-black text-3xl shadow-sm">
+                <div className="w-24 h-24 rounded-3xl bg-red-50 text-[#E92E3D] border-2 border-red-100 flex items-center justify-center font-black text-3xl shadow-sm">
                   {formData.personal.fullName?.charAt(0) || "T"}
                 </div>
               )}
@@ -290,7 +290,7 @@ export default function TrainerProfilePage() {
                   Upload Photo from Device (Cloudinary)
                 </label>
                 <div className="flex items-center gap-3">
-                  <label className="flex items-center justify-center gap-2 bg-[#d91a24] hover:bg-[#cc1616] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-all">
+                  <label className="flex items-center justify-center gap-2 bg-[#E92E3D] hover:bg-[#d42936] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-all">
                     {uploadingPhoto ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
@@ -321,7 +321,7 @@ export default function TrainerProfilePage() {
                     placeholder="https://... or paste image URL"
                     value={formData.personal.profilePhoto}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
                   />
                 </div>
               </div>
@@ -340,7 +340,7 @@ export default function TrainerProfilePage() {
                       onClick={() => setFormData((prev) => ({ ...prev, personal: { ...prev.personal, profilePhoto: url } }))}
                       className={`w-10 h-10 rounded-xl overflow-hidden border-2 transition-all cursor-pointer relative ${
                         formData.personal.profilePhoto === url 
-                          ? "border-[#d91a24] scale-105 shadow-sm" 
+                          ? "border-[#E92E3D] scale-105 shadow-sm" 
                           : "border-transparent hover:border-gray-300 opacity-75 hover:opacity-100"
                       }`}
                     >
@@ -365,7 +365,7 @@ export default function TrainerProfilePage() {
         {/* Personal Details */}
         <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
           <div className="flex items-center gap-2.5 mb-2">
-            <User className="w-5 h-5 text-[#d91a24]" />
+            <User className="w-5 h-5 text-[#E92E3D]" />
             <h2 className="text-lg font-bold text-gray-900">Personal Information</h2>
           </div>
 
@@ -378,7 +378,7 @@ export default function TrainerProfilePage() {
                 required
                 value={formData.personal.fullName}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
               />
             </div>
             <div>
@@ -389,7 +389,7 @@ export default function TrainerProfilePage() {
                 required
                 value={formData.personal.city}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
               />
             </div>
           </div>
@@ -402,7 +402,7 @@ export default function TrainerProfilePage() {
               value={formData.personal.location}
               onChange={handleChange}
               placeholder="e.g. Bandra West, Indiranagar"
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
             />
           </div>
         </div>
@@ -410,7 +410,7 @@ export default function TrainerProfilePage() {
         {/* Professional Details */}
         <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
           <div className="flex items-center gap-2.5 mb-2">
-            <Briefcase className="w-5 h-5 text-[#d91a24]" />
+            <Briefcase className="w-5 h-5 text-[#E92E3D]" />
             <h2 className="text-lg font-bold text-gray-900">Professional Coaching Experience</h2>
           </div>
 
@@ -424,7 +424,7 @@ export default function TrainerProfilePage() {
                 placeholder="e.g. Senior Functional & Strength Coach"
                 value={formData.professional.professionalTitle}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
               />
             </div>
             <div>
@@ -437,7 +437,7 @@ export default function TrainerProfilePage() {
                 required
                 value={formData.professional.yearsOfExperience}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
               />
             </div>
           </div>
@@ -452,7 +452,7 @@ export default function TrainerProfilePage() {
               placeholder="e.g. CrossFit, Kettlebell, HIIT, Weight Loss, Powerlifting"
               value={formData.professional.specializations}
               onChange={handleChange}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
             />
           </div>
 
@@ -466,7 +466,7 @@ export default function TrainerProfilePage() {
               placeholder="e.g. CPR Certified, Body Composition Analysis, Nutritional Guidance"
               value={formData.professional.skills}
               onChange={handleChange}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
             />
           </div>
 
@@ -478,7 +478,7 @@ export default function TrainerProfilePage() {
               placeholder="e.g. ACE Certified Personal Trainer, B.Sc Physical Education"
               value={formData.professional.education}
               onChange={handleChange}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
             />
           </div>
 
@@ -490,7 +490,7 @@ export default function TrainerProfilePage() {
               placeholder="Describe your training methodology, client transformation philosophy, and track record..."
               value={formData.professional.bio}
               onChange={handleChange}
-              className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+              className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
             />
           </div>
         </div>
@@ -498,7 +498,7 @@ export default function TrainerProfilePage() {
         {/* Work Preferences */}
         <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm space-y-4">
           <div className="flex items-center gap-2.5 mb-2">
-            <IndianRupee className="w-5 h-5 text-[#d91a24]" />
+            <IndianRupee className="w-5 h-5 text-[#E92E3D]" />
             <h2 className="text-lg font-bold text-gray-900">Salary & Availability Preferences</h2>
           </div>
 
@@ -511,7 +511,7 @@ export default function TrainerProfilePage() {
                 placeholder="e.g. ₹40,000 - ₹55,000 / month"
                 value={formData.workPreferences.expectedMonthlySalary}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
               />
             </div>
             <div>
@@ -520,7 +520,7 @@ export default function TrainerProfilePage() {
                 name="workPreferences.availability"
                 value={formData.workPreferences.availability}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
               >
                 <option value="Immediate">Immediate (Within 1-7 days)</option>
                 <option value="15 Days">15 Days Notice</option>
@@ -537,7 +537,7 @@ export default function TrainerProfilePage() {
                 name="workPreferences.willingToRelocate"
                 checked={formData.workPreferences.willingToRelocate}
                 onChange={handleChange}
-                className="w-4 h-4 rounded text-[#d91a24] focus:ring-[#d91a24]"
+                className="w-4 h-4 rounded text-[#E92E3D] focus:ring-[#E92E3D]"
               />
               <span className="text-sm font-medium text-gray-700">Open to relocation for premium gym assignments</span>
             </label>
@@ -549,7 +549,7 @@ export default function TrainerProfilePage() {
           <Button 
             type="submit" 
             disabled={saving}
-            className="bg-[#d91a24] hover:bg-[#cc1616] text-white px-8 h-12 rounded-2xl text-sm font-bold shadow-md shadow-red-500/20 flex items-center gap-2 cursor-pointer"
+            className="bg-[#E92E3D] hover:bg-[#d42936] text-white px-8 h-12 rounded-2xl text-sm font-bold shadow-md shadow-red-500/20 flex items-center gap-2 cursor-pointer"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {saving ? "Saving Changes..." : "Save Trainer Profile"}

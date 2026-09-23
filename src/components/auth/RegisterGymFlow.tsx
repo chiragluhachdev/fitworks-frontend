@@ -244,7 +244,7 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
         <h2 className="text-3xl font-bold text-gray-900 mb-3">Registration Successful!</h2>
         <p className="text-gray-500 mb-8 max-w-sm">Your gym account has been created. You can now access your dashboard and start hiring.</p>
         <Link href={`/gym/${createdSlug}/dashboard`} className="w-full max-w-[240px]">
-          <Button className="w-full bg-[#d91a24] hover:bg-[#cc1616] text-white py-6 rounded-xl font-bold cursor-pointer">
+          <Button className="w-full bg-[#E92E3D] hover:bg-[#d42936] text-white py-6 rounded-xl font-bold cursor-pointer">
             Go to Dashboard
           </Button>
         </Link>
@@ -270,14 +270,14 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
           </div>
           <div className="flex gap-2 mb-1">
             {[1, 2, 3].map((s) => (
-              <div key={s} className={`h-2 w-8 md:w-10 rounded-full transition-colors ${s <= step ? "bg-[#d91a24]" : "bg-gray-100"}`} />
+              <div key={s} className={`h-2 w-8 md:w-10 rounded-full transition-colors ${s <= step ? "bg-[#E92E3D]" : "bg-gray-100"}`} />
             ))}
           </div>
         </div>
 
         {errorMessage && (
           <div className="p-3.5 mb-4 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-semibold flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-[#d91a24] shrink-0" />
+            <AlertCircle className="w-4 h-4 text-[#E92E3D] shrink-0" />
             <span>{errorMessage}</span>
           </div>
         )}
@@ -289,28 +289,28 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Email Address <span className="text-red-500">*</span></label>
-                  <input type="email" name="email" required value={formData.email} onChange={handleChange} placeholder="gym@example.com" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="email" name="email" required value={formData.email} onChange={handleChange} placeholder="gym@example.com" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Password <span className="text-red-500">*</span></label>
-                  <input type="password" name="password" required value={formData.password} onChange={handleChange} placeholder="Create password (min 6 chars)" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="password" name="password" required value={formData.password} onChange={handleChange} placeholder="Create password (min 6 chars)" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
               </div>
               <hr className="border-gray-100 my-2" />
               <div className="grid grid-cols-1 gap-5">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Contact Person Name <span className="text-red-500">*</span></label>
-                  <input type="text" name="contactPerson.name" required value={formData.contactPerson.name} onChange={handleChange} placeholder="E.g. Ashish / Vikram" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="text" name="contactPerson.name" required value={formData.contactPerson.name} onChange={handleChange} placeholder="E.g. Ashish / Vikram" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Designation <span className="text-red-500">*</span></label>
-                  <input type="text" name="contactPerson.designation" required value={formData.contactPerson.designation} onChange={handleChange} placeholder="Owner / General Manager" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="text" name="contactPerson.designation" required value={formData.contactPerson.designation} onChange={handleChange} placeholder="Owner / General Manager" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Phone Number <span className="text-red-500">*</span></label>
-                  <input type="tel" name="contactPerson.phone" required value={formData.contactPerson.phone} onChange={handleChange} placeholder="10-digit mobile number" inputMode="numeric" maxLength={10} className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="tel" name="contactPerson.phone" required value={formData.contactPerson.phone} onChange={handleChange} placeholder="10-digit mobile number" inputMode="numeric" maxLength={10} className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
               </div>
             </div>
@@ -321,15 +321,15 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Official Gym Name <span className="text-red-500">*</span></label>
-                <input type="text" name="gymName" required value={formData.gymName} onChange={handleChange} placeholder="E.g. HOPE GYM & SPA" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <input type="text" name="gymName" required value={formData.gymName} onChange={handleChange} placeholder="E.g. HOPE GYM & SPA" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Gym Description <span className="text-red-500">*</span></label>
-                <textarea name="gymDescription" value={formData.gymDescription} onChange={handleChange} rows={4} placeholder="Optional — a line or two about your club, facilities and culture." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 resize-none" />
+                <textarea name="gymDescription" value={formData.gymDescription} onChange={handleChange} rows={4} placeholder="Optional — a line or two about your club, facilities and culture." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10 resize-none" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Number of Locations / Branches <span className="text-red-500">*</span></label>
-                <input type="number" name="numberOfLocations" required value={formData.numberOfLocations} onChange={handleChange} min="1" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <input type="number" name="numberOfLocations" required value={formData.numberOfLocations} onChange={handleChange} min="1" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
               </div>
             </div>
           )}
@@ -339,31 +339,31 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Street Address / Locality <span className="text-red-500">*</span></label>
-                <input type="text" name="address.street" required value={formData.address.street} onChange={handleChange} placeholder="Building name, Road / Sector" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <input type="text" name="address.street" required value={formData.address.street} onChange={handleChange} placeholder="Building name, Road / Sector" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">City <span className="text-red-500">*</span></label>
-                  <input type="text" name="address.city" required value={formData.address.city} onChange={handleChange} placeholder="City" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="text" name="address.city" required value={formData.address.city} onChange={handleChange} placeholder="City" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">State <span className="text-red-500">*</span></label>
-                  <input type="text" name="address.state" required value={formData.address.state} onChange={handleChange} placeholder="State" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="text" name="address.state" required value={formData.address.state} onChange={handleChange} placeholder="State" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
                 <div className="space-y-1.5 col-span-2 md:col-span-1">
                   <label className="text-xs font-bold text-gray-700 ml-1">Pincode <span className="text-red-500">*</span></label>
-                  <input type="text" name="address.pincode" required value={formData.address.pincode} onChange={handleChange} placeholder="Pincode" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="text" name="address.pincode" required value={formData.address.pincode} onChange={handleChange} placeholder="Pincode" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
               </div>
               <hr className="border-gray-100 my-2" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Website (Optional)</label>
-                  <input type="url" name="website" value={formData.website} onChange={handleChange} placeholder="https://..." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="url" name="website" value={formData.website} onChange={handleChange} placeholder="https://..." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Instagram Handle (Optional)</label>
-                  <input type="text" name="instagram" value={formData.instagram} onChange={handleChange} placeholder="@gymhandle" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="text" name="instagram" value={formData.instagram} onChange={handleChange} placeholder="@gymhandle" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
               </div>
             </div>
@@ -384,7 +384,7 @@ export default function RegisterGymFlow({ onBack }: RegisterGymFlowProps) {
         <Button 
           onClick={handleNext} 
           disabled={loading} 
-          className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-95 text-white px-8 py-5 rounded-xl font-bold transition-all shadow-[0_8px_20px_rgb(217,26,36,0.15)] flex items-center gap-2 cursor-pointer disabled:opacity-50"
+          className="bg-[#E92E3D] hover:bg-[#d42936] active:scale-95 text-white px-8 py-5 rounded-xl font-bold transition-all shadow-[0_8px_20px_rgb(217,26,36,0.15)] flex items-center gap-2 cursor-pointer disabled:opacity-50"
         >
           {loading ? (
             <>

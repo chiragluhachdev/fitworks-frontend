@@ -279,7 +279,7 @@ export default function AdminInstantFormsPage() {
             placeholder="Search any detail — name, phone, email, city, form, campaign…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
           />
         </div>
 
@@ -289,7 +289,7 @@ export default function AdminInstantFormsPage() {
               key={t.id}
               onClick={() => setFilter(t.id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
-                filter === t.id ? "bg-[#d91a24] text-white shadow-xs" : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                filter === t.id ? "bg-[#E92E3D] text-white shadow-xs" : "bg-gray-50 text-gray-600 hover:bg-gray-100"
               }`}
             >
               {t.label}
@@ -326,7 +326,7 @@ export default function AdminInstantFormsPage() {
             value={from}
             max={to || undefined}
             onChange={(e) => { setFrom(e.target.value); setPreset("custom"); }}
-            className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:border-[#d91a24]"
+            className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:border-[#E92E3D]"
           />
           <span className="text-xs text-gray-400">to</span>
           <input
@@ -334,7 +334,7 @@ export default function AdminInstantFormsPage() {
             value={to}
             min={from || undefined}
             onChange={(e) => { setTo(e.target.value); setPreset("custom"); }}
-            className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:border-[#d91a24]"
+            className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:border-[#E92E3D]"
           />
           {datesActive && (
             <button
@@ -362,7 +362,7 @@ export default function AdminInstantFormsPage() {
 
       {loading ? (
         <div className="flex flex-col h-64 items-center justify-center gap-3">
-          <Loader2 className="w-7 h-7 text-[#d91a24] animate-spin" />
+          <Loader2 className="w-7 h-7 text-[#E92E3D] animate-spin" />
           <p className="text-xs text-gray-500 font-medium">Loading leads…</p>
         </div>
       ) : filtered.length === 0 ? (
@@ -388,7 +388,7 @@ export default function AdminInstantFormsPage() {
                 className="bg-white rounded-2xl border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)] p-4 flex flex-col lg:flex-row lg:items-center gap-3 flex-wrap"
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <span className="w-10 h-10 rounded-xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-sm shrink-0">
+                  <span className="w-10 h-10 rounded-xl bg-red-50 text-[#E92E3D] border border-red-100 flex items-center justify-center font-black text-sm shrink-0">
                     {lead.fullName?.charAt(0)?.toUpperCase() || "L"}
                   </span>
                   <div className="min-w-0">
@@ -455,7 +455,7 @@ export default function AdminInstantFormsPage() {
                     value={lead.status}
                     disabled={busyId === lead._id}
                     onChange={(e) => setStatus(lead._id, e.target.value as Lead["status"])}
-                    className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-gray-700 cursor-pointer focus:outline-none focus:border-[#d91a24] disabled:opacity-60"
+                    className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-gray-700 cursor-pointer focus:outline-none focus:border-[#E92E3D] disabled:opacity-60"
                   >
                     <option value="new">New</option>
                     <option value="contacted">Contacted</option>

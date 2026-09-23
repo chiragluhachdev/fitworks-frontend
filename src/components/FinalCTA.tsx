@@ -20,7 +20,7 @@ export default function FinalCTA() {
           <div className="absolute inset-0 bg-[url('/images/auth_hero.jpg')] bg-cover bg-center opacity-25 mix-blend-overlay" />
           <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r from-gray-900 via-gray-900/95 to-[#c5121c]/40" />
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-          <div className="absolute -top-24 -left-24 w-80 h-80 bg-[#d91a24] rounded-full mix-blend-screen blur-[110px] opacity-30 pointer-events-none" />
+          <div className="absolute -top-24 -left-24 w-80 h-80 bg-[#E92E3D] rounded-full mix-blend-screen blur-[110px] opacity-30 pointer-events-none" />
           <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-[#c5121c] rounded-full mix-blend-screen blur-[110px] opacity-30 pointer-events-none" />
 
           <div className="relative z-10 px-6 py-12 sm:px-10 sm:py-14 md:p-16 lg:p-20 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16">
@@ -85,7 +85,7 @@ export default function FinalCTA() {
 
                 <div className="flex flex-col gap-3 relative z-10">
                   <Link href="/auth" className="w-full">
-                    <Button className="w-full bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.98] transition-all duration-200 text-white h-[54px] rounded-xl text-[15px] font-bold shadow-[0_8px_20px_rgb(217,26,36,0.3)] flex justify-between items-center px-5 group border-0">
+                    <Button className="w-full bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.98] transition-all duration-200 text-white h-[54px] rounded-xl text-[15px] font-bold shadow-[0_8px_20px_rgb(217,26,36,0.3)] flex justify-between items-center px-5 group border-0">
                       I&apos;m a Gym Owner
                       <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Button>

@@ -142,3 +142,42 @@
 .animate-marquee {
   animation: marquee 20s linear infinite;
 }
+
+/**
+ * Brand tokens.
+ *
+ * One red, exposed to Tailwind as `brand`, `brand-dark` and `brand-tint`
+ * (bg-brand, text-brand, ring-brand, hover:bg-brand-dark …). New code should
+ * reach for these rather than repeating a hex — the app spent a while with two
+ * near-identical reds because every component hard-coded its own.
+ */
+@theme {
+  --color-brand: #e92e3d;
+  --color-brand-dark: #d42936;
+  --color-brand-tint: #fff1f2;
+}
+
+/**
+ * A 16px floor on form controls.
+ *
+ * iOS Safari zooms the whole page when a focused input's text is under 16px,
+ * and every dashboard form was at 14–15px. The zoom is not recoverable by the
+ * user without pinching back out, so it has to be prevented rather than
+ * styled around.
+ */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Horizontal filter rows scroll rather than wrap; the bar itself is noise. */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

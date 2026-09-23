@@ -105,7 +105,7 @@ export default function AdminSubscriptionsPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
-        <Loader2 className="w-7 h-7 text-[#d91a24] animate-spin" />
+        <Loader2 className="w-7 h-7 text-[#E92E3D] animate-spin" />
         <p className="text-xs font-semibold text-gray-500">Loading subscriptions…</p>
       </div>
     );
@@ -133,7 +133,7 @@ export default function AdminSubscriptionsPage() {
       {/* Revenue */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div className="bg-gray-900 text-white rounded-2xl p-5 relative overflow-hidden">
-          <div className="absolute -top-16 -right-10 w-48 h-48 rounded-full bg-[#d91a24] blur-[80px] opacity-40 pointer-events-none" />
+          <div className="absolute -top-16 -right-10 w-48 h-48 rounded-full bg-[#E92E3D] blur-[80px] opacity-40 pointer-events-none" />
           <div className="relative z-10">
             <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
               <IndianRupee className="w-3.5 h-3.5" /> Collected
@@ -183,7 +183,7 @@ export default function AdminSubscriptionsPage() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search by name, phone or city…"
-            className="w-full h-11 pl-10 pr-4 bg-gray-50/80 border border-gray-200/80 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10"
+            className="w-full h-11 pl-10 pr-4 bg-gray-50/80 border border-gray-200/80 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10"
           />
         </div>
         <div className="flex gap-1.5 overflow-x-auto pb-1 sm:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -223,7 +223,7 @@ export default function AdminSubscriptionsPage() {
                   className="block bg-white rounded-2xl p-4 border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)] active:scale-[0.99] transition-all"
                 >
                   <div className="flex items-start gap-3">
-                    <span className="w-10 h-10 rounded-xl bg-red-50 text-[#d91a24] flex items-center justify-center font-bold text-sm shrink-0">
+                    <span className="w-10 h-10 rounded-xl bg-red-50 text-[#E92E3D] flex items-center justify-center font-bold text-sm shrink-0">
                       {r.fullName?.charAt(0)?.toUpperCase() || "T"}
                     </span>
                     <div className="min-w-0 flex-1">
@@ -281,7 +281,7 @@ export default function AdminSubscriptionsPage() {
                       <tr key={r._id} className="hover:bg-gray-50/60 transition-colors">
                         <td className="px-5 py-3.5">
                           <div className="flex items-center gap-3">
-                            <span className="w-9 h-9 rounded-xl bg-red-50 text-[#d91a24] flex items-center justify-center font-bold text-xs shrink-0">
+                            <span className="w-9 h-9 rounded-xl bg-red-50 text-[#E92E3D] flex items-center justify-center font-bold text-xs shrink-0">
                               {r.fullName?.charAt(0)?.toUpperCase() || "T"}
                             </span>
                             <div className="min-w-0">

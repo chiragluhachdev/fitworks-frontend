@@ -93,7 +93,7 @@ export default function TrainerSettingsPage() {
 
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 text-red-600 rounded-2xl text-sm font-semibold flex items-center gap-2.5">
-          <AlertCircle className="w-4 h-4 text-[#d91a24] shrink-0" />
+          <AlertCircle className="w-4 h-4 text-[#E92E3D] shrink-0" />
           <span>{error}</span>
         </div>
       )}
@@ -115,7 +115,7 @@ export default function TrainerSettingsPage() {
       {/* Change Password Form */}
       <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-6">
-          <KeyRound className="w-5 h-5 text-[#d91a24]" /> Change Password
+          <KeyRound className="w-5 h-5 text-[#E92E3D]" /> Change Password
         </h2>
 
         <form onSubmit={handleChangePassword} className="space-y-4">
@@ -127,7 +127,7 @@ export default function TrainerSettingsPage() {
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24]"
+              className="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D]"
             />
           </div>
 
@@ -140,7 +140,7 @@ export default function TrainerSettingsPage() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Minimum 6 characters"
-                className="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24]"
+                className="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D]"
               />
             </div>
 
@@ -152,7 +152,7 @@ export default function TrainerSettingsPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm password"
-                className="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24]"
+                className="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D]"
               />
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function TrainerSettingsPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="bg-[#d91a24] hover:bg-[#cc1616] text-white px-7 h-11 rounded-xl text-sm font-bold shadow-sm"
+              className="bg-[#E92E3D] hover:bg-[#d42936] text-white px-7 h-11 rounded-xl text-sm font-bold shadow-sm"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               {loading ? "Updating..." : "Update Password"}

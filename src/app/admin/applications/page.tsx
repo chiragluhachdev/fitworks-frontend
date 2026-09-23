@@ -88,7 +88,7 @@ export default function AdminApplications() {
             placeholder="Search by trainer, gym, or position..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
           />
         </div>
 
@@ -106,7 +106,7 @@ export default function AdminApplications() {
               onClick={() => setStatusFilter(tab.id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
                 statusFilter === tab.id
-                  ? "bg-[#d91a24] text-white shadow-xs"
+                  ? "bg-[#E92E3D] text-white shadow-xs"
                   : "bg-gray-50 text-gray-600 hover:bg-gray-100"
               }`}
             >
@@ -120,7 +120,7 @@ export default function AdminApplications() {
       <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs overflow-hidden">
         {loading ? (
           <div className="flex flex-col h-64 items-center justify-center gap-3">
-            <div className="w-8 h-8 border-3 border-[#d91a24] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-3 border-[#E92E3D] border-t-transparent rounded-full animate-spin"></div>
             <p className="text-xs text-gray-500 font-medium">Loading applications pipeline...</p>
           </div>
         ) : (
@@ -147,7 +147,7 @@ export default function AdminApplications() {
                             <Image src={app.trainerId.personal.profilePhoto} alt="Trainer" fill className="object-cover" />
                           </div>
                         ) : (
-                          <div className="w-9 h-9 rounded-full bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                          <div className="w-9 h-9 rounded-full bg-red-50 text-[#E92E3D] border border-red-100 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                             {app.trainerId?.personal?.fullName?.charAt(0) || "T"}
                           </div>
                         )}

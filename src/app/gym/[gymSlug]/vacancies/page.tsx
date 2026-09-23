@@ -85,7 +85,7 @@ export default function GymVacanciesPage() {
         title="My vacancies"
         description="Every role you've asked us to hire for, and how far along each one is."
         actions={
-          <Button href={`/gym/${gymSlug}/vacancies/new`}>
+          <Button href={`/gym/${gymSlug}/vacancies/new`} className="w-full sm:w-auto">
             <Plus className="w-4 h-4" /> Post a Vacancy
           </Button>
         }
@@ -94,7 +94,7 @@ export default function GymVacanciesPage() {
       {error ? (
         <ErrorState message={error} onRetry={load} />
       ) : vacancies.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200/80">
+        <div className="bg-white rounded-[20px] ring-1 ring-gray-200/70">
           <Empty
             icon={Briefcase}
             title="No vacancies yet"
@@ -105,7 +105,7 @@ export default function GymVacanciesPage() {
       ) : (
         <>
           {/* Filters — tabs scroll sideways on a phone rather than wrapping. */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center gap-2.5 sm:gap-3 mb-4 sm:mb-5">
             <div className="flex-1 flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-none">
               {TABS.map((t) => {
                 const n = counts[t.id] || 0;
@@ -118,7 +118,7 @@ export default function GymVacanciesPage() {
                     className={`h-9 px-3.5 rounded-lg text-[13px] font-bold whitespace-nowrap transition-colors cursor-pointer ${
                       on
                         ? "bg-gray-900 text-white"
-                        : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300"
+                        : "bg-white text-gray-600 border border-gray-200 hover:ring-gray-300"
                     }`}
                   >
                     {t.label}
@@ -140,7 +140,7 @@ export default function GymVacanciesPage() {
           </div>
 
           {visible.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-gray-200/80">
+            <div className="bg-white rounded-[20px] ring-1 ring-gray-200/70">
               <Empty
                 icon={Search}
                 title="Nothing matches that"

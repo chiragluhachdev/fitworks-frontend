@@ -83,7 +83,7 @@ export default function HowItWorks() {
       id="how-it-works"
     >
       {/* Ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[520px] bg-[#d91a24]/[0.03] blur-3xl rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[520px] bg-[#E92E3D]/[0.03] blur-3xl rounded-full pointer-events-none" />
 
       <div className="max-w-[1380px] mx-auto relative z-10">
         {/* Header */}
@@ -94,11 +94,11 @@ export default function HowItWorks() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.4 }}
           >
-            <span className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-bold text-[#d91a24] uppercase tracking-[0.18em] px-3.5 py-1.5 rounded-full bg-red-50 border border-red-100 mb-4">
-              <Zap className="w-3.5 h-3.5 fill-[#d91a24]" /> How FitWorks Operates
+            <span className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-bold text-[#E92E3D] uppercase tracking-[0.18em] px-3.5 py-1.5 rounded-full bg-red-50 border border-red-100 mb-4">
+              <Zap className="w-3.5 h-3.5 fill-[#E92E3D]" /> How FitWorks Operates
             </span>
             <h2 className="text-[27px] leading-[1.15] sm:text-3xl md:text-5xl font-extrabold text-gray-900 tracking-[-0.02em] mb-3.5">
-              Simple steps, <span className="text-[#d91a24]">extraordinary</span> results
+              Simple steps, <span className="text-[#E92E3D]">extraordinary</span> results
             </h2>
             <p className="text-gray-500 max-w-xl mx-auto text-[15px] sm:text-base md:text-lg leading-relaxed">
               Whether you&apos;re hiring for a gym or advancing your training
@@ -129,7 +129,7 @@ export default function HowItWorks() {
                 onClick={() => setTab(value)}
                 className={`px-4 sm:px-6 py-2.5 rounded-xl text-[13px] sm:text-sm font-bold transition-all duration-300 ${
                   tab === value
-                    ? "bg-white text-[#d91a24] shadow-md shadow-gray-200"
+                    ? "bg-white text-[#E92E3D] shadow-md shadow-gray-200"
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
@@ -162,15 +162,15 @@ export default function HowItWorks() {
                   </span>
 
                   <div>
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center mb-5 sm:mb-6 group-hover:bg-[#d91a24] group-hover:text-white transition-all duration-300 shadow-sm">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-red-50 text-[#E92E3D] flex items-center justify-center mb-5 sm:mb-6 group-hover:bg-[#E92E3D] group-hover:text-white transition-all duration-300 shadow-sm">
                       <IconComponent className="w-6 h-6 sm:w-7 sm:h-7" />
                     </div>
 
                     <div className="mb-3.5">
-                      <span className="text-[11px] font-bold text-[#d91a24] tracking-wider uppercase">
+                      <span className="text-[11px] font-bold text-[#E92E3D] tracking-wider uppercase">
                         Step {step.number}
                       </span>
-                      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 group-hover:text-[#d91a24] transition-colors leading-tight">
+                      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 group-hover:text-[#E92E3D] transition-colors leading-tight">
                         {step.title}
                       </h3>
                       <p className="text-xs font-semibold text-gray-400 mt-1">
@@ -189,7 +189,7 @@ export default function HowItWorks() {
                         key={h}
                         className="flex items-center gap-2 text-[12px] sm:text-xs font-medium text-gray-700"
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#d91a24] shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#E92E3D] shrink-0" />
                         <span>{h}</span>
                       </div>
                     ))}
@@ -209,7 +209,7 @@ export default function HowItWorks() {
         <div className="mt-10 sm:mt-14 text-center px-5 sm:px-6">
           <Link
             href="/auth"
-            className="inline-flex items-center justify-center gap-2 text-[15px] font-bold text-white bg-[#d91a24] hover:bg-[#cc1616] px-8 h-[52px] rounded-2xl shadow-[0_10px_24px_rgb(217,26,36,0.24)] active:scale-[0.98] transition-all w-full sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 text-[15px] font-bold text-white bg-[#E92E3D] hover:bg-[#d42936] px-8 h-[52px] rounded-2xl shadow-[0_10px_24px_rgb(217,26,36,0.24)] active:scale-[0.98] transition-all w-full sm:w-auto"
           >
             Get Started Now <ArrowRight className="w-4 h-4" />
           </Link>

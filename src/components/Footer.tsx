@@ -50,7 +50,7 @@ export default function Footer() {
             <div className="space-y-1.5 mb-4 text-xs text-gray-400">
               <p>
                 <span className="text-gray-500 font-medium">Helpline:</span>{" "}
-                <a href="tel:+918130200285" className="text-white hover:text-[#d91a24] font-bold transition-colors">
+                <a href="tel:+918130200285" className="text-white hover:text-[#E92E3D] font-bold transition-colors">
                   +91 8130200285
                 </a>
               </p>

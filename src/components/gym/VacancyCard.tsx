@@ -33,7 +33,7 @@ export default function VacancyCard({ vacancy, href }: { vacancy: VacancyRow; hr
   return (
     <Link
       href={href}
-      className="group block bg-white rounded-2xl border border-gray-200/80 p-5 hover:border-gray-300 active:scale-[0.995] transition-all"
+      className="group block bg-white rounded-[20px] ring-1 ring-gray-200/70 hover:ring-gray-300 p-4 sm:p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:shadow-[0_16px_34px_-14px_rgba(16,24,40,0.18)] active:scale-[0.995] transition-all"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
@@ -46,11 +46,11 @@ export default function VacancyCard({ vacancy, href }: { vacancy: VacancyRow; hr
             )}
           </div>
 
-          <h3 className="text-[16px] sm:text-[17px] font-bold text-gray-900 leading-snug group-hover:text-[#d91a24] transition-colors">
+          <h3 className="text-[15px] sm:text-[17px] font-bold text-gray-900 leading-snug group-hover:text-brand transition-colors">
             {vacancy.position}
           </h3>
 
-          <div className="flex items-center gap-x-4 gap-y-1.5 mt-2.5 flex-wrap text-[12.5px] text-gray-500 font-medium">
+          <div className="flex items-center gap-x-3.5 gap-y-1.5 mt-2.5 flex-wrap text-[11.5px] sm:text-[12.5px] text-gray-500 font-medium">
             <span className="inline-flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-gray-400" />
               {vacancy.location}
@@ -65,7 +65,7 @@ export default function VacancyCard({ vacancy, href }: { vacancy: VacancyRow; hr
             </span>
           </div>
 
-          <p className="text-[13px] font-bold text-gray-900 mt-3">
+          <p className="text-[12.5px] sm:text-[13px] font-bold text-gray-900 mt-2.5 sm:mt-3">
             {vacancy.salaryRange}
             <span className="text-gray-400 font-medium"> · {vacancy.employmentType}</span>
             {(vacancy.numberOfOpenings ?? 1) > 1 && (
@@ -75,12 +75,12 @@ export default function VacancyCard({ vacancy, href }: { vacancy: VacancyRow; hr
         </div>
 
         {/* Candidate count — the one figure worth a glance. */}
-        <div className="shrink-0 text-right pl-3 border-l border-gray-100 self-stretch flex flex-col justify-center min-w-[92px]">
-          <p className="text-[26px] font-extrabold text-gray-900 leading-none tabular-nums">
+        <div className="shrink-0 text-right pl-3 sm:pl-4 border-l border-gray-100 self-stretch flex flex-col justify-center min-w-[74px] sm:min-w-[92px]">
+          <p className="text-[22px] sm:text-[26px] font-extrabold text-gray-900 leading-none tabular-nums">
             {inReview}
           </p>
           <p className="text-[11px] font-semibold text-gray-400 mt-1.5 leading-tight">being reviewed</p>
-          <span className="inline-flex items-center justify-end gap-1 text-[11.5px] font-bold text-[#d91a24] mt-2.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="hidden sm:inline-flex items-center justify-end gap-1 text-[11.5px] font-bold text-brand mt-2.5 opacity-0 group-hover:opacity-100 transition-opacity">
             Details <ArrowUpRight className="w-3.5 h-3.5" />
           </span>
         </div>
@@ -99,12 +99,12 @@ export function VacancyRowItem({ vacancy, href }: { vacancy: VacancyRow; href: s
       href={href}
       className="flex items-center gap-3.5 px-4 py-3.5 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-colors"
     >
-      <span className="w-10 h-10 rounded-xl bg-red-50 text-[#d91a24] flex items-center justify-center shrink-0">
+      <span className="w-10 h-10 rounded-xl bg-brand-tint text-brand flex items-center justify-center shrink-0">
         <Briefcase className="w-[18px] h-[18px]" />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[14px] font-bold text-gray-900 truncate">{vacancy.position}</p>
-        <p className="text-[12px] text-gray-500 truncate mt-0.5">
+        <p className="text-[13.5px] sm:text-[14px] font-bold text-gray-900 truncate">{vacancy.position}</p>
+        <p className="text-[11.5px] sm:text-[12px] text-gray-500 truncate mt-0.5">
           {vacancy.location} · {vacancy.salaryRange}
         </p>
       </div>

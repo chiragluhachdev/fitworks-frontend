@@ -5,15 +5,17 @@ import React from "react";
 /**
  * Form primitives for the workspace.
  *
- * One label style, one control height, one focus ring — so a six-field form and
- * a twenty-field form look like the same product. Controls are 48px tall on
- * phones, which is what stops the browser zooming in on focus.
+ * One label style, one control height, one focus ring — so a six-field form
+ * and a twenty-field form look like the same product.
+ *
+ * Controls are 48px tall on phones and their text is 16px, which is the floor
+ * below which iOS Safari zooms the page on focus. globals.css enforces that
+ * floor for every input as a backstop; the class here says so explicitly.
  */
-
 const CONTROL =
-  "w-full h-12 px-3.5 bg-white border border-gray-200 rounded-xl text-[15px] sm:text-sm text-gray-900 " +
-  "placeholder:text-gray-400 outline-none transition-colors " +
-  "focus:border-[#d91a24] focus:ring-4 focus:ring-red-500/10 disabled:bg-gray-50 disabled:text-gray-400";
+  "w-full h-12 sm:h-11 px-3.5 bg-white ring-1 ring-gray-200 rounded-xl text-[16px] sm:text-[14px] text-gray-900 " +
+  "placeholder:text-gray-400 outline-none transition-shadow " +
+  "focus:ring-2 focus:ring-brand/40 disabled:bg-gray-50 disabled:text-gray-400";
 
 export function Field({
   label,
@@ -34,15 +36,15 @@ export function Field({
 }) {
   return (
     <div className={`space-y-1.5 ${className}`}>
-      <label htmlFor={htmlFor} className="block text-[13px] font-bold text-gray-800">
+      <label htmlFor={htmlFor} className="block text-[12.5px] sm:text-[13px] font-bold text-gray-800">
         {label}
-        {required && <span className="text-[#d91a24] ml-0.5">*</span>}
+        {required && <span className="text-brand ml-0.5">*</span>}
       </label>
       {children}
       {error ? (
-        <p className="text-[12px] font-semibold text-[#d91a24]">{error}</p>
+        <p className="text-[11.5px] sm:text-[12px] font-semibold text-brand">{error}</p>
       ) : (
-        hint && <p className="text-[12px] text-gray-400 leading-snug">{hint}</p>
+        hint && <p className="text-[11.5px] sm:text-[12px] text-gray-400 leading-snug">{hint}</p>
       )}
     </div>
   );
@@ -64,18 +66,19 @@ export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttrib
   }
 );
 
-export const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
-  function Textarea({ className = "", rows = 4, ...props }, ref) {
-    return (
-      <textarea
-        ref={ref}
-        rows={rows}
-        className={`${CONTROL} h-auto py-3 leading-relaxed resize-y ${className}`}
-        {...props}
-      />
-    );
-  }
-);
+export const Textarea = React.forwardRef<
+  HTMLTextAreaElement,
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>
+>(function Textarea({ className = "", rows = 4, ...props }, ref) {
+  return (
+    <textarea
+      ref={ref}
+      rows={rows}
+      className={`${CONTROL} h-auto py-3 leading-relaxed resize-y ${className}`}
+      {...props}
+    />
+  );
+});
 
 /** A labelled group of fields inside a longer form. */
 export function FieldGroup({
@@ -90,8 +93,8 @@ export function FieldGroup({
   return (
     <section className="space-y-4">
       <div>
-        <h3 className="text-[15px] font-bold text-gray-900">{title}</h3>
-        {description && <p className="text-[12.5px] text-gray-500 mt-0.5">{description}</p>}
+        <h3 className="text-[14.5px] sm:text-[15px] font-bold text-gray-900">{title}</h3>
+        {description && <p className="text-[12px] sm:text-[12.5px] text-gray-500 mt-0.5">{description}</p>}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>
     </section>
@@ -130,10 +133,10 @@ export function ChipSelect({
             type="button"
             onClick={() => toggle(option)}
             aria-pressed={on}
-            className={`h-10 px-3.5 rounded-xl text-[13px] font-semibold border transition-all active:scale-[0.97] ${
+            className={`h-10 px-3.5 rounded-xl text-[12.5px] sm:text-[13px] font-semibold ring-1 transition-all active:scale-[0.97] ${
               on
-                ? "bg-[#d91a24] text-white border-[#d91a24]"
-                : "bg-white text-gray-700 border-gray-200 hover:border-gray-300"
+                ? "bg-brand text-white ring-brand"
+                : "bg-white text-gray-700 ring-gray-200 hover:ring-gray-300"
             }`}
           >
             {option}

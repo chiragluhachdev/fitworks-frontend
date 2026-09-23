@@ -15,7 +15,7 @@ export function ProgressBar({ percent, className = "" }: { percent: number; clas
     >
       <div
         className={`h-full rounded-full transition-all duration-500 ${
-          value >= 100 ? "bg-emerald-500" : "bg-[#d91a24]"
+          value >= 100 ? "bg-emerald-500" : "bg-brand"
         }`}
         style={{ width: `${value}%` }}
       />
@@ -40,7 +40,7 @@ export function ProgressRing({ percent, size = 56 }: { percent: number; size?: n
           cy={size / 2}
           r={r}
           fill="none"
-          stroke={done ? "#10b981" : "#d91a24"}
+          stroke={done ? "#10b981" : "#e92e3d"}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={circumference}

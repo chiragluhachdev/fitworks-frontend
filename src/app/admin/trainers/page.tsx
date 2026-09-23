@@ -249,7 +249,7 @@ export default function AdminTrainers() {
             placeholder="Search by name, title, or city..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24]"
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-2 text-xs md:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D]"
           />
         </div>
 
@@ -270,7 +270,7 @@ export default function AdminTrainers() {
                 }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
                   filterStatus === tab.id
-                    ? "bg-[#d91a24] text-white shadow-xs"
+                    ? "bg-[#E92E3D] text-white shadow-xs"
                     : "bg-gray-50 text-gray-600 hover:bg-gray-100"
                 }`}
               >
@@ -332,7 +332,7 @@ export default function AdminTrainers() {
             value={from}
             max={to || undefined}
             onChange={(e) => { setFrom(e.target.value); setPreset("custom"); }}
-            className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:border-[#d91a24]"
+            className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:border-[#E92E3D]"
           />
           <span className="text-xs text-gray-400">to</span>
           <input
@@ -340,7 +340,7 @@ export default function AdminTrainers() {
             value={to}
             min={from || undefined}
             onChange={(e) => { setTo(e.target.value); setPreset("custom"); }}
-            className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:border-[#d91a24]"
+            className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 focus:outline-none focus:border-[#E92E3D]"
           />
           {datesActive && (
             <button
@@ -358,7 +358,7 @@ export default function AdminTrainers() {
       <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs overflow-hidden">
         {loading ? (
           <div className="flex flex-col h-64 items-center justify-center gap-3">
-            <div className="w-8 h-8 border-3 border-[#d91a24] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-3 border-[#E92E3D] border-t-transparent rounded-full animate-spin"></div>
             <p className="text-xs text-gray-500 font-medium">Loading trainers directory...</p>
           </div>
         ) : (
@@ -380,17 +380,17 @@ export default function AdminTrainers() {
                     {/* Trainer Info */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-sm shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-red-50 text-[#E92E3D] border border-red-100 flex items-center justify-center font-black text-sm shrink-0">
                           {trainer.personal?.fullName?.charAt(0) || "T"}
                         </div>
                         <div>
                           <div className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
                             {trainer.personal?.fullName}
                             {trainer.verificationStatus === "verified" && (
-                              <ShieldCheck className="w-4 h-4 text-[#d91a24] shrink-0" />
+                              <ShieldCheck className="w-4 h-4 text-[#E92E3D] shrink-0" />
                             )}
                           </div>
-                          <div className="text-xs font-medium text-[#d91a24]">
+                          <div className="text-xs font-medium text-[#E92E3D]">
                             {trainer.professional?.professionalTitle || "Fitness Trainer"}
                           </div>
                         </div>
@@ -533,7 +533,7 @@ export default function AdminTrainers() {
                     <Image src={selectedTrainer.personal.profilePhoto} alt="Trainer" fill className="object-cover" />
                   </div>
                 ) : (
-                  <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-black text-lg shrink-0">
+                  <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#E92E3D] border border-red-100 flex items-center justify-center font-black text-lg shrink-0">
                     {selectedTrainer.personal?.fullName?.charAt(0) || "T"}
                   </div>
                 )}
@@ -546,7 +546,7 @@ export default function AdminTrainers() {
                       </span>
                     )}
                   </h3>
-                  <p className="text-xs font-semibold text-[#d91a24]">
+                  <p className="text-xs font-semibold text-[#E92E3D]">
                     {selectedTrainer.professional?.professionalTitle || "Fitness Trainer"}
                   </p>
                 </div>
@@ -570,7 +570,7 @@ export default function AdminTrainers() {
                 </h4>
                 {detailLoading ? (
                   <div className="flex items-center gap-2 p-4 rounded-2xl bg-gray-50 border border-gray-100 text-xs text-gray-500">
-                    <Loader2 className="w-4 h-4 animate-spin text-[#d91a24]" /> Loading full record…
+                    <Loader2 className="w-4 h-4 animate-spin text-[#E92E3D]" /> Loading full record…
                   </div>
                 ) : (
                   <>
@@ -655,7 +655,7 @@ export default function AdminTrainers() {
                 <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Specializations & Skills</h4>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedTrainer.professional?.specializations?.map((s: string, idx: number) => (
-                    <span key={idx} className="bg-red-50 text-[#d91a24] border border-red-100 text-xs font-semibold px-2.5 py-1 rounded-lg">
+                    <span key={idx} className="bg-red-50 text-[#E92E3D] border border-red-100 text-xs font-semibold px-2.5 py-1 rounded-lg">
                       {s}
                     </span>
                   ))}
@@ -675,11 +675,11 @@ export default function AdminTrainers() {
                     {selectedTrainer.professional.certifications.map((cert: any, idx: number) => (
                       <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 text-xs">
                         <span className="font-semibold text-gray-900 flex items-center gap-2">
-                          <GraduationCap className="w-4 h-4 text-[#d91a24]" />
+                          <GraduationCap className="w-4 h-4 text-[#E92E3D]" />
                           {typeof cert === "string" ? cert : cert.name}
                         </span>
                         {cert.url && (
-                          <a href={cert.url} target="_blank" rel="noreferrer" className="text-xs font-bold text-[#d91a24] hover:underline flex items-center gap-1">
+                          <a href={cert.url} target="_blank" rel="noreferrer" className="text-xs font-bold text-[#E92E3D] hover:underline flex items-center gap-1">
                             Verify Link <ExternalLink className="w-3 h-3" />
                           </a>
                         )}
@@ -718,7 +718,7 @@ export default function AdminTrainers() {
                               rel="noreferrer" 
                               className="bg-white hover:bg-amber-100/60 text-amber-900 border border-amber-300 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 self-start sm:self-auto transition-colors cursor-pointer"
                             >
-                              <ExternalLink className="w-3.5 h-3.5 text-[#d91a24]" />
+                              <ExternalLink className="w-3.5 h-3.5 text-[#E92E3D]" />
                               Open Document
                             </a>
                           ) : (

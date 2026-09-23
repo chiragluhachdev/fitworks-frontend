@@ -442,7 +442,7 @@ export default function AdminVacancyWorkspace() {
                               onClick={() => removeCandidate(row._id)}
                               disabled={busyRow === row._id}
                               aria-label="Remove from shortlist"
-                              className="w-9 h-9 rounded-lg border border-gray-200 text-gray-400 hover:text-[#d91a24] hover:border-red-200 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50"
+                              className="w-9 h-9 rounded-lg border border-gray-200 text-gray-400 hover:text-[#E92E3D] hover:border-red-200 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>

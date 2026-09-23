@@ -65,10 +65,10 @@ export default function AdminLogin() {
         <div className="bg-white rounded-3xl border border-gray-200/90 p-8 shadow-xl shadow-gray-200/50">
           
           <div className="text-center mb-8">
-            <div className="w-14 h-14 bg-red-50 text-[#d91a24] border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+            <div className="w-14 h-14 bg-red-50 text-[#E92E3D] border border-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
               <ShieldCheck className="w-7 h-7" />
             </div>
-            <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-[#d91a24] bg-red-50 px-2.5 py-1 rounded-full border border-red-200/60 mb-2">
+            <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-[#E92E3D] bg-red-50 px-2.5 py-1 rounded-full border border-red-200/60 mb-2">
               Staff & Administration
             </span>
             <h1 className="text-2xl font-bold text-gray-900">Admin Control Center</h1>
@@ -87,7 +87,7 @@ export default function AdminLogin() {
                 <input
                   type="email"
                   required
-                  className="w-full bg-gray-50/50 border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24] transition-all"
+                  className="w-full bg-gray-50/50 border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D] transition-all"
                   placeholder="admin@fitworks.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -104,7 +104,7 @@ export default function AdminLogin() {
                 <input
                   type="password"
                   required
-                  className="w-full bg-gray-50/50 border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#d91a24]/20 focus:border-[#d91a24] transition-all"
+                  className="w-full bg-gray-50/50 border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E92E3D]/20 focus:border-[#E92E3D] transition-all"
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -115,7 +115,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#d91a24] hover:bg-[#b8151e] text-white font-bold py-3.5 px-4 rounded-xl flex justify-center items-center gap-2 shadow-md shadow-red-500/20 transition-all disabled:opacity-70 mt-6 cursor-pointer"
+              className="w-full bg-[#E92E3D] hover:bg-[#d42936] text-white font-bold py-3.5 px-4 rounded-xl flex justify-center items-center gap-2 shadow-md shadow-red-500/20 transition-all disabled:opacity-70 mt-6 cursor-pointer"
             >
               {isLoading ? (
                 <>

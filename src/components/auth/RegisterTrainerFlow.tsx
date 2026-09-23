@@ -393,7 +393,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
 
         <div className="w-full max-w-md flex flex-col sm:flex-row gap-2.5">
           <Link href={`/trainer/${createdSlug}/dashboard`} className="flex-1">
-            <Button className="w-full h-12 bg-[#d91a24] hover:bg-[#c2141d] active:scale-[0.99] text-white rounded-xl font-bold text-sm shadow-md shadow-red-500/20 cursor-pointer transition-all">
+            <Button className="w-full h-12 bg-[#E92E3D] hover:bg-[#c2141d] active:scale-[0.99] text-white rounded-xl font-bold text-sm shadow-md shadow-red-500/20 cursor-pointer transition-all">
               Go to my dashboard
             </Button>
           </Link>
@@ -430,14 +430,14 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
           </div>
           <div className="flex gap-2 mb-1">
             {[1, 2, 3, 4].map((s) => (
-              <div key={s} className={`h-2 w-8 md:w-10 rounded-full transition-colors ${s <= step ? "bg-[#d91a24]" : "bg-gray-100"}`} />
+              <div key={s} className={`h-2 w-8 md:w-10 rounded-full transition-colors ${s <= step ? "bg-[#E92E3D]" : "bg-gray-100"}`} />
             ))}
           </div>
         </div>
 
         {errorMessage && (
           <div className="p-3.5 mb-4 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-semibold flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-[#d91a24] shrink-0" />
+            <AlertCircle className="w-4 h-4 text-[#E92E3D] shrink-0" />
             <span>{errorMessage}</span>
           </div>
         )}
@@ -469,20 +469,20 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                         handleChange(e);
                       }}
                       placeholder="98765 43210"
-                      className="w-full h-12 pl-16 pr-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10"
+                      className="w-full h-12 pl-16 pr-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10"
                     />
                   </div>
                   <p className="text-[11px] text-gray-400 ml-1">You&apos;ll use this to log in.</p>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Password <span className="text-red-500">*</span></label>
-                  <input type="password" name="password" required value={formData.password} onChange={handleChange} placeholder="Create password (min 6 chars)" className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="password" name="password" required value={formData.password} onChange={handleChange} placeholder="Create password (min 6 chars)" className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
               </div>
               <hr className="border-gray-100 my-2" />
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Full Name <span className="text-red-500">*</span></label>
-                <input type="text" name="personal.fullName" required value={formData.personal.fullName} onChange={handleChange} placeholder="E.g. Rahul Sharma" className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <input type="text" name="personal.fullName" required value={formData.personal.fullName} onChange={handleChange} placeholder="E.g. Rahul Sharma" className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">
@@ -495,18 +495,18 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="trainer@example.com"
-                  className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10"
+                  className="w-full h-12 px-4 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10"
                 />
                 <p className="text-[11px] text-gray-400 ml-1">Add one and you can log in with either.</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Date of Birth <span className="text-red-500">*</span></label>
-                  <input type="date" name="personal.dateOfBirth" required value={formData.personal.dateOfBirth} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="date" name="personal.dateOfBirth" required value={formData.personal.dateOfBirth} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Gender <span className="text-red-500">*</span></label>
-                  <select name="personal.gender" required value={formData.personal.gender} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
+                  <select name="personal.gender" required value={formData.personal.gender} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10">
                     <option value="">Select Gender...</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -517,11 +517,11 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">City <span className="text-red-500">*</span></label>
-                  <input type="text" name="personal.city" required value={formData.personal.city} onChange={handleChange} placeholder="E.g. Mumbai" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="text" name="personal.city" required value={formData.personal.city} onChange={handleChange} placeholder="E.g. Mumbai" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Specific Location / Area <span className="text-red-500">*</span></label>
-                  <input type="text" name="personal.location" required value={formData.personal.location} onChange={handleChange} placeholder="E.g. Andheri West" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="text" name="personal.location" required value={formData.personal.location} onChange={handleChange} placeholder="E.g. Andheri West" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
               </div>
             </div>
@@ -533,28 +533,28 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Professional Title <span className="text-red-500">*</span></label>
-                  <input type="text" name="professional.professionalTitle" required value={formData.professional.professionalTitle} onChange={handleChange} placeholder="E.g. Senior Yoga Instructor, Personal Trainer" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="text" name="professional.professionalTitle" required value={formData.professional.professionalTitle} onChange={handleChange} placeholder="E.g. Senior Yoga Instructor, Personal Trainer" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Years of Experience <span className="text-red-500">*</span></label>
-                  <input type="number" name="professional.yearsOfExperience" required value={formData.professional.yearsOfExperience} onChange={handleChange} min="0" placeholder="0" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="number" name="professional.yearsOfExperience" required value={formData.professional.yearsOfExperience} onChange={handleChange} min="0" placeholder="0" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Specializations <span className="text-gray-400 font-semibold">(Optional)</span></label>
-                <input type="text" name="professional.specializations" value={formData.professional.specializations} onChange={handleChange} placeholder="E.g. Weight Loss, Strength Training, CrossFit, HIIT" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <input type="text" name="professional.specializations" value={formData.professional.specializations} onChange={handleChange} placeholder="E.g. Weight Loss, Strength Training, CrossFit, HIIT" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Skills <span className="text-gray-400 font-semibold">(Optional)</span></label>
-                <input type="text" name="professional.skills" value={formData.professional.skills} onChange={handleChange} placeholder="E.g. Nutrition planning, CPR, Client Management" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <input type="text" name="professional.skills" value={formData.professional.skills} onChange={handleChange} placeholder="E.g. Nutrition planning, CPR, Client Management" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Education / Fitness Certification <span className="text-red-500">*</span></label>
-                <input type="text" name="professional.education" required value={formData.professional.education} onChange={handleChange} placeholder="E.g. ACE Certified, ISSA, BSc Sports Science, K11" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                <input type="text" name="professional.education" required value={formData.professional.education} onChange={handleChange} placeholder="E.g. ACE Certified, ISSA, BSc Sports Science, K11" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Bio / About You <span className="text-red-500">*</span></label>
-                <textarea name="professional.bio" required value={formData.professional.bio} onChange={handleChange} rows={3} placeholder="Tell partner gyms about your coaching philosophy and client achievements..." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10 resize-none" />
+                <textarea name="professional.bio" required value={formData.professional.bio} onChange={handleChange} rows={3} placeholder="Tell partner gyms about your coaching philosophy and client achievements..." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10 resize-none" />
               </div>
             </div>
           )}
@@ -565,11 +565,11 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Expected Monthly Salary <span className="text-red-500">*</span></label>
-                  <input type="text" name="workPreferences.expectedMonthlySalary" required value={formData.workPreferences.expectedMonthlySalary} onChange={handleChange} placeholder="E.g. ₹25,000 - ₹35,000" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10" />
+                  <input type="text" name="workPreferences.expectedMonthlySalary" required value={formData.workPreferences.expectedMonthlySalary} onChange={handleChange} placeholder="E.g. ₹25,000 - ₹35,000" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-gray-700 ml-1">Employment Type <span className="text-red-500">*</span></label>
-                  <select name="workPreferences.employmentType" required value={formData.workPreferences.employmentType} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
+                  <select name="workPreferences.employmentType" required value={formData.workPreferences.employmentType} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10">
                     <option value="Full-time">Full-time</option>
                     <option value="Part-time">Part-time</option>
                     <option value="Freelance">Freelance</option>
@@ -578,14 +578,14 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-700 ml-1">Availability <span className="text-red-500">*</span></label>
-                <select name="workPreferences.availability" required value={formData.workPreferences.availability} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#d91a24] focus:ring-2 focus:ring-[#d91a24]/10">
+                <select name="workPreferences.availability" required value={formData.workPreferences.availability} onChange={handleChange} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#E92E3D] focus:ring-2 focus:ring-[#E92E3D]/10">
                   <option value="Immediate">Immediate</option>
                   <option value="In 1 week">In 1 week</option>
                   <option value="In 1 month">In 1 month</option>
                 </select>
               </div>
               <label className="flex items-center gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
-                <input type="checkbox" name="workPreferences.willingToRelocate" checked={formData.workPreferences.willingToRelocate} onChange={handleChange} className="w-5 h-5 text-[#d91a24] border-gray-300 rounded focus:ring-[#d91a24]" />
+                <input type="checkbox" name="workPreferences.willingToRelocate" checked={formData.workPreferences.willingToRelocate} onChange={handleChange} className="w-5 h-5 text-[#E92E3D] border-gray-300 rounded focus:ring-[#E92E3D]" />
                 <span className="text-sm font-medium text-gray-700">I am willing to relocate for the right gym opportunity</span>
               </label>
             </div>
@@ -603,7 +603,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
               {/* Certifications Upload Box */}
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-900 ml-1 flex items-center gap-1.5">
-                  <Award className="w-4 h-4 text-[#d91a24]" /> Coaching Certificate (Optional / Recommended)
+                  <Award className="w-4 h-4 text-[#E92E3D]" /> Coaching Certificate (Optional / Recommended)
                 </label>
                 
                 {certDoc ? (
@@ -627,7 +627,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                     </button>
                   </div>
                 ) : (
-                  <label className="block border-2 border-dashed border-gray-200 rounded-2xl p-7 text-center hover:border-[#d91a24] hover:bg-red-50/30 transition-all cursor-pointer group">
+                  <label className="block border-2 border-dashed border-gray-200 rounded-2xl p-7 text-center hover:border-[#E92E3D] hover:bg-red-50/30 transition-all cursor-pointer group">
                     <input
                       type="file"
                       accept="application/pdf,image/jpeg,image/png,image/webp"
@@ -637,13 +637,13 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                     />
                     {uploadingCert ? (
                       <div className="flex flex-col items-center">
-                        <Loader2 className="w-8 h-8 text-[#d91a24] animate-spin mb-2" />
+                        <Loader2 className="w-8 h-8 text-[#E92E3D] animate-spin mb-2" />
                         <p className="text-xs font-bold text-gray-700">Uploading certificate to Cloudinary...</p>
                       </div>
                     ) : (
                       <>
-                        <UploadCloud className="w-9 h-9 text-gray-400 group-hover:text-[#d91a24] mx-auto mb-2 transition-colors" />
-                        <p className="text-xs md:text-sm font-bold text-gray-800 mb-0.5 group-hover:text-[#d91a24]">
+                        <UploadCloud className="w-9 h-9 text-gray-400 group-hover:text-[#E92E3D] mx-auto mb-2 transition-colors" />
+                        <p className="text-xs md:text-sm font-bold text-gray-800 mb-0.5 group-hover:text-[#E92E3D]">
                           Click to upload certificate
                         </p>
                         <p className="text-[11px] text-gray-400">PDF, JPG, or PNG (Max 10MB)</p>
@@ -656,7 +656,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
               {/* Government ID (Aadhaar/PAN) Upload Box */}
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-gray-900 ml-1 flex items-center gap-1.5">
-                  <CreditCard className="w-4 h-4 text-[#d91a24]" /> Government ID (Aadhaar / PAN Card)
+                  <CreditCard className="w-4 h-4 text-[#E92E3D]" /> Government ID (Aadhaar / PAN Card)
                 </label>
 
                 {govIdDoc ? (
@@ -680,7 +680,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                     </button>
                   </div>
                 ) : (
-                  <label className="block border-2 border-dashed border-gray-200 rounded-2xl p-7 text-center hover:border-[#d91a24] hover:bg-red-50/30 transition-all cursor-pointer group">
+                  <label className="block border-2 border-dashed border-gray-200 rounded-2xl p-7 text-center hover:border-[#E92E3D] hover:bg-red-50/30 transition-all cursor-pointer group">
                     <input
                       type="file"
                       accept="application/pdf,image/jpeg,image/png,image/webp"
@@ -690,13 +690,13 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                     />
                     {uploadingGovId ? (
                       <div className="flex flex-col items-center">
-                        <Loader2 className="w-8 h-8 text-[#d91a24] animate-spin mb-2" />
+                        <Loader2 className="w-8 h-8 text-[#E92E3D] animate-spin mb-2" />
                         <p className="text-xs font-bold text-gray-700">Uploading ID proof to Cloudinary...</p>
                       </div>
                     ) : (
                       <>
-                        <UploadCloud className="w-9 h-9 text-gray-400 group-hover:text-[#d91a24] mx-auto mb-2 transition-colors" />
-                        <p className="text-xs md:text-sm font-bold text-gray-800 mb-0.5 group-hover:text-[#d91a24]">
+                        <UploadCloud className="w-9 h-9 text-gray-400 group-hover:text-[#E92E3D] mx-auto mb-2 transition-colors" />
+                        <p className="text-xs md:text-sm font-bold text-gray-800 mb-0.5 group-hover:text-[#E92E3D]">
                           Click to upload ID (Aadhaar / PAN)
                         </p>
                         <p className="text-[11px] text-gray-400">PDF, JPG, or PNG (Max 10MB)</p>
@@ -713,7 +713,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
                   href="/about#privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-gray-500 hover:text-[#d91a24] underline underline-offset-2"
+                  className="font-semibold text-gray-500 hover:text-[#E92E3D] underline underline-offset-2"
                 >
                   Privacy policy
                 </a>
@@ -735,7 +735,7 @@ export default function RegisterTrainerFlow({ onBack }: RegisterTrainerFlowProps
         <Button 
           onClick={handleNext} 
           disabled={loading || uploadingCert || uploadingGovId} 
-          className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-95 text-white px-8 py-5 rounded-xl font-bold transition-all shadow-[0_8px_20px_rgb(217,26,36,0.15)] flex items-center gap-2 cursor-pointer disabled:opacity-50"
+          className="bg-[#E92E3D] hover:bg-[#d42936] active:scale-95 text-white px-8 py-5 rounded-xl font-bold transition-all shadow-[0_8px_20px_rgb(217,26,36,0.15)] flex items-center gap-2 cursor-pointer disabled:opacity-50"
         >
           {loading ? (
             <>

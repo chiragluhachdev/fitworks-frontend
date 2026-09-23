@@ -15,7 +15,7 @@ export interface StatCardProps {
 }
 
 const TONES: Record<NonNullable<StatCardProps["tone"]>, string> = {
-  red: "bg-red-50 text-[#d91a24]",
+  red: "bg-red-50 text-[#E92E3D]",
   blue: "bg-blue-50 text-blue-600",
   purple: "bg-purple-50 text-purple-600",
   amber: "bg-amber-50 text-amber-600",

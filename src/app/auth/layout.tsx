@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 function AuthFallback() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-gray-50">
-      <span className="w-7 h-7 rounded-full border-[3px] border-[#d91a24] border-t-transparent animate-spin" />
+      <span className="w-7 h-7 rounded-full border-[3px] border-[#E92E3D] border-t-transparent animate-spin" />
       <p className="text-xs font-semibold text-gray-500">Loading…</p>
     </div>
   );

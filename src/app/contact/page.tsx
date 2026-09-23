@@ -26,11 +26,11 @@ export default function ContactPage() {
         
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <span className="text-xs font-bold text-[#d91a24] uppercase tracking-widest bg-red-50 border border-red-100 px-3 py-1 rounded-full inline-block">
+          <span className="text-xs font-bold text-[#E92E3D] uppercase tracking-widest bg-red-50 border border-red-100 px-3 py-1 rounded-full inline-block">
             Support & Partnerships
           </span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight">
-            We&apos;re here to help you <span className="text-[#d91a24]">grow</span>.
+            We&apos;re here to help you <span className="text-[#E92E3D]">grow</span>.
           </h1>
           <p className="text-gray-500 text-sm md:text-base leading-relaxed">
             Whether you are a gym seeking elite trainers or a fitness coach looking for your next career move, our team is ready to assist.
@@ -40,24 +40,24 @@ export default function ContactPage() {
         {/* Contact Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-xs flex flex-col items-center text-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#E92E3D] flex items-center justify-center font-bold">
               <Mail className="w-6 h-6" />
             </div>
             <h3 className="text-base font-bold text-gray-900">Email Us</h3>
             <p className="text-xs text-gray-500">For general support and partnerships:</p>
-            <a href="mailto:support@fitworks.in" className="text-sm font-bold text-[#d91a24] hover:underline">
+            <a href="mailto:support@fitworks.in" className="text-sm font-bold text-[#E92E3D] hover:underline">
               support@fitworks.in
             </a>
           </div>
 
           <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-xs flex flex-col items-center text-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#E92E3D] flex items-center justify-center font-bold">
               <Phone className="w-6 h-6" />
             </div>
             <h3 className="text-base font-bold text-gray-900">Partner &amp; Support Helpline</h3>
             <p className="text-xs text-gray-500">Call or WhatsApp (Monday – Saturday, 9 AM – 8 PM):</p>
             <div className="flex flex-col items-center gap-1.5">
-              <a href="tel:+918130200285" className="text-sm font-bold text-[#d91a24] hover:underline">
+              <a href="tel:+918130200285" className="text-sm font-bold text-[#E92E3D] hover:underline">
                 +91 8130200285
               </a>
               <a 
@@ -72,7 +72,7 @@ export default function ContactPage() {
           </div>
 
           <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-xs flex flex-col items-center text-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-2xl bg-red-50 text-[#E92E3D] flex items-center justify-center font-bold">
               <MapPin className="w-6 h-6" />
             </div>
             <h3 className="text-base font-bold text-gray-900">Headquarters</h3>
@@ -94,7 +94,7 @@ export default function ContactPage() {
             </p>
           </div>
           <Link href="/auth">
-            <Button className="bg-[#d91a24] hover:bg-[#cc1616] text-white px-6 h-12 rounded-xl text-sm font-bold shadow-sm flex items-center gap-2">
+            <Button className="bg-[#E92E3D] hover:bg-[#d42936] text-white px-6 h-12 rounded-xl text-sm font-bold shadow-sm flex items-center gap-2">
               Get Started Free <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>

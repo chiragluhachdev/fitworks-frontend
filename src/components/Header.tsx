@@ -57,8 +57,8 @@ export default function Header() {
                 href={link.href}
                 className={`relative py-1 transition-colors ${
                   isActive
-                    ? "text-[#d91a24] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#d91a24] after:rounded-full"
-                    : "text-gray-900 hover:text-[#d91a24]"
+                    ? "text-[#E92E3D] font-bold after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#E92E3D] after:rounded-full"
+                    : "text-gray-900 hover:text-[#E92E3D]"
                 }`}
               >
                 {link.name}
@@ -71,7 +71,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           {pathname !== "/auth" && (
             <Link href="/auth">
-              <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white rounded-lg px-[20px] h-[38px] text-sm font-semibold hidden md:inline-flex shadow-sm cursor-pointer">
+              <Button className="bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 text-white rounded-lg px-[20px] h-[38px] text-sm font-semibold hidden md:inline-flex shadow-sm cursor-pointer">
                 Login / Sign Up <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </Link>
@@ -104,7 +104,7 @@ export default function Header() {
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center justify-between py-3 border-b border-gray-50 text-[15px] font-semibold transition-colors ${
-                  isActive ? "text-[#d91a24]" : "text-gray-900 hover:text-[#d91a24]"
+                  isActive ? "text-[#E92E3D]" : "text-gray-900 hover:text-[#E92E3D]"
                 }`}
               >
                 {link.name}
@@ -115,7 +115,7 @@ export default function Header() {
 
           {pathname !== "/auth" && (
             <Link href="/auth" onClick={() => setMobileOpen(false)} className="block mt-4">
-              <Button className="bg-[#d91a24] hover:bg-[#cc1616] active:scale-[0.98] transition-all duration-200 ease-out active:duration-0 text-white rounded-xl w-full h-[48px] text-[15px] font-semibold flex items-center justify-center cursor-pointer shadow-[0_6px_16px_rgb(217,26,36,0.22)]">
+              <Button className="bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.98] transition-all duration-200 ease-out active:duration-0 text-white rounded-xl w-full h-[48px] text-[15px] font-semibold flex items-center justify-center cursor-pointer shadow-[0_6px_16px_rgb(217,26,36,0.22)]">
                 Login / Sign Up <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>

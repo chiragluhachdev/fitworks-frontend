@@ -85,7 +85,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       <div className="md:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
         <Link href="/admin/dashboard" className="flex items-center gap-2">
           <Image src="/images/logo.png" alt="FitWorks" width={100} height={28} className="object-contain" />
-          <span className="text-[10px] font-bold uppercase tracking-wider bg-red-50 text-[#d91a24] border border-red-200/60 px-2 py-0.5 rounded-full">
+          <span className="text-[10px] font-bold uppercase tracking-wider bg-red-50 text-[#E92E3D] border border-red-200/60 px-2 py-0.5 rounded-full">
             Admin
           </span>
         </Link>
@@ -110,7 +110,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             </Link>
             
             <div className="mt-4 flex items-center gap-2.5 px-3 py-2 bg-red-50/70 rounded-xl border border-red-100">
-              <div className="w-7 h-7 rounded-lg bg-[#d91a24] text-white flex items-center justify-center font-bold shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-[#E92E3D] text-white flex items-center justify-center font-bold shrink-0">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div className="min-w-0 flex-1">
@@ -136,7 +136,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                       isActive 
-                        ? "bg-[#d91a24] text-white shadow-sm shadow-red-500/20" 
+                        ? "bg-[#E92E3D] text-white shadow-sm shadow-red-500/20" 
                         : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     }`}
                   >

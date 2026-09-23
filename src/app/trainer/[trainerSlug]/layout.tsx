@@ -133,7 +133,7 @@ export default function TrainerDashboardLayout({ children }: { children: React.R
   if (state === "loading") {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-3 bg-gray-50">
-        <Loader2 className="w-7 h-7 text-[#d91a24] animate-spin" />
+        <Loader2 className="w-7 h-7 text-[#E92E3D] animate-spin" />
         <p className="text-xs font-semibold text-gray-500">Loading your workspace…</p>
       </div>
     );
@@ -145,7 +145,7 @@ export default function TrainerDashboardLayout({ children }: { children: React.R
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-5">
         <div className="max-w-md w-full bg-white rounded-3xl border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)] p-8 text-center">
-          <span className="w-14 h-14 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center mx-auto mb-4">
+          <span className="w-14 h-14 rounded-2xl bg-red-50 text-[#E92E3D] flex items-center justify-center mx-auto mb-4">
             <UserX className="w-7 h-7" />
           </span>
           <h1 className="text-xl font-extrabold text-gray-900 mb-2">This trainer profile no longer exists</h1>
@@ -156,7 +156,7 @@ export default function TrainerDashboardLayout({ children }: { children: React.R
           <div className="flex flex-col sm:flex-row gap-2.5">
             <button
               onClick={handleLogout}
-              className="flex-1 h-12 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-sm font-bold transition-colors cursor-pointer"
+              className="flex-1 h-12 rounded-xl bg-[#E92E3D] hover:bg-[#d42936] text-white text-sm font-bold transition-colors cursor-pointer"
             >
               Sign in again
             </button>

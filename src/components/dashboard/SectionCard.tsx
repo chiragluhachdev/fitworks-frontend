@@ -30,7 +30,7 @@ export default function SectionCard({
         {action && (
           <Link
             href={action.href}
-            className="text-[11px] sm:text-xs font-bold text-[#d91a24] hover:underline flex items-center gap-1 shrink-0 whitespace-nowrap pt-0.5"
+            className="text-[11px] sm:text-xs font-bold text-[#E92E3D] hover:underline flex items-center gap-1 shrink-0 whitespace-nowrap pt-0.5"
           >
             {action.label} <ArrowRight className="w-3.5 h-3.5" />
           </Link>

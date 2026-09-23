@@ -144,7 +144,7 @@ export default function TrainerVerificationPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 text-[#d91a24] animate-spin" />
+        <Loader2 className="w-8 h-8 text-[#E92E3D] animate-spin" />
       </div>
     );
   }
@@ -203,7 +203,7 @@ export default function TrainerVerificationPage() {
 
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 text-red-600 rounded-2xl text-sm font-semibold flex items-center gap-2.5">
-          <AlertCircle className="w-5 h-5 text-[#d91a24] shrink-0" />
+          <AlertCircle className="w-5 h-5 text-[#E92E3D] shrink-0" />
           <span>{error}</span>
         </div>
       )}
@@ -211,7 +211,7 @@ export default function TrainerVerificationPage() {
       {/* Upload Document Form (Direct Cloudinary Upload) */}
       <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm space-y-6">
         <div className="flex items-center gap-2">
-          <UploadCloud className="w-5 h-5 text-[#d91a24]" />
+          <UploadCloud className="w-5 h-5 text-[#E92E3D]" />
           <h2 className="text-lg font-bold text-gray-900">Upload Verification Document / PAN Card</h2>
         </div>
 
@@ -224,7 +224,7 @@ export default function TrainerVerificationPage() {
               <select
                 value={docType}
                 onChange={(e) => setDocType(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-xs md:text-sm outline-none focus:border-[#d91a24]"
+                className="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-xs md:text-sm outline-none focus:border-[#E92E3D]"
               >
                 <option value="PAN Card">PAN Card (Identity Verification)</option>
                 <option value="Aadhaar / Govt ID">Aadhaar Card / Govt ID</option>
@@ -244,7 +244,7 @@ export default function TrainerVerificationPage() {
                 value={docName}
                 onChange={(e) => setDocName(e.target.value)}
                 placeholder="e.g. Rahul Sharma PAN Card, ACE CPT Certificate"
-                className="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-xs md:text-sm outline-none focus:border-[#d91a24]"
+                className="w-full px-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-xs md:text-sm outline-none focus:border-[#E92E3D]"
               />
             </div>
           </div>
@@ -257,7 +257,7 @@ export default function TrainerVerificationPage() {
                 <span className="text-[11px] text-gray-400">PDF, JPG, PNG, or DOC up to 10MB</span>
               </div>
 
-              <label className="inline-flex items-center justify-center gap-2 bg-[#d91a24] hover:bg-[#cc1616] text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-all">
+              <label className="inline-flex items-center justify-center gap-2 bg-[#E92E3D] hover:bg-[#d42936] text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-all">
                 {uploadingFile ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
                 {uploadingFile ? "Uploading File..." : "Choose File"}
                 <input
@@ -280,7 +280,7 @@ export default function TrainerVerificationPage() {
                   href={docUrl} 
                   target="_blank" 
                   rel="noreferrer" 
-                  className="text-[#d91a24] font-bold hover:underline shrink-0 flex items-center gap-1"
+                  className="text-[#E92E3D] font-bold hover:underline shrink-0 flex items-center gap-1"
                 >
                   Preview <ExternalLink className="w-3 h-3" />
                 </a>
@@ -295,7 +295,7 @@ export default function TrainerVerificationPage() {
               href="/about#privacy"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-gray-500 hover:text-[#d91a24] underline underline-offset-2"
+              className="font-semibold text-gray-500 hover:text-[#E92E3D] underline underline-offset-2"
             >
               Privacy policy
             </a>
@@ -305,7 +305,7 @@ export default function TrainerVerificationPage() {
             <Button
               type="submit"
               disabled={submitting || !docUrl}
-              className="bg-[#d91a24] hover:bg-[#cc1616] text-white px-7 h-11 rounded-xl text-xs md:text-sm font-bold shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="bg-[#E92E3D] hover:bg-[#d42936] text-white px-7 h-11 rounded-xl text-xs md:text-sm font-bold shadow-sm flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
               {submitting ? "Submitting..." : "Submit Document for Review"}
@@ -337,7 +337,7 @@ export default function TrainerVerificationPage() {
               return (
                 <div key={idx} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-red-50 text-[#d91a24] flex items-center justify-center font-bold shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-red-50 text-[#E92E3D] flex items-center justify-center font-bold shrink-0">
                       {title.toLowerCase().includes("pan") ? (
                         <CreditCard className="w-5 h-5" />
                       ) : (
@@ -359,7 +359,7 @@ export default function TrainerVerificationPage() {
                       rel="noreferrer"
                       className="bg-white hover:bg-gray-100 text-gray-800 border border-gray-200 px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 self-start sm:self-auto transition-colors cursor-pointer"
                     >
-                      <ExternalLink className="w-3.5 h-3.5 text-[#d91a24]" />
+                      <ExternalLink className="w-3.5 h-3.5 text-[#E92E3D]" />
                       View Document
                     </a>
                   )}

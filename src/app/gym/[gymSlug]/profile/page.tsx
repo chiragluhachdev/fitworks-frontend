@@ -101,7 +101,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
         aria-expanded={open}
         className="w-full flex items-center justify-between gap-4 py-3.5 text-left cursor-pointer group"
       >
-        <span className="text-[13.5px] font-bold text-gray-900 group-hover:text-[#d91a24] transition-colors">
+        <span className="text-[13.5px] font-bold text-gray-900 group-hover:text-brand transition-colors">
           {q}
         </span>
         <ChevronDown
@@ -311,7 +311,7 @@ export default function GymProfileAndSettingsPage() {
       />
 
       {/* ── Tabs ── */}
-      <div className="flex items-center gap-2 mb-5 overflow-x-auto pb-1 -mb-1 scrollbar-none">
+      <div className="flex items-center gap-2 mb-4 sm:mb-5 overflow-x-auto pb-1 scrollbar-none">
         {TABS.map(({ id, label, icon: Icon }) => {
           const on = tab === id;
           return (
@@ -321,7 +321,7 @@ export default function GymProfileAndSettingsPage() {
               className={`inline-flex items-center gap-2 h-10 px-4 rounded-xl text-[13.5px] font-bold whitespace-nowrap transition-colors cursor-pointer ${
                 on
                   ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300"
+                  : "bg-white text-gray-600 border border-gray-200 hover:ring-gray-300"
               }`}
             >
               <Icon className={`w-4 h-4 ${on ? "text-white" : "text-gray-400"}`} />
@@ -334,7 +334,7 @@ export default function GymProfileAndSettingsPage() {
       {/* ─────────────────────── Gym profile ─────────────────────── */}
       {tab === "profile" && (
         <>
-          <div className="bg-white rounded-2xl border border-gray-200/80 p-5 mb-5">
+          <div className="bg-white rounded-[20px] ring-1 ring-gray-200/70 shadow-[0_1px_2px_rgba(16,24,40,0.04)] p-4 sm:p-5 mb-4 sm:mb-5">
             <div className="flex items-center justify-between gap-4 mb-3">
               <div className="min-w-0">
                 <p className="text-[14px] font-bold text-gray-900">
@@ -359,7 +359,7 @@ export default function GymProfileAndSettingsPage() {
             <ProgressBar percent={completion.percent} />
           </div>
 
-          <form onSubmit={save} className="space-y-5">
+          <form onSubmit={save} className="space-y-4 sm:space-y-5">
             <Panel title="Logo & cover" description="A recognisable gym gets a faster yes from trainers.">
               <div className="flex flex-col sm:flex-row gap-5">
                 <div className="shrink-0">
@@ -367,7 +367,7 @@ export default function GymProfileAndSettingsPage() {
                   <button
                     type="button"
                     onClick={() => logoInput.current?.click()}
-                    className="relative w-24 h-24 rounded-2xl border-2 border-dashed border-gray-200 hover:border-[#d91a24] bg-gray-50 overflow-hidden flex items-center justify-center transition-colors group cursor-pointer"
+                    className="relative w-24 h-24 rounded-2xl border-2 border-dashed border-gray-200 hover:border-[#E92E3D] bg-gray-50 overflow-hidden flex items-center justify-center transition-colors group cursor-pointer"
                   >
                     {form.gymLogo ? (
                       <Image src={form.gymLogo} alt="" fill className="object-cover" />
@@ -396,7 +396,7 @@ export default function GymProfileAndSettingsPage() {
                   <button
                     type="button"
                     onClick={() => coverInput.current?.click()}
-                    className="relative w-full h-24 rounded-2xl border-2 border-dashed border-gray-200 hover:border-[#d91a24] bg-gray-50 overflow-hidden flex items-center justify-center transition-colors group cursor-pointer"
+                    className="relative w-full h-24 rounded-2xl border-2 border-dashed border-gray-200 hover:border-[#E92E3D] bg-gray-50 overflow-hidden flex items-center justify-center transition-colors group cursor-pointer"
                   >
                     {form.coverImage ? (
                       <Image src={form.coverImage} alt="" fill className="object-cover" />
@@ -425,7 +425,7 @@ export default function GymProfileAndSettingsPage() {
             </Panel>
 
             <Panel title="About your gym">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <Field label="Gym name" required htmlFor="gymName" className="sm:col-span-2">
                   <Input id="gymName" value={form.gymName} onChange={setField("gymName")} required />
                 </Field>
@@ -480,7 +480,7 @@ export default function GymProfileAndSettingsPage() {
             </Panel>
 
             <Panel title="Facilities & training focus" description="Tap everything that applies.">
-              <div className="space-y-5">
+              <div className="space-y-4 sm:space-y-5">
                 <div>
                   <p className="text-[13px] font-bold text-gray-800 mb-2.5 flex items-center gap-2">
                     <Dumbbell className="w-4 h-4 text-gray-400" /> Facilities
@@ -508,7 +508,7 @@ export default function GymProfileAndSettingsPage() {
             </Panel>
 
             <Panel title="Location">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <Field label="Street address" htmlFor="street" className="sm:col-span-2">
                   <Input id="street" value={form.address.street} onChange={setNested("address", "street")} />
                 </Field>
@@ -533,7 +533,7 @@ export default function GymProfileAndSettingsPage() {
               title="Hiring contact"
               description="Who our team speaks to when we have a trainer for you."
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <Field label="Name" htmlFor="contactName">
                   <Input
                     id="contactName"
@@ -573,7 +573,7 @@ export default function GymProfileAndSettingsPage() {
               title="Hiring preferences"
               description="Your defaults — we use these to narrow the search before you've even posted."
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <Field label="Trainers you typically need" htmlFor="trainersRequired">
                   <Input
                     id="trainersRequired"
@@ -637,9 +637,9 @@ export default function GymProfileAndSettingsPage() {
 
       {/* ─────────────────────── Account ─────────────────────── */}
       {tab === "account" && (
-        <div className="space-y-5">
+        <div className="space-y-4 sm:space-y-5">
           <Panel title="Login email">
-            <div className="flex items-center justify-between gap-4 p-4 bg-gray-50/70 rounded-xl border border-gray-200/80">
+            <div className="flex items-center justify-between gap-4 p-4 bg-gray-50/70 rounded-xl ring-1 ring-gray-200/70">
               <div className="min-w-0">
                 <p className="text-[11px] font-bold uppercase tracking-[0.07em] text-gray-400">
                   Primary login
@@ -669,7 +669,7 @@ export default function GymProfileAndSettingsPage() {
                 />
               </Field>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <Field label="New password" htmlFor="newPassword" required>
                   <Input
                     id="newPassword"
@@ -719,13 +719,13 @@ export default function GymProfileAndSettingsPage() {
 
       {/* ─────────────────────── Support ─────────────────────── */}
       {tab === "support" && (
-        <div className="space-y-5">
+        <div className="space-y-4 sm:space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <a
               href={supportWhatsAppUrl("Hi FitWorks! 👋\n\nI need help with my gym account.")}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-200/80 hover:border-emerald-300 active:scale-[0.99] transition-all"
+              className="flex items-center gap-3 p-4 bg-white rounded-[20px] ring-1 ring-gray-200/70 hover:ring-emerald-300 active:scale-[0.99] transition-all"
             >
               <span className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                 <MessageCircle className="w-[18px] h-[18px]" />
@@ -738,7 +738,7 @@ export default function GymProfileAndSettingsPage() {
 
             <a
               href={`tel:+${SUPPORT_PHONE}`}
-              className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-200/80 hover:border-gray-300 active:scale-[0.99] transition-all"
+              className="flex items-center gap-3 p-4 bg-white rounded-[20px] ring-1 ring-gray-200/70 hover:ring-gray-300 active:scale-[0.99] transition-all"
             >
               <span className="w-10 h-10 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center shrink-0">
                 <Phone className="w-[18px] h-[18px]" />
@@ -751,7 +751,7 @@ export default function GymProfileAndSettingsPage() {
 
             <a
               href={`mailto:${SUPPORT_EMAIL}`}
-              className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-200/80 hover:border-gray-300 active:scale-[0.99] transition-all"
+              className="flex items-center gap-3 p-4 bg-white rounded-[20px] ring-1 ring-gray-200/70 hover:ring-gray-300 active:scale-[0.99] transition-all"
             >
               <span className="w-10 h-10 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center shrink-0">
                 <Mail className="w-[18px] h-[18px]" />

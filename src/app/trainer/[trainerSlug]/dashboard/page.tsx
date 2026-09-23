@@ -40,7 +40,7 @@ const VERIFICATION: Record<string, { label: string; chip: string; dot: string }>
   rejected: {
     label: "Needs attention",
     chip: "text-red-700 bg-red-50 border-red-200/70",
-    dot: "bg-[#d91a24]",
+    dot: "bg-brand",
   },
 };
 
@@ -81,14 +81,14 @@ export default function TrainerOverviewPage() {
   return (
     <div className="max-w-5xl mx-auto animate-in fade-in duration-300">
       {/* ── Who you are, and whether you're live ── */}
-      <header className="bg-white rounded-2xl border border-gray-200/80 p-5 sm:p-7 mb-4 sm:mb-5">
+      <header className="bg-white rounded-[20px] ring-1 ring-gray-200/70 p-5 sm:p-7 mb-4 sm:mb-5">
         <div className="flex flex-col sm:flex-row sm:items-center gap-5">
           {trainer?.personal?.profilePhoto ? (
             <span className="w-16 h-16 rounded-2xl overflow-hidden relative shrink-0 border border-gray-200">
               <Image src={trainer.personal.profilePhoto} alt="" fill className="object-cover" />
             </span>
           ) : (
-            <span className="w-16 h-16 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center font-extrabold text-xl shrink-0">
+            <span className="w-16 h-16 rounded-2xl bg-red-50 text-brand flex items-center justify-center font-extrabold text-xl shrink-0">
               {firstName.charAt(0).toUpperCase()}
             </span>
           )}
@@ -121,12 +121,13 @@ export default function TrainerOverviewPage() {
           label="Profile"
           value={`${percent}%`}
           icon={User}
-          accent={percent < 100}
+          accent={percent >= 100 ? "emerald" : "brand"}
           href={`/trainer/${trainerSlug}/profile`}
           hint={percent >= 100 ? "Complete" : "Finish it to get picked"}
         />
         <Stat
           label="Verification"
+          accent="blue"
           value={active ? "Verified" : status === "rejected" ? "Action needed" : "Pending"}
           icon={FileCheck}
           href={`/trainer/${trainerSlug}/verification`}
@@ -134,6 +135,7 @@ export default function TrainerOverviewPage() {
         />
         <Stat
           label="Introductions"
+          accent="amber"
           value={stats?.introductions ?? connections.length}
           icon={Handshake}
           href={`/trainer/${trainerSlug}/opportunities`}
@@ -290,7 +292,7 @@ export default function TrainerOverviewPage() {
       </div>
 
       {/* ── The promise, stated plainly ── */}
-      <section className="mt-4 sm:mt-5 bg-white rounded-2xl border border-gray-200/80 p-5 sm:p-7">
+      <section className="mt-4 sm:mt-5 bg-white rounded-[20px] ring-1 ring-gray-200/70 p-5 sm:p-7">
         <h2 className="text-[17px] font-extrabold text-gray-900 tracking-[-0.01em]">
           Looking for opportunities?
         </h2>
