@@ -33,7 +33,7 @@ interface Stats {
   filledVacancies: number;
   trainersInReview: number;
   payingGyms: number;
-  planRequests: number;
+  lapsedGyms: number;
   pendingConnections: number;
 }
 
@@ -174,12 +174,12 @@ export default function AdminDashboard() {
           hint={`${stats.verifiedTrainers || 0} verified`}
         />
         <Stat
-          label="Plan requests"
-          value={stats.planRequests || 0}
+          label="Lapsed memberships"
+          value={stats.lapsedGyms || 0}
           icon={CreditCard}
-          accent={(stats.planRequests || 0) > 0}
+          accent={(stats.lapsedGyms || 0) > 0}
           href="/admin/gyms"
-          hint="Gyms asking to subscribe"
+          hint="Gyms whose plan has run out"
         />
         <Stat
           label="Pending invitations"

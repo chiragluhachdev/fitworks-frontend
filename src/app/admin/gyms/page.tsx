@@ -169,9 +169,10 @@ export default function AdminGyms() {
   /**
    * Sets a gym's membership by hand.
    *
-   * There is no gym payment gateway yet — the team takes payment outside the
-   * product and records the plan here, which is what unlocks nothing technical
-   * but tells everyone where a gym stands.
+   * Gyms pay through Razorpay on their own Subscription screen. This is the
+   * support override — comping a partner, honouring a payment that never came
+   * back, or cutting an account off. It records no payment, because none was
+   * taken.
    */
   const setPlan = async (gym: any, value: string) => {
     setPlanBusy(gym._id);
@@ -193,7 +194,7 @@ export default function AdminGyms() {
       toast.success(
         value === "deactivate"
           ? `${gym.gymName} set to inactive`
-          : `${gym.gymName} is on the ${findPlan(value)?.name} plan`
+          : `${gym.gymName} granted ${findPlan(value)?.name} — no payment taken`
       );
     } else {
       toast.error(res.error || "Couldn't update the plan.");
@@ -336,7 +337,10 @@ export default function AdminGyms() {
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       {(() => {
                         const state = gym.subscriptionState;
-                        const requested = state?.requestedPlan;
+                        const paid = (gym.subscription?.history || []).reduce(
+                          (sum: number, h: any) => sum + (h.amount || 0),
+                          0
+                        );
                         return (
                           <div className="space-y-1.5">
                             {state?.isActive ? (
@@ -368,9 +372,9 @@ export default function AdminGyms() {
                               </p>
                             )}
 
-                            {requested && !state?.isActive && (
-                              <p className="text-[10.5px] font-bold text-[#d91a24]">
-                                asked for {findPlan(requested)?.name.replace("FitWorks ", "")}
+                            {paid > 0 && (
+                              <p className="text-[10.5px] text-gray-400 font-medium">
+                                ₹{paid.toLocaleString("en-IN")} paid
                               </p>
                             )}
 
@@ -378,12 +382,13 @@ export default function AdminGyms() {
                               value=""
                               disabled={planBusy === gym._id}
                               onChange={(e) => e.target.value && setPlan(gym, e.target.value)}
+                              title="Support override — grants a term without taking payment"
                               className="h-8 text-[11px] font-semibold border border-gray-200 rounded-lg px-2 bg-white text-gray-600 cursor-pointer outline-none focus:border-[#d91a24] disabled:opacity-50"
                             >
-                              <option value="">{planBusy === gym._id ? "Saving…" : "Set plan…"}</option>
+                              <option value="">{planBusy === gym._id ? "Saving…" : "Override…"}</option>
                               {GYM_PLANS.map((p) => (
                                 <option key={p.id} value={p.id}>
-                                  {p.name} — ₹{p.price}
+                                  Grant {p.name.replace("FitWorks ", "")}
                                 </option>
                               ))}
                               <option value="deactivate">Deactivate</option>
