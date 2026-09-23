@@ -90,38 +90,44 @@ function MembershipCard({
 
   return (
     <section
-      className={`relative overflow-hidden rounded-[20px] p-4 sm:p-6 ring-1 ${
+      className={`relative overflow-hidden rounded-[24px] p-5 sm:p-7 ${
         active
-          ? "bg-gray-900 ring-gray-900 text-white"
-          : "bg-white ring-gray-200/70 shadow-[0_1px_2px_rgba(16,24,40,0.04)]"
+          ? "bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 text-white shadow-[0_20px_50px_-16px_rgba(16,24,40,0.5)]"
+          : "bg-white ring-1 ring-gray-200/70 shadow-[0_1px_3px_rgba(16,24,40,0.06)]"
       }`}
     >
       {active && (
-        <span
-          aria-hidden
-          className="absolute -top-20 -right-12 w-64 h-64 rounded-full bg-brand opacity-25 blur-3xl pointer-events-none"
-        />
+        <>
+          <span
+            aria-hidden
+            className="absolute -top-24 -right-16 w-72 h-72 rounded-full bg-brand opacity-20 blur-[80px] pointer-events-none"
+          />
+          <span
+            aria-hidden
+            className="absolute -bottom-20 -left-20 w-56 h-56 rounded-full bg-amber-500 opacity-10 blur-[60px] pointer-events-none"
+          />
+        </>
       )}
 
-      <div className="relative flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0">
+      <div className="relative flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        <div className="flex items-center gap-3.5 min-w-0">
           <span
-            className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-              active ? "bg-white/10 text-amber-300 ring-1 ring-white/15" : "bg-gray-100 text-gray-500"
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
+              active ? "bg-white/10 text-amber-300 ring-1 ring-white/15 backdrop-blur-sm" : "bg-gray-100 text-gray-500"
             }`}
           >
             {active ? <Crown className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
           </span>
           <div className="min-w-0">
             <p
-              className={`text-[11px] font-bold uppercase tracking-[0.12em] ${
-                active ? "text-white/45" : "text-gray-400"
+              className={`text-[10.5px] font-bold uppercase tracking-[0.14em] ${
+                active ? "text-white/40" : "text-gray-400"
               }`}
             >
               Your membership
             </p>
             <p
-              className={`text-[16px] sm:text-[18px] font-extrabold tracking-[-0.01em] mt-0.5 truncate ${
+              className={`text-[17px] sm:text-[20px] font-extrabold tracking-[-0.02em] mt-0.5 truncate ${
                 active ? "text-white" : "text-gray-900"
               }`}
             >
@@ -131,7 +137,7 @@ function MembershipCard({
         </div>
 
         <span
-          className={`inline-flex items-center gap-1.5 shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full ring-1 ${
+          className={`inline-flex items-center gap-1.5 shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-full ring-1 ${
             active
               ? "bg-emerald-500/15 text-emerald-300 ring-emerald-400/40"
               : expired
@@ -141,7 +147,7 @@ function MembershipCard({
         >
           <span
             className={`w-1.5 h-1.5 rounded-full ${
-              active ? "bg-emerald-400" : expired ? "bg-amber-500" : "bg-gray-400"
+              active ? "bg-emerald-400 animate-pulse" : expired ? "bg-amber-500" : "bg-gray-400"
             }`}
           />
           {active ? "Active" : expired ? "Expired" : "Inactive"}
@@ -149,55 +155,57 @@ function MembershipCard({
       </div>
 
       {active ? (
-        <div className="relative mt-5">
+        <div className="relative mt-6">
           <div className="flex items-end justify-between gap-3">
-            <p className="text-[26px] sm:text-[30px] font-extrabold leading-none tracking-[-0.02em] tabular-nums">
+            <p className="text-[30px] sm:text-[36px] font-extrabold leading-none tracking-[-0.03em] tabular-nums">
               {sub.daysLeft ?? "—"}
-              <span className="text-[13px] font-bold text-white/50 ml-1.5">
+              <span className="text-[14px] font-bold text-white/45 ml-2">
                 day{sub.daysLeft === 1 ? "" : "s"} left
               </span>
             </p>
             {soon && (
-              <span className="text-[11px] font-bold text-amber-300 pb-1">Renew soon</span>
+              <span className="text-[11px] font-bold text-amber-300 bg-amber-500/15 px-2.5 py-1 rounded-full ring-1 ring-amber-400/30 mb-1">
+                Renew soon
+              </span>
             )}
           </div>
 
           {elapsed !== null && (
-            <div className="mt-3 h-1.5 w-full rounded-full bg-white/12 overflow-hidden">
+            <div className="mt-4 h-2 w-full rounded-full bg-white/10 overflow-hidden">
               <div
-                className="h-full rounded-full bg-white/70 transition-[width] duration-700"
+                className="h-full rounded-full bg-gradient-to-r from-white/50 to-white/80 transition-[width] duration-700"
                 style={{ width: `${elapsed}%` }}
               />
             </div>
           )}
 
-          <dl className="flex flex-wrap gap-x-7 gap-y-2.5 mt-5 pt-5 border-t border-white/10">
+          <dl className="flex flex-wrap gap-x-8 gap-y-3 mt-6 pt-6 border-t border-white/10">
             <div>
-              <dt className="text-[10.5px] font-bold uppercase tracking-[0.1em] text-white/40 flex items-center gap-1.5">
+              <dt className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-white/35 flex items-center gap-1.5">
                 <CalendarDays className="w-3 h-3" /> Member since
               </dt>
-              <dd className="text-[13px] font-bold mt-1">
+              <dd className="text-[14px] font-bold mt-1.5">
                 {sub.startedAt ? shortDate(sub.startedAt) : "—"}
               </dd>
             </div>
             <div>
-              <dt className="text-[10.5px] font-bold uppercase tracking-[0.1em] text-white/40 flex items-center gap-1.5">
+              <dt className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-white/35 flex items-center gap-1.5">
                 <Clock className="w-3 h-3" /> Renews on
               </dt>
-              <dd className="text-[13px] font-bold mt-1">
+              <dd className="text-[14px] font-bold mt-1.5">
                 {sub.expiresAt ? shortDate(sub.expiresAt) : "—"}
               </dd>
             </div>
           </dl>
         </div>
       ) : (
-        <div className="mt-4">
-          <p className="text-[13px] text-gray-500 leading-relaxed">
+        <div className="mt-5">
+          <p className="text-[13.5px] text-gray-500 leading-relaxed">
             {expired
               ? "Renew to keep posting vacancies and having our team find trainers for you."
               : "Post vacancies and let the FitWorks team find suitable trainers for you. Every plan includes the same features."}
           </p>
-          <Button size="md" onClick={onChoose} className="mt-4 w-full sm:w-auto">
+          <Button size="md" onClick={onChoose} className="mt-5 w-full sm:w-auto">
             <ArrowDown className="w-4 h-4" /> {expired ? "Renew your plan" : "Choose a plan"}
           </Button>
         </div>
