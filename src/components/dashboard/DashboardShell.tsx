@@ -46,8 +46,15 @@ export default function DashboardShell({
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
 
-  const isActive = (href: string) =>
-    pathname === href || (href.endsWith("/vacancies") && pathname.startsWith(href));
+  // The longest nav href the current path sits under wins. Without this,
+  // "/vacancies" would light up alongside "/vacancies/new" and both links
+  // would look selected at once.
+  const bestMatch = navLinks
+    .map((l) => l.href)
+    .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
+    .sort((a, b) => b.length - a.length)[0];
+
+  const isActive = (href: string) => href === bestMatch;
 
   // Four primary destinations sit in the tab bar; the rest live under "More".
   const primary = navLinks.slice(0, 4);

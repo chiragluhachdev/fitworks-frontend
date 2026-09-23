@@ -67,9 +67,9 @@ const trainerSteps = [
     title: "Grow Career",
     subtitle: "Build Income",
     description:
-      "Browse vacancies from gyms actively hiring, apply to the ones that fit, and grow your career with real opportunities.",
+      "Our team matches your profile to gym requirements across India and contacts you directly whenever a suitable role comes up.",
     icon: Zap,
-    highlights: ["Direct gym invites", "Apply to vacancies", "Track every application"],
+    highlights: ["Matched by our team", "Direct gym introductions", "No applications to chase"],
   },
 ];
 

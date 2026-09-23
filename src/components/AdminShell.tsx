@@ -70,7 +70,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     { name: "Trainers", href: "/admin/trainers", icon: Dumbbell },
     { name: "Gyms", href: "/admin/gyms", icon: Building2 },
     { name: "Vacancies", href: "/admin/vacancies", icon: Briefcase },
-    { name: "Applications", href: "/admin/applications", icon: FileText },
+    { name: "Candidates", href: "/admin/applications", icon: FileText },
     { name: "Connections", href: "/admin/connections", icon: Link2 },
     { name: "Payments", href: "/admin/subscriptions", icon: CreditCard },
     { name: "Instant Forms", href: "/admin/instant-forms", icon: ClipboardList },
@@ -180,7 +180,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <span>Admin</span>
             <span>/</span>
             <span className="text-gray-900 font-semibold capitalize">
-              {pathname.split("/")[2] || "Dashboard"}
+              {navLinks.find((l) => pathname.startsWith(l.href))?.name ||
+                pathname.split("/")[2] ||
+                "Dashboard"}
             </span>
           </div>
 

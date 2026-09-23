@@ -5,13 +5,16 @@ import { useParams, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Briefcase,
+  Plus,
   Users,
+  CreditCard,
   Building2,
-  Settings,
+  LifeBuoy,
   MapPin,
 } from "lucide-react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { loginPathFor, readStoredUser } from "@/lib/session";
+import { api } from "@/lib/api";
 
 export default function GymDashboardLayout({ children }: { children: React.ReactNode }) {
   const params = useParams();
@@ -51,20 +54,15 @@ export default function GymDashboardLayout({ children }: { children: React.React
     }
 
     (async () => {
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-        const res = await fetch(`${apiUrl}/gyms/${gymSlug}`);
-        const json = await res.json();
-        if (json.success && json.data) {
-          setGym({
-            gymName: json.data.gymName || "FitWorks Gym",
-            gymLogo: json.data.gymLogo || "",
-            city: json.data.address?.city || "",
-            locations: json.data.numberOfLocations || 1,
-          });
-        }
-      } catch (err) {
-        console.error("Layout gym fetch error:", err);
+      const res = await api<{ data?: any }>(`/gyms/${gymSlug}`);
+      if (res.ok && res.data?.data) {
+        const g = res.data.data;
+        setGym({
+          gymName: g.gymName || "Your Gym",
+          gymLogo: g.gymLogo || "",
+          city: g.address?.city || "",
+          locations: g.numberOfLocations || 1,
+        });
       }
     })();
   }, [router, gymSlug]);
@@ -75,12 +73,16 @@ export default function GymDashboardLayout({ children }: { children: React.React
     router.push("/auth");
   };
 
+  // The first four reach the mobile tab bar; the rest sit under "More".
+  // Ordered by how often a gym owner needs them, not by importance on paper.
   const navLinks = [
     { name: "Overview", shortName: "Home", href: `/gym/${gymSlug}/dashboard`, icon: LayoutDashboard },
-    { name: "My Vacancies", shortName: "Jobs", href: `/gym/${gymSlug}/vacancies`, icon: Briefcase },
-    { name: "Applications & Hires", shortName: "Applied", href: `/gym/${gymSlug}/shortlisted`, icon: Users },
+    { name: "My Vacancies", shortName: "Vacancies", href: `/gym/${gymSlug}/vacancies`, icon: Briefcase },
+    { name: "Post a Vacancy", shortName: "Post", href: `/gym/${gymSlug}/vacancies/new`, icon: Plus },
+    { name: "Trainers", shortName: "Trainers", href: `/gym/${gymSlug}/trainers`, icon: Users },
+    { name: "Subscription", href: `/gym/${gymSlug}/subscription`, icon: CreditCard },
     { name: "Gym Profile", href: `/gym/${gymSlug}/profile`, icon: Building2 },
-    { name: "Settings", href: `/gym/${gymSlug}/settings`, icon: Settings },
+    { name: "Help & Support", href: `/gym/${gymSlug}/help`, icon: LifeBuoy },
   ];
 
   return (

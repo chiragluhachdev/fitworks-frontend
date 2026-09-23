@@ -22,6 +22,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
+import StatusPill from "@/components/workspace/StatusPill";
+import { GYM_PLANS, findPlan, shortDate } from "@/lib/hiring";
+import { api } from "@/lib/api";
 
 const PRESET_GYM_LOGOS = [
   "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&auto=format&fit=crop&q=80",
@@ -44,6 +47,9 @@ export default function AdminGyms() {
   // Deletion confirmation
   const [deletingGym, setDeletingGym] = useState<any | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Which gym's plan is mid-save, so only that row's control disables.
+  const [planBusy, setPlanBusy] = useState<string | null>(null);
 
   const fetchGyms = async () => {
     try {
@@ -160,6 +166,40 @@ export default function AdminGyms() {
     }
   };
 
+  /**
+   * Sets a gym's membership by hand.
+   *
+   * There is no gym payment gateway yet — the team takes payment outside the
+   * product and records the plan here, which is what unlocks nothing technical
+   * but tells everyone where a gym stands.
+   */
+  const setPlan = async (gym: any, value: string) => {
+    setPlanBusy(gym._id);
+    const body = value === "deactivate" ? { action: "deactivate" } : { plan: value };
+    const res = await api<{ data?: any; subscription?: any }>(`/admin/gyms/${gym._id}/subscription`, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    });
+    setPlanBusy(null);
+
+    if (res.ok && res.data?.data) {
+      setGyms((prev) =>
+        prev.map((g) =>
+          g._id === gym._id
+            ? { ...g, subscription: res.data!.data.subscription, subscriptionState: res.data!.subscription }
+            : g
+        )
+      );
+      toast.success(
+        value === "deactivate"
+          ? `${gym.gymName} set to inactive`
+          : `${gym.gymName} is on the ${findPlan(value)?.name} plan`
+      );
+    } else {
+      toast.error(res.error || "Couldn't update the plan.");
+    }
+  };
+
   const filteredGyms = gyms.filter((g) => {
     const name = g.gymName?.toLowerCase() || "";
     const city = g.address?.city?.toLowerCase() || "";
@@ -215,6 +255,7 @@ export default function AdminGyms() {
                   <th className="px-6 py-4">City & Address</th>
                   <th className="px-6 py-4">Contact Representative</th>
                   <th className="px-6 py-4">Hiring Budget</th>
+                  <th className="px-6 py-4">Plan</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -291,6 +332,67 @@ export default function AdminGyms() {
                       </div>
                     </td>
 
+                    {/* Membership */}
+                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                      {(() => {
+                        const state = gym.subscriptionState;
+                        const requested = state?.requestedPlan;
+                        return (
+                          <div className="space-y-1.5">
+                            {state?.isActive ? (
+                              <StatusPill
+                                label={findPlan(state.plan)?.name.replace("FitWorks ", "") || "Active"}
+                                chip="text-emerald-700 bg-emerald-50 border-emerald-200/70"
+                                dot="bg-emerald-500"
+                                size="sm"
+                              />
+                            ) : state?.status === "expired" ? (
+                              <StatusPill
+                                label="Expired"
+                                chip="text-amber-700 bg-amber-50 border-amber-200/70"
+                                dot="bg-amber-500"
+                                size="sm"
+                              />
+                            ) : (
+                              <StatusPill
+                                label="No plan"
+                                chip="text-gray-600 bg-gray-100 border-gray-200"
+                                dot="bg-gray-400"
+                                size="sm"
+                              />
+                            )}
+
+                            {state?.isActive && state.expiresAt && (
+                              <p className="text-[10.5px] text-gray-400 font-medium">
+                                until {shortDate(state.expiresAt)}
+                              </p>
+                            )}
+
+                            {requested && !state?.isActive && (
+                              <p className="text-[10.5px] font-bold text-[#d91a24]">
+                                asked for {findPlan(requested)?.name.replace("FitWorks ", "")}
+                              </p>
+                            )}
+
+                            <select
+                              value=""
+                              disabled={planBusy === gym._id}
+                              onChange={(e) => e.target.value && setPlan(gym, e.target.value)}
+                              className="h-8 text-[11px] font-semibold border border-gray-200 rounded-lg px-2 bg-white text-gray-600 cursor-pointer outline-none focus:border-[#d91a24] disabled:opacity-50"
+                            >
+                              <option value="">{planBusy === gym._id ? "Saving…" : "Set plan…"}</option>
+                              {GYM_PLANS.map((p) => (
+                                <option key={p.id} value={p.id}>
+                                  {p.name} — ₹{p.price}
+                                </option>
+                              ))}
+                              <option value="deactivate">Deactivate</option>
+                            </select>
+                          </div>
+                        );
+                      })()}
+                    </td>
+
                     {/* Action buttons */}
                     <td className="px-6 py-4 text-right space-x-1.5 whitespace-nowrap">
                       <button
@@ -320,7 +422,7 @@ export default function AdminGyms() {
 
                 {filteredGyms.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-6 py-16 text-center">
+                    <td colSpan={6} className="px-6 py-16 text-center">
                       <div className="max-w-xs mx-auto text-center space-y-2">
                         <p className="text-sm font-bold text-gray-700">No gyms match your query</p>
                         <p className="text-xs text-gray-400">Try searching for a different gym name or city.</p>

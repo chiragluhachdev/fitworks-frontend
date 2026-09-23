@@ -1,397 +1,313 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import {
-  Briefcase,
-  UserPlus,
-  CheckCircle2,
-  ArrowRight,
-  Search,
+  Sparkles,
   ShieldCheck,
-  Loader2,
   Clock,
-  ChevronRight,
-  FileCheck,
-  CalendarClock,
-  Lock,
   AlertCircle,
+  User,
+  FileCheck,
+  Handshake,
+  ArrowRight,
+  MapPin,
+  Banknote,
+  Lock,
 } from "lucide-react";
-import StatCard from "@/components/dashboard/StatCard";
-import SectionCard from "@/components/dashboard/SectionCard";
-import EmptyState from "@/components/dashboard/EmptyState";
-import type { LockInfo } from "@/components/dashboard/AccessLocked";
+import Button from "@/components/workspace/Button";
+import Panel from "@/components/workspace/Panel";
+import Stat from "@/components/workspace/Stat";
+import Empty from "@/components/workspace/Empty";
+import Callout from "@/components/workspace/Callout";
+import StatusPill from "@/components/workspace/StatusPill";
+import { ProgressRing, ProgressBar } from "@/components/workspace/Progress";
+import { PageSkeleton, ErrorState } from "@/components/workspace/States";
+import { api } from "@/lib/api";
 
-const APPLICATION_TONE: Record<string, string> = {
-  hired: "bg-green-50 text-green-700 border-green-200",
-  shortlisted: "bg-orange-50 text-orange-700 border-orange-200",
-  rejected: "bg-red-50 text-red-700 border-red-200",
-  reviewing: "bg-blue-50 text-blue-700 border-blue-200",
-  applied: "bg-blue-50 text-blue-700 border-blue-200",
-};
-
-const VERIFICATION_PILL: Record<string, { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
+const VERIFICATION: Record<string, { label: string; chip: string; dot: string }> = {
   verified: {
     label: "Verified",
-    cls: "text-emerald-700 bg-emerald-50 border-emerald-200/80",
-    Icon: CheckCircle2,
+    chip: "text-emerald-700 bg-emerald-50 border-emerald-200/70",
+    dot: "bg-emerald-500",
   },
   pending: {
-    label: "Pending review",
-    cls: "text-amber-700 bg-amber-50 border-amber-200/80",
-    Icon: Clock,
+    label: "Under review",
+    chip: "text-amber-700 bg-amber-50 border-amber-200/70",
+    dot: "bg-amber-500",
   },
   rejected: {
-    label: "Not verified",
-    cls: "text-red-700 bg-red-50 border-red-200/80",
-    Icon: AlertCircle,
+    label: "Needs attention",
+    chip: "text-red-700 bg-red-50 border-red-200/70",
+    dot: "bg-[#d91a24]",
   },
 };
 
-export default function TrainerDashboardPage() {
+export default function TrainerOverviewPage() {
   const params = useParams();
   const trainerSlug = (params?.trainerSlug as string) || "";
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [error, setError] = useState("");
 
-  const fetchDashboard = async () => {
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-      const token = localStorage.getItem("fitworks_token");
-      const res = await fetch(`${apiUrl}/trainers/${trainerSlug}/dashboard`, {
-        headers: { Authorization: `Bearer ${token || ""}` },
-      });
-      const json = await res.json();
-      if (json.success) {
-        setData(json.data);
-        setLoadError(null);
-      } else {
-        setLoadError(json.message || "We couldn't load your dashboard.");
-      }
-    } catch (err) {
-      console.error("Fetch Trainer Dashboard Error:", err);
-      setLoadError("Couldn't reach FitWorks. Check your connection and try again.");
-    } finally {
-      setLoading(false);
+  const load = useCallback(async () => {
+    setLoading(true);
+    const res = await api<{ data?: any }>(`/trainers/${trainerSlug}/dashboard`);
+    if (res.ok && res.data?.data) {
+      setData(res.data.data);
+      setError("");
+    } else {
+      setError(res.error || "We couldn't load your dashboard.");
     }
-  };
-
-  useEffect(() => {
-    fetchDashboard();
+    setLoading(false);
   }, [trainerSlug]);
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
-        <Loader2 className="w-7 h-7 text-[#d91a24] animate-spin" />
-        <p className="text-xs font-semibold text-gray-500">Loading your dashboard…</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    load();
+  }, [load]);
 
-  // Nothing came back — show the reason rather than an empty dashboard that
-  // reads as if the account is fine.
-  if (!data) {
-    return (
-      <div className="max-w-md mx-auto mt-10 bg-white rounded-3xl border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)] p-8 text-center">
-        <span className="w-14 h-14 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center mx-auto mb-4">
-          <AlertCircle className="w-7 h-7" />
-        </span>
-        <h1 className="text-lg font-extrabold text-gray-900 mb-2">Dashboard unavailable</h1>
-        <p className="text-[13px] text-gray-500 leading-relaxed mb-6">
-          {loadError || "We couldn't load your dashboard."}
-        </p>
-        <button
-          onClick={() => {
-            setLoading(true);
-            fetchDashboard();
-          }}
-          className="h-12 px-6 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-sm font-bold transition-colors cursor-pointer"
-        >
-          Try again
-        </button>
-      </div>
-    );
-  }
+  if (loading) return <PageSkeleton />;
+  if (!data) return <ErrorState title="Dashboard unavailable" message={error} onRetry={load} />;
 
-  const { trainer, stats, applications = [], connections = [], recommendedJobs = [] } = data;
-  const jobAccess: (LockInfo & { allowed: boolean }) | null = data?.jobAccess ?? null;
+  const { trainer, stats, completion, connections = [], recommendedJobs = [] } = data;
   const status = trainer?.verificationStatus;
-  const verification = status ? VERIFICATION_PILL[status] : undefined;
-  // "Active" means approved AND paid. Verification alone never makes a profile
-  // live, so it must never be presented as if it does.
-  // Verification is the gate: approved means active, nothing else does.
-  const accountActive = status === "verified";
-  const pendingInvites = connections.filter((c: any) => c.status === "pending").length;
+  const badge = VERIFICATION[status] || VERIFICATION.pending;
+  const active = status === "verified";
+  const firstName = trainer?.personal?.fullName?.split(" ")[0] || "Trainer";
+  const percent = completion?.percent ?? 0;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-300">
+    <div className="max-w-5xl mx-auto animate-in fade-in duration-300">
+      {/* ── Who you are, and whether you're live ── */}
+      <header className="bg-white rounded-2xl border border-gray-200/80 p-5 sm:p-7 mb-4 sm:mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+          {trainer?.personal?.profilePhoto ? (
+            <span className="w-16 h-16 rounded-2xl overflow-hidden relative shrink-0 border border-gray-200">
+              <Image src={trainer.personal.profilePhoto} alt="" fill className="object-cover" />
+            </span>
+          ) : (
+            <span className="w-16 h-16 rounded-2xl bg-red-50 text-[#d91a24] flex items-center justify-center font-extrabold text-xl shrink-0">
+              {firstName.charAt(0).toUpperCase()}
+            </span>
+          )}
 
-      {/* ── Greeting ── */}
-      <header className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border border-gray-100 shadow-[0_1px_3px_rgb(0,0,0,0.04)]">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-1.5">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-                Hello, {trainer?.personal?.fullName?.split(" ")[0] || "Trainer"}
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-[22px] sm:text-[26px] font-extrabold text-gray-900 tracking-[-0.02em] leading-tight">
+                Hello, {firstName}
               </h1>
-              {verification && (
-                <span
-                  className={`inline-flex items-center gap-1 text-[11px] font-bold border px-2.5 py-0.5 rounded-full ${verification.cls}`}
-                >
-                  <verification.Icon className="w-3.5 h-3.5" /> {verification.label}
-                </span>
-              )}
+              <StatusPill label={badge.label} chip={badge.chip} dot={badge.dot} />
             </div>
-            <p className="text-[13px] sm:text-sm text-gray-500 leading-relaxed">
-              {status === "pending"
-                ? "Your documents are under review. Your profile goes active once approved."
+            <p className="text-[13.5px] text-gray-500 mt-1.5 leading-relaxed">
+              {active
+                ? "Your profile is live. Our team puts it in front of gyms whose roles match what you do."
                 : status === "rejected"
-                ? "Your documents weren't approved. Re-upload them to get verified."
-                : pendingInvites > 0
-                ? `You have ${pendingInvites} gym invitation${pendingInvites > 1 ? "s" : ""} waiting for a reply.`
-                : "Track your applications and incoming gym invitations here."}
+                ? "Your documents weren't approved. Re-upload them and we'll take another look."
+                : "Our team is reviewing your documents. Your profile goes live once approved."}
             </p>
           </div>
 
-          <div className="grid grid-cols-2 lg:flex items-center gap-2.5 shrink-0">
-            <Link
-              href={`/trainer/${trainerSlug}/profile`}
-              className="inline-flex items-center justify-center gap-2 h-12 lg:h-11 px-4 rounded-xl border border-gray-200 bg-white text-gray-800 text-[13px] sm:text-sm font-bold hover:bg-gray-50 active:scale-[0.98] transition-all"
-            >
-              My Profile
-            </Link>
-            <Link
-              href={`/trainer/${trainerSlug}/jobs`}
-              className="inline-flex items-center justify-center gap-2 h-12 lg:h-11 px-4 rounded-xl bg-[#d91a24] hover:bg-[#cc1616] text-white text-[13px] sm:text-sm font-bold shadow-[0_6px_16px_rgb(217,26,36,0.22)] active:scale-[0.98] transition-all"
-            >
-              <Search className="w-4 h-4" /> Browse Jobs
-            </Link>
-          </div>
+          <Button href={`/trainer/${trainerSlug}/profile`} variant="secondary" className="shrink-0">
+            <User className="w-4 h-4" /> My profile
+          </Button>
         </div>
       </header>
 
-      {/* ── Is this profile actually live? Approved AND paid, never one alone. ── */}
-      <div
-        className={`flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl border ${
-          accountActive ? "bg-emerald-50/70 border-emerald-200/70" : "bg-gray-50 border-gray-200"
-        }`}
-      >
-        <span
-          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-            accountActive ? "bg-emerald-100 text-emerald-700" : "bg-white text-gray-400 border border-gray-200"
-          }`}
-        >
-          {accountActive ? <ShieldCheck className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className={`text-sm font-bold ${accountActive ? "text-emerald-900" : "text-gray-900"}`}>
-            {accountActive ? "Your profile is active" : "Your profile needs attention"}
-          </p>
-          <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 leading-relaxed">
-            {accountActive
-              ? "Verified — apply to any open vacancy, and gyms see your profile with each application."
-              : status === "pending"
-              ? "Our team is reviewing your documents. Nothing to pay — your profile goes active once approved."
-              : "Your documents were not approved. Re-upload them from the Verification page."}
-          </p>
-        </div>
-      </div>
-
-      {/* ── Stats: 2-up on mobile ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatCard
-          label="Active applications"
-          value={stats?.activeApplications ?? applications.length}
-          icon={Briefcase}
-          tone="purple"
-          href={`/trainer/${trainerSlug}/applications`}
-        />
-        <StatCard
-          label="Gym invitations"
-          value={pendingInvites}
-          icon={UserPlus}
-          tone="green"
-          href={`/trainer/${trainerSlug}/connections`}
-          hint={pendingInvites > 0 ? "Awaiting your reply" : undefined}
-        />
-        <StatCard
-          label="Verification"
-          value={status === "verified" ? "Verified" : status === "rejected" ? "Rejected" : "Pending"}
-          icon={FileCheck}
-          tone={status === "verified" ? "green" : status === "rejected" ? "red" : "amber"}
-          href={`/trainer/${trainerSlug}/verification`}
-        />
-        <StatCard
+      {/* ── Three numbers, no applications anywhere ── */}
+      <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-5">
+        <Stat
           label="Profile"
-          value={status === "verified" ? "Active" : status === "rejected" ? "Action needed" : "Pending"}
-          icon={CalendarClock}
-          tone={status === "verified" ? "green" : status === "rejected" ? "red" : "amber"}
-          hint={status === "verified" ? "live · free" : "activates on approval"}
+          value={`${percent}%`}
+          icon={User}
+          accent={percent < 100}
+          href={`/trainer/${trainerSlug}/profile`}
+          hint={percent >= 100 ? "Complete" : "Finish it to get picked"}
+        />
+        <Stat
+          label="Verification"
+          value={active ? "Verified" : status === "rejected" ? "Action needed" : "Pending"}
+          icon={FileCheck}
           href={`/trainer/${trainerSlug}/verification`}
+          hint={active ? "Documents approved" : "Awaiting our team"}
+        />
+        <Stat
+          label="Introductions"
+          value={stats?.introductions ?? connections.length}
+          icon={Handshake}
+          href={`/trainer/${trainerSlug}/opportunities`}
+          hint="Gyms we've put you forward to"
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-
-        {/* ── Recommended jobs ── */}
-        <SectionCard
-          title="Recommended jobs"
-          description="Open vacancies from partner gyms"
+      {/* ── The one thing to do next ── */}
+      {!active && (
+        <Callout
+          icon={status === "rejected" ? AlertCircle : Clock}
+          tone={status === "rejected" ? "warning" : "info"}
+          title={
+            status === "rejected"
+              ? "Re-upload your documents"
+              : "Your documents are being reviewed"
+          }
           action={
-            recommendedJobs.length > 0 ? { label: "View all", href: `/trainer/${trainerSlug}/jobs` } : undefined
+            <Button href={`/trainer/${trainerSlug}/verification`} size="sm">
+              {status === "rejected" ? "Fix now" : "View"}
+            </Button>
           }
         >
-          {jobAccess && !jobAccess.allowed ? (
-            /* The backend withholds vacancies from a locked trainer, so this panel
-               explains why instead of showing an empty list. */
-            <div className="p-5 sm:p-6 rounded-2xl bg-gray-50/80 border border-gray-100 text-center">
-              <span className="w-12 h-12 rounded-2xl bg-white border border-gray-200 text-[#d91a24] flex items-center justify-center mx-auto mb-3.5">
-                {jobAccess.reason === "pending_review" ? (
-                  <Clock className="w-6 h-6 text-amber-500" />
-                ) : (
-                  <Lock className="w-6 h-6" />
-                )}
+          {status === "rejected"
+            ? "We couldn't verify what you sent. A valid fitness certificate and a clear government ID is all we need."
+            : "Usually done within 24 hours. Once approved, we start matching you to gym requirements."}
+        </Callout>
+      )}
+
+      {active && percent < 100 && (
+        <Callout
+          icon={Sparkles}
+          tone="neutral"
+          title={`Your profile is ${percent}% complete`}
+          action={
+            <Button href={`/trainer/${trainerSlug}/profile`} size="sm" variant="secondary">
+              Complete
+            </Button>
+          }
+        >
+          {completion?.missing?.length
+            ? `Add ${completion.missing.slice(0, 2).join(" and ").toLowerCase()} — it's what our team searches on.`
+            : "A fuller profile is easier for our team to place."}
+        </Callout>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 mt-4 sm:mt-5">
+        {/* ── Opportunities ── */}
+        <Panel
+          className="lg:col-span-2"
+          title="Opportunities"
+          description="Roles our partner gyms are hiring for."
+          action={
+            recommendedJobs.length > 0
+              ? { label: "See all", href: `/trainer/${trainerSlug}/opportunities` }
+              : undefined
+          }
+          bodyClassName={recommendedJobs.length ? "p-2 sm:p-2.5" : ""}
+        >
+          {!active ? (
+            <div className="px-5 py-10 text-center">
+              <span className="w-12 h-12 rounded-2xl bg-gray-50 border border-gray-200/80 flex items-center justify-center mx-auto mb-4">
+                <Lock className="w-5 h-5 text-gray-400" />
               </span>
-              <h3 className="text-sm font-extrabold text-gray-900 mb-1.5">{jobAccess.title}</h3>
-              <p className="text-[12px] sm:text-[13px] text-gray-500 leading-relaxed mb-5 max-w-sm mx-auto">
-                {jobAccess.message}
+              <p className="text-[15px] font-bold text-gray-900">Unlocks once you're verified</p>
+              <p className="text-[13px] text-gray-500 mt-2 max-w-sm mx-auto leading-relaxed">
+                Gym roles appear here as soon as your documents are approved — usually within 24 hours.
               </p>
-              <Link
-                href={`/trainer/${trainerSlug}/verification`}
-                className="w-full sm:w-auto h-11 px-6 rounded-xl border border-gray-200 bg-white text-gray-800 text-sm font-bold hover:bg-gray-50 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2"
-              >
-                Go to Verification <ArrowRight className="w-4 h-4" />
-              </Link>
+              <Button href={`/trainer/${trainerSlug}/verification`} variant="secondary" className="mt-5">
+                Go to verification <ArrowRight className="w-4 h-4" />
+              </Button>
             </div>
           ) : recommendedJobs.length === 0 ? (
-            <EmptyState
-              icon={Briefcase}
-              title="No open vacancies right now"
-              description="New roles from partner gyms will appear here as soon as they're posted."
+            <Empty
+              icon={Sparkles}
+              title="No open roles right now"
+              description="New gym requirements land here as they come in. We'll contact you directly when one fits."
             />
           ) : (
-            <ul className="space-y-2.5">
-              {recommendedJobs.map((job: any) => (
-                <li key={job._id}>
-                  <Link
-                    href={`/trainer/${trainerSlug}/jobs`}
-                    className="flex items-center gap-3 p-3 sm:p-4 bg-gray-50/70 hover:bg-gray-50 active:scale-[0.99] rounded-2xl border border-gray-100 transition-all"
-                  >
-                    {job.gymId?.gymLogo ? (
-                      <span className="w-11 h-11 rounded-xl overflow-hidden border border-gray-200 relative shrink-0">
-                        <Image src={job.gymId.gymLogo} alt="" fill className="object-cover" />
-                      </span>
-                    ) : (
-                      <span className="w-11 h-11 rounded-xl bg-red-50 text-[#d91a24] border border-red-100 flex items-center justify-center font-bold text-sm shrink-0">
-                        {job.gymId?.gymName?.charAt(0)?.toUpperCase() || "G"}
-                      </span>
-                    )}
-
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-sm font-bold text-gray-900 truncate">{job.position}</h3>
-                      <p className="text-[11px] sm:text-xs text-gray-500 truncate">
-                        {job.gymId?.gymName || "Partner gym"}
-                        {job.location ? ` • ${job.location}` : ""}
-                      </p>
-                      <p className="text-xs font-bold text-gray-800 mt-1">{job.salaryRange}</p>
-                    </div>
-
-                    <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </SectionCard>
-
-        {/* ── My applications ── */}
-        <SectionCard
-          title="My applications"
-          description="Roles you've applied to and where they stand"
-          action={
-            applications.length > 0 ? { label: "View all", href: `/trainer/${trainerSlug}/applications` } : undefined
-          }
-        >
-          {applications.length === 0 ? (
-            <EmptyState
-              icon={Briefcase}
-              title="You haven't applied anywhere yet"
-              description="Browse open vacancies from partner gyms and your applications will be tracked here."
-              action={
-                jobAccess?.allowed
-                  ? { label: "Browse jobs", href: `/trainer/${trainerSlug}/jobs` }
-                  : undefined
-              }
-            />
-          ) : (
-            <ul className="space-y-2.5">
-              {applications.slice(0, 4).map((app: any) => (
-                <li key={app._id}>
-                  <Link
-                    href={`/trainer/${trainerSlug}/applications`}
-                    className="flex items-center gap-3 p-3 sm:p-4 bg-gray-50/70 hover:bg-gray-50 active:scale-[0.99] rounded-2xl border border-gray-100 transition-all"
-                  >
-                    {app.gymId?.gymLogo ? (
-                      <span className="w-11 h-11 rounded-xl overflow-hidden border border-gray-200 relative shrink-0">
-                        <Image src={app.gymId.gymLogo} alt="" fill className="object-cover" />
-                      </span>
-                    ) : (
-                      <span className="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center font-bold text-sm shrink-0">
-                        {app.gymId?.gymName?.charAt(0)?.toUpperCase() || "G"}
-                      </span>
-                    )}
-
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-sm font-bold text-gray-900 truncate">
-                        {app.jobId?.position || "Trainer role"}
-                      </h3>
-                      <p className="text-[11px] sm:text-xs text-gray-500 truncate">
-                        {app.gymId?.gymName || "Partner gym"}
-                        {app.jobId?.location ? ` • ${app.jobId.location}` : ""}
-                      </p>
-                      {app.jobId?.salaryRange && (
-                        <p className="text-xs font-bold text-gray-800 mt-1">{app.jobId.salaryRange}</p>
-                      )}
-                    </div>
-
-                    <span
-                      className={`text-[10px] sm:text-[11px] font-bold px-2 sm:px-2.5 py-1 rounded-full border capitalize shrink-0 ${
-                        APPLICATION_TONE[app.status] || APPLICATION_TONE.applied
-                      }`}
-                    >
-                      {app.status === "applied" ? "Under review" : app.status}
+            <ul className="divide-y divide-gray-100">
+              {recommendedJobs.slice(0, 5).map((job: any) => (
+                <li key={job._id} className="flex items-start gap-3.5 px-3 py-3.5">
+                  {job.gymId?.gymLogo ? (
+                    <span className="w-11 h-11 rounded-xl overflow-hidden relative shrink-0 border border-gray-200">
+                      <Image src={job.gymId.gymLogo} alt="" fill className="object-cover" />
                     </span>
-                  </Link>
+                  ) : (
+                    <span className="w-11 h-11 rounded-xl bg-gray-100 text-gray-500 flex items-center justify-center font-extrabold shrink-0">
+                      {job.gymId?.gymName?.charAt(0)?.toUpperCase() || "G"}
+                    </span>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[14px] font-bold text-gray-900 truncate">{job.position}</p>
+                    <p className="text-[12px] text-gray-500 truncate mt-0.5">
+                      {job.gymId?.gymName || "Partner gym"}
+                    </p>
+                    <div className="flex items-center gap-3 mt-1.5 text-[11.5px] text-gray-500 font-medium">
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-gray-400" />
+                        {job.location}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <Banknote className="w-3 h-3 text-gray-400" />
+                        {job.salaryRange}
+                      </span>
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>
           )}
-        </SectionCard>
-      </div>
+        </Panel>
 
-      {/* ── Verification nudge ── */}
-      {status !== "verified" && (
-        <Link
-          href={`/trainer/${trainerSlug}/verification`}
-          className="flex items-center gap-3.5 p-4 sm:p-5 bg-white rounded-2xl border border-amber-200/70 shadow-[0_1px_3px_rgb(0,0,0,0.04)] hover:border-amber-300 active:scale-[0.99] transition-all"
-        >
-          <span className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-            <FileCheck className="w-5 h-5" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-gray-900">Finish your verification</p>
-            <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 leading-relaxed">
-              Upload your ID and certificates — gyms only see verified trainers.
+        {/* ── Profile strength ── */}
+        <Panel title="Profile strength">
+          <div className="flex items-center gap-4">
+            <ProgressRing percent={percent} size={62} />
+            <div className="min-w-0">
+              <p className="text-[14px] font-bold text-gray-900">
+                {percent >= 100 ? "All done" : "Keep going"}
+              </p>
+              <p className="text-[12.5px] text-gray-500 mt-0.5 leading-snug">
+                {percent >= 100
+                  ? "Nothing left to add."
+                  : `${completion?.missing?.length ?? 0} thing${
+                      (completion?.missing?.length ?? 0) === 1 ? "" : "s"
+                    } left`}
+              </p>
+            </div>
+          </div>
+
+          {!!completion?.missing?.length && (
+            <ul className="mt-5 space-y-2">
+              {completion.missing.slice(0, 4).map((m: string) => (
+                <li key={m} className="flex items-center gap-2.5 text-[12.5px] text-gray-600">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-300 shrink-0" />
+                  {m}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <Button href={`/trainer/${trainerSlug}/profile`} variant="secondary" block className="mt-5">
+            {percent >= 100 ? "Update profile" : "Complete profile"}
+          </Button>
+
+          <div className="mt-5 pt-5 border-t border-gray-100 flex items-start gap-2.5">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <p className="text-[12px] text-gray-500 leading-relaxed">
+              FitWorks is completely free for trainers. We never ask you to pay to be introduced to a gym.
             </p>
           </div>
-          <ArrowRight className="w-4 h-4 text-gray-300 shrink-0" />
-        </Link>
-      )}
+        </Panel>
+      </div>
+
+      {/* ── The promise, stated plainly ── */}
+      <section className="mt-4 sm:mt-5 bg-white rounded-2xl border border-gray-200/80 p-5 sm:p-7">
+        <h2 className="text-[17px] font-extrabold text-gray-900 tracking-[-0.01em]">
+          Looking for opportunities?
+        </h2>
+        <p className="text-[13.5px] text-gray-600 mt-2 leading-relaxed max-w-2xl">
+          Keep your profile complete and verified. The FitWorks team will contact you when a suitable gym
+          opportunity is available — you don't need to apply anywhere.
+        </p>
+        <ProgressBar percent={percent} className="mt-5 max-w-sm" />
+        <div className="flex flex-col sm:flex-row gap-2.5 mt-5">
+          <Button href={`/trainer/${trainerSlug}/profile`}>
+            {percent >= 100 ? "Update profile" : "Complete profile"}
+          </Button>
+          <Button href={`/trainer/${trainerSlug}/opportunities`} variant="secondary">
+            View opportunities <ArrowRight className="w-4 h-4" />
+          </Button>
+        </div>
+      </section>
     </div>
   );
 }

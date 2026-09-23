@@ -12,6 +12,8 @@ import {
   Briefcase
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import StatusPill from "@/components/workspace/StatusPill";
+import { candidateMeta } from "@/lib/hiring";
 
 export default function AdminApplications() {
   const [applications, setApplications] = useState<any[]>([]);
@@ -62,7 +64,7 @@ export default function AdminApplications() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Hiring Applications Pipeline</h1>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Candidate pipeline</h1>
           <p className="text-xs md:text-sm text-gray-500 mt-1">
             Global tracking of candidate submissions, shortlisting stages, and successful gym hires.
           </p>
@@ -94,10 +96,11 @@ export default function AdminApplications() {
         <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
           {[
             { id: "all", label: `All (${applications.length})` },
-            { id: "applied", label: "Applied" },
             { id: "shortlisted", label: `Shortlisted (${shortlistedCount})` },
+            { id: "contacted", label: "Contacted" },
+            { id: "shared", label: "Shared" },
+            { id: "connected", label: "Connected" },
             { id: "hired", label: `Hired (${hiredCount})` },
-            { id: "rejected", label: "Rejected" },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -188,28 +191,13 @@ export default function AdminApplications() {
 
                     {/* Pipeline Status */}
                     <td className="px-6 py-4">
-                      {app.status === "hired" && (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          Hired 🎉
-                        </span>
-                      )}
-                      {app.status === "shortlisted" && (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                          <Clock className="w-3.5 h-3.5 text-amber-600" />
-                          Shortlisted
-                        </span>
-                      )}
-                      {app.status === "applied" && (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                          <Clock className="w-3.5 h-3.5 text-blue-600" />
-                          Under Review
-                        </span>
-                      )}
-                      {app.status === "rejected" && (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">
-                          <XCircle className="w-3.5 h-3.5 text-red-600" />
-                          Declined
+                      {(() => {
+                        const stage = candidateMeta(app.status);
+                        return <StatusPill label={stage.label} chip={stage.chip} size="sm" />;
+                      })()}
+                      {app.source === "admin" && (
+                        <span className="block text-[10.5px] text-gray-400 font-medium mt-1">
+                          added by FitWorks
                         </span>
                       )}
                     </td>
@@ -228,7 +216,7 @@ export default function AdminApplications() {
                       <div className="max-w-xs mx-auto text-center space-y-2">
                         <FileText className="w-10 h-10 text-gray-300 mx-auto" />
                         <p className="text-sm font-bold text-gray-700">No applications found</p>
-                        <p className="text-xs text-gray-400">Applications submitted by trainers will appear here.</p>
+                        <p className="text-xs text-gray-400">Trainers shortlisted against a gym vacancy appear here.</p>
                       </div>
                     </td>
                   </tr>

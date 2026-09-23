@@ -89,3 +89,31 @@ export async function apiFetch<T = Record<string, unknown>>(
     error: serverMessage || `Something went wrong (error ${res.status}). Please try again.`,
   };
 }
+
+/* ───────────────────────── Request helpers ───────────────────────── */
+
+/** The API base. In production this is "/api", proxied to the backend. */
+export const apiBase = () => process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
+
+/** The stored bearer token, or an empty string when signed out. */
+export const authToken = () =>
+  typeof window === "undefined" ? "" : localStorage.getItem("fitworks_token") || "";
+
+/**
+ * A signed API call that returns parsed JSON and a usable error message.
+ *
+ * Wraps apiFetch with the base URL and the Authorization header, which every
+ * dashboard screen was otherwise rebuilding by hand.
+ */
+export async function api<T = Record<string, unknown>>(
+  path: string,
+  init: RequestInit = {}
+): Promise<ApiResult<T>> {
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${authToken()}`,
+    ...((init.headers as Record<string, string>) || {}),
+  };
+  if (init.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
+
+  return apiFetch<T>(`${apiBase()}${path}`, { ...init, headers });
+}

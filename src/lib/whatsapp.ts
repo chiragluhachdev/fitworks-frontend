@@ -147,3 +147,18 @@ export const buildLeadWhatsAppUrl = (lead: WhatsAppLead): string | null => {
 
   return waLink(number, text);
 };
+
+/* ─────────────────── FitWorks support ─────────────────── */
+
+/** The number on the public site — one place, so it can't drift. */
+export const SUPPORT_PHONE = "918130200285";
+export const SUPPORT_PHONE_DISPLAY = "+91 81302 00285";
+export const SUPPORT_EMAIL = "support@fitworks.in";
+
+/**
+ * Opens a WhatsApp chat with our team, prefilled.
+ *
+ * Uses the same api.whatsapp.com endpoint as the admin links: wa.me redirects
+ * and mangles the text on the way, which is what turned emoji into "�".
+ */
+export const supportWhatsAppUrl = (message: string) => waLink(SUPPORT_PHONE, message);

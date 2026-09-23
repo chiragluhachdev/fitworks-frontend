@@ -1,212 +1,154 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
-import { 
-  Briefcase, 
-  Plus, 
-  MapPin, 
-  Calendar, 
-  Trash2, 
-  CheckCircle2, 
-  XCircle, 
-  Loader2,
-  Users
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Plus, Briefcase, Search } from "lucide-react";
+import PageHeader from "@/components/workspace/PageHeader";
+import Button from "@/components/workspace/Button";
+import Empty from "@/components/workspace/Empty";
+import { Input } from "@/components/workspace/Field";
+import { PageSkeleton, ErrorState } from "@/components/workspace/States";
+import VacancyCard, { type VacancyRow } from "@/components/gym/VacancyCard";
+import { api } from "@/lib/api";
+import { VACANCY_STATUS, type GymVacancyStatus } from "@/lib/hiring";
 
-interface JobVacancy {
-  _id: string;
-  position: string;
-  description: string;
-  requirements: {
-    experience: string;
-    specialization: string;
-  };
-  salaryRange: string;
-  employmentType: string;
-  location: string;
-  numberOfOpenings: number;
-  status: "open" | "closed";
-  createdAt: string;
-}
+const TABS: { id: "all" | GymVacancyStatus; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "active", label: "Active" },
+  { id: "under_review", label: "Under review" },
+  { id: "filled", label: "Filled" },
+  { id: "closed", label: "Closed" },
+];
 
-export default function GymVacanciesListPage() {
+export default function GymVacanciesPage() {
   const params = useParams();
   const gymSlug = (params?.gymSlug as string) || "";
 
-  const [vacancies, setVacancies] = useState<JobVacancy[]>([]);
+  const [vacancies, setVacancies] = useState<VacancyRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const [tab, setTab] = useState<"all" | GymVacancyStatus>("all");
+  const [query, setQuery] = useState("");
 
-  const fetchVacancies = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-      const res = await fetch(`${apiUrl}/jobs/gym/slug/${gymSlug}`);
-      const json = await res.json();
-      if (json.success) {
-        setVacancies(json.data || []);
-      }
-    } catch (err) {
-      console.error("Fetch Gym Vacancies Error:", err);
-    } finally {
-      setLoading(false);
+    const res = await api<{ data?: VacancyRow[] }>(`/jobs/gym/slug/${gymSlug}`);
+    if (res.ok) {
+      setVacancies(res.data?.data || []);
+      setError("");
+    } else {
+      setError(res.error || "We couldn't load your vacancies.");
     }
-  };
-
-  useEffect(() => {
-    fetchVacancies();
+    setLoading(false);
   }, [gymSlug]);
 
-  const toggleStatus = async (jobId: string, currentStatus: "open" | "closed") => {
-    setActionLoading(jobId);
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-      const token = typeof window !== "undefined" ? localStorage.getItem("fitworks_token") : null;
-      const nextStatus = currentStatus === "open" ? "closed" : "open";
+  useEffect(() => {
+    load();
+  }, [load]);
 
-      const res = await fetch(`${apiUrl}/jobs/${jobId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token || ""}`,
-        },
-        body: JSON.stringify({ status: nextStatus }),
-      });
-
-      const json = await res.json();
-      if (json.success) {
-        setVacancies(prev => prev.map(v => v._id === jobId ? { ...v, status: nextStatus } : v));
-      }
-    } catch (err) {
-      console.error("Toggle Job Status Error:", err);
-    } finally {
-      setActionLoading(null);
+  const counts = useMemo(() => {
+    const map: Record<string, number> = { all: vacancies.length };
+    for (const v of vacancies) {
+      const s = v.gymStatus || "under_review";
+      map[s] = (map[s] || 0) + 1;
     }
-  };
+    return map;
+  }, [vacancies]);
 
-  const handleDelete = async (jobId: string) => {
-    if (!confirm("Are you sure you want to remove this job vacancy?")) return;
-    setActionLoading(jobId);
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
-      const token = typeof window !== "undefined" ? localStorage.getItem("fitworks_token") : null;
+  const visible = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return vacancies.filter((v) => {
+      if (tab !== "all" && (v.gymStatus || "under_review") !== tab) return false;
+      if (!q) return true;
+      return [v.position, v.location, v.requirements?.specialization, v.requirements?.trainerType]
+        .filter(Boolean)
+        .some((f) => String(f).toLowerCase().includes(q));
+    });
+  }, [vacancies, tab, query]);
 
-      const res = await fetch(`${apiUrl}/jobs/${jobId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token || ""}`,
-        },
-      });
-
-      const json = await res.json();
-      if (json.success) {
-        setVacancies(prev => prev.filter(v => v._id !== jobId));
-      }
-    } catch (err) {
-      console.error("Delete Job Error:", err);
-    } finally {
-      setActionLoading(null);
-    }
-  };
+  if (loading) return <PageSkeleton stats={0} rows={4} />;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-300">
-      
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">My Posted Vacancies</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage all your open positions, edit details, or post new vacancies.</p>
-        </div>
-        <Link href={`/gym/${gymSlug}/vacancies/new`}>
-          <Button className="bg-[#d91a24] hover:bg-[#cc1616] text-white px-5 h-11 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-1.5">
-            <Plus className="w-4 h-4" /> Post New Vacancy
+    <div className="max-w-5xl mx-auto animate-in fade-in duration-300">
+      <PageHeader
+        title="My vacancies"
+        description="Every role you've asked us to hire for, and how far along each one is."
+        actions={
+          <Button href={`/gym/${gymSlug}/vacancies/new`}>
+            <Plus className="w-4 h-4" /> Post a Vacancy
           </Button>
-        </Link>
-      </div>
+        }
+      />
 
-      {/* Vacancies List */}
-      {loading ? (
-        <div className="flex items-center justify-center min-h-[300px]">
-          <Loader2 className="w-8 h-8 text-[#d91a24] animate-spin" />
-        </div>
+      {error ? (
+        <ErrorState message={error} onRetry={load} />
       ) : vacancies.length === 0 ? (
-        <div className="bg-white p-12 text-center rounded-3xl border border-gray-100 shadow-sm">
-          <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-gray-900">No vacancies posted yet</h3>
-          <p className="text-sm text-gray-500 mt-1 max-w-sm mx-auto mb-6">Create your first job listing to receive applications from verified trainers.</p>
-          <Link href={`/gym/${gymSlug}/vacancies/new`}>
-            <Button className="bg-[#d91a24] hover:bg-[#cc1616] text-white rounded-xl font-bold px-6">
-              <Plus className="w-4 h-4 mr-1.5" /> Post a Vacancy
-            </Button>
-          </Link>
+        <div className="bg-white rounded-2xl border border-gray-200/80">
+          <Empty
+            icon={Briefcase}
+            title="No vacancies yet"
+            description="Post your first requirement and our team will start looking for trainers who fit it. It takes about a minute."
+            action={{ label: "Post a Vacancy", href: `/gym/${gymSlug}/vacancies/new` }}
+          />
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {vacancies.map((vac) => (
-            <div key={vac._id} className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
-              <div>
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <div>
-                    <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider inline-block mb-2 ${
-                      vac.status === "open" ? "bg-green-50 text-green-700 border border-green-200" : "bg-gray-100 text-gray-600 border border-gray-200"
-                    }`}>
-                      {vac.status === "open" ? "● Active Hiring" : "● Closed"}
-                    </span>
-                    <h3 className="text-lg font-bold text-gray-900">{vac.position}</h3>
-                  </div>
-                  <span className="text-xs font-semibold px-2.5 py-1 bg-gray-50 text-gray-700 border border-gray-100 rounded-lg">
-                    {vac.employmentType}
-                  </span>
-                </div>
-
-                <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed mb-4">
-                  {vac.description}
-                </p>
-
-                <div className="space-y-2 text-xs text-gray-500 font-medium mb-5">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-gray-400" />
-                    <span>{vac.location}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-gray-900">{vac.salaryRange}</span>
-                    <span>• {vac.requirements?.experience} exp required</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Bar */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100 gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={actionLoading === vac._id}
-                  onClick={() => toggleStatus(vac._id, vac.status)}
-                  className="rounded-xl text-xs font-semibold border-gray-200"
-                >
-                  {vac.status === "open" ? "Close Vacancy" : "Reopen Vacancy"}
-                </Button>
-
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  disabled={actionLoading === vac._id}
-                  onClick={() => handleDelete(vac._id)}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl text-xs font-semibold p-2"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-
+        <>
+          {/* Filters — tabs scroll sideways on a phone rather than wrapping. */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+            <div className="flex-1 flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-none">
+              {TABS.map((t) => {
+                const n = counts[t.id] || 0;
+                if (t.id !== "all" && n === 0) return null;
+                const on = tab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setTab(t.id)}
+                    className={`h-9 px-3.5 rounded-lg text-[13px] font-bold whitespace-nowrap transition-colors cursor-pointer ${
+                      on
+                        ? "bg-gray-900 text-white"
+                        : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    {t.label}
+                    <span className={on ? "text-white/60 ml-1.5" : "text-gray-400 ml-1.5"}>{n}</span>
+                  </button>
+                );
+              })}
             </div>
-          ))}
-        </div>
-      )}
 
+            <div className="relative sm:w-64 shrink-0">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search vacancies"
+                className="h-10 pl-9"
+              />
+            </div>
+          </div>
+
+          {visible.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-gray-200/80">
+              <Empty
+                icon={Search}
+                title="Nothing matches that"
+                description={
+                  query
+                    ? `No vacancy matches "${query}". Try a different word, or clear the search.`
+                    : `You have no ${VACANCY_STATUS[tab as GymVacancyStatus]?.label.toLowerCase()} vacancies.`
+                }
+              />
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {visible.map((v) => (
+                <VacancyCard key={v._id} vacancy={v} href={`/gym/${gymSlug}/vacancies/${v._id}`} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -5,9 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   LayoutDashboard,
-  Search,
-  Briefcase,
-  UserPlus,
+  Sparkles,
   User,
   ShieldCheck,
   Settings,
@@ -122,13 +120,13 @@ export default function TrainerDashboardLayout({ children }: { children: React.R
     router.push("/auth");
   };
 
+  // Trainers don't apply to gyms any more — FitWorks makes the introduction —
+  // so there is no applications screen to navigate to.
   const navLinks = [
     { name: "Overview", shortName: "Home", href: `/trainer/${trainerSlug}/dashboard`, icon: LayoutDashboard },
-    { name: "Find Jobs", shortName: "Jobs", href: `/trainer/${trainerSlug}/jobs`, icon: Search },
-    { name: "My Applications", shortName: "Applied", href: `/trainer/${trainerSlug}/applications`, icon: Briefcase },
-    { name: "Connections", shortName: "Invites", href: `/trainer/${trainerSlug}/connections`, icon: UserPlus },
-    { name: "My Profile", href: `/trainer/${trainerSlug}/profile`, icon: User },
-    { name: "Verification", href: `/trainer/${trainerSlug}/verification`, icon: ShieldCheck },
+    { name: "Opportunities", shortName: "Roles", href: `/trainer/${trainerSlug}/opportunities`, icon: Sparkles },
+    { name: "My Profile", shortName: "Profile", href: `/trainer/${trainerSlug}/profile`, icon: User },
+    { name: "Verification", shortName: "Verify", href: `/trainer/${trainerSlug}/verification`, icon: ShieldCheck },
     { name: "Settings", href: `/trainer/${trainerSlug}/settings`, icon: Settings },
   ];
 
