@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { Plus, Briefcase, Users, CreditCard, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Plus, Briefcase, CreditCard, ArrowRight } from "lucide-react";
 import Button from "@/components/workspace/Button";
 import Stat from "@/components/workspace/Stat";
 import Panel from "@/components/workspace/Panel";
@@ -85,29 +85,14 @@ export default function GymOverviewPage() {
         </div>
       </section>
 
-      {/* ── The numbers that change ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
+      {/* ── Two figures. This screen is for posting vacancies, not reporting. ── */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-5 sm:mb-6">
         <Stat
           label="Active vacancies"
           value={stats?.activeVacancies ?? 0}
           icon={Briefcase}
           href={`/gym/${gymSlug}/vacancies`}
           hint={`${stats?.totalVacancies ?? 0} posted in total`}
-        />
-        <Stat
-          label="Being reviewed"
-          value={stats?.trainersInReview ?? 0}
-          icon={Users}
-          accent={(stats?.trainersInReview ?? 0) > 0}
-          href={`/gym/${gymSlug}/vacancies`}
-          hint="Trainers our team is working on for you"
-        />
-        <Stat
-          label="Roles filled"
-          value={stats?.filled ?? 0}
-          icon={CheckCircle2}
-          href={`/gym/${gymSlug}/vacancies`}
-          hint="Hired through FitWorks"
         />
         <Stat
           label="Subscription"
