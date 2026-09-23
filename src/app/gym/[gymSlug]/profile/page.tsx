@@ -26,7 +26,6 @@ import Button from "@/components/workspace/Button";
 import Panel from "@/components/workspace/Panel";
 import { Field, Input, Select, Textarea, ChipSelect } from "@/components/workspace/Field";
 import { ProgressBar } from "@/components/workspace/Progress";
-import HiringSteps from "@/components/workspace/HiringSteps";
 import { PageSkeleton, ErrorState } from "@/components/workspace/States";
 import { api, apiBase } from "@/lib/api";
 import {
@@ -126,6 +125,25 @@ export default function GymProfileAndSettingsPage() {
   const gymSlug = (params?.gymSlug as string) || "";
 
   const [tab, setTab] = useState<Tab>("profile");
+
+  /**
+   * Open on the tab the link asked for.
+   *
+   * Read from the URL rather than through useSearchParams, which would force
+   * this whole screen behind a Suspense boundary for one string.
+   */
+  useEffect(() => {
+    const asked = new URLSearchParams(window.location.search).get("tab");
+    if (asked === "account" || asked === "support" || asked === "profile") setTab(asked);
+  }, []);
+
+  /** Keeps the URL in step, so a reload or a back-button lands where you were. */
+  const selectTab = (next: Tab) => {
+    setTab(next);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", next);
+    window.history.replaceState(null, "", url);
+  };
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -299,7 +317,7 @@ export default function GymProfileAndSettingsPage() {
           return (
             <button
               key={id}
-              onClick={() => setTab(id)}
+              onClick={() => selectTab(id)}
               className={`inline-flex items-center gap-2 h-10 px-4 rounded-xl text-[13.5px] font-bold whitespace-nowrap transition-colors cursor-pointer ${
                 on
                   ? "bg-gray-900 text-white"
@@ -748,8 +766,6 @@ export default function GymProfileAndSettingsPage() {
           <p className="text-[12.5px] text-gray-500 text-center">
             Monday to Saturday, 9 AM to 8 PM.
           </p>
-
-          <HiringSteps />
 
           <Panel title="Common questions" bodyClassName="py-1 sm:py-1">
             {FAQ.map((item) => (

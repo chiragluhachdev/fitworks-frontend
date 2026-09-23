@@ -14,7 +14,7 @@ export default function GymSettingsRedirect() {
   const gymSlug = (params?.gymSlug as string) || "";
 
   useEffect(() => {
-    router.replace(`/gym/${gymSlug}/profile`);
+    router.replace(`/gym/${gymSlug}/profile?tab=account`);
   }, [router, gymSlug]);
 
   return <Spinner label="Taking you to your profile and settings…" />;
