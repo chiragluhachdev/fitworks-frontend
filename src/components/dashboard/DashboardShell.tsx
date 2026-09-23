@@ -143,7 +143,7 @@ export default function DashboardShell({
   const avatar = (size: string, rounded: string) =>
     profile.image ? (
       <div className={`${size} ${rounded} overflow-hidden border-2 border-red-100 relative shrink-0`}>
-        <Image src={profile.image} alt={profile.name} fill className="object-cover" />
+        <Image src={profile.image} alt={profile.name} fill sizes="48px" className="object-cover" />
       </div>
     ) : (
       <div
@@ -159,7 +159,7 @@ export default function DashboardShell({
       <header className="md:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100">
         <div className="flex items-center justify-between px-3.5 h-14">
           <Link href="/" aria-label="FitWorks home" className="relative w-[104px] h-[30px] shrink-0">
-            <Image src="/images/logo.png" alt="FitWorks" fill className="object-contain object-left" priority />
+            <Image src="/images/logo.png" alt="FitWorks" fill sizes="132px" className="object-contain object-left" priority />
           </Link>
           <Link
             href={profile.href}
@@ -178,7 +178,7 @@ export default function DashboardShell({
       <aside className="hidden md:flex sticky top-0 h-screen w-[268px] shrink-0 bg-white border-r border-gray-200/70 flex-col">
         <div className="px-6 pt-6 pb-5">
           <span className="relative block w-[132px] h-[38px]">
-            <Image src="/images/logo.png" alt="FitWorks" fill className="object-contain object-left" priority />
+            <Image src="/images/logo.png" alt="FitWorks" fill sizes="132px" className="object-contain object-left" priority />
           </span>
         </div>
 

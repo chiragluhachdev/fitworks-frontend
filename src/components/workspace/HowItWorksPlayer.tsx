@@ -56,7 +56,8 @@ function Mark({ width = 116 }: { width?: number }) {
         alt="FitWorks"
         width={width - 28}
         height={Math.round((width - 28) / 3.6)}
-        className="object-contain"
+        // Both axes, so the intrinsic ratio is never in conflict with the CSS.
+        className="w-full h-auto object-contain"
         priority
       />
     </span>
@@ -129,12 +130,18 @@ function PostScene() {
         </div>
       </div>
 
-      {/* It arrives with us. */}
-      <div
-        className="fw-anim fw-receive absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{ animationDelay: "3300ms" }}
-      >
-        <Mark />
+      {/* It arrives with us, and says so. Without the confirmation the mark
+          just sat there for the rest of the scene, which read as a stall. */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-3">
+        <div className="fw-anim fw-receive" style={{ animationDelay: "2900ms" }}>
+          <Mark />
+        </div>
+        <span
+          className="fw-anim fw-rise inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 ring-1 ring-emerald-400/40 text-emerald-300 text-[10.5px] font-extrabold tracking-wide"
+          style={{ animationDelay: "3800ms" }}
+        >
+          <Check className="w-3 h-3" strokeWidth={4} /> Received
+        </span>
       </div>
     </div>
   );
@@ -295,7 +302,7 @@ const SCENES: Scene[] = [
     chapter: "Step 1",
     title: "Post your vacancy",
     caption: "Tell us the role, the experience you want and what you're paying. About a minute.",
-    ms: 6000,
+    ms: 5200,
     Body: PostScene,
   },
   {
@@ -702,14 +709,14 @@ const KEYFRAMES = `
   72% { opacity: 1; transform: none; }
   100% { opacity: 0; transform: translateY(-34px) scale(.72) rotate(-4deg); }
 }
-.fw-handoff { animation-name: fw-handoff; animation-duration: 5000ms; animation-timing-function: cubic-bezier(.65,0,.35,1); }
+.fw-handoff { animation-name: fw-handoff; animation-duration: 4200ms; animation-timing-function: cubic-bezier(.65,0,.35,1); }
 
 @keyframes fw-receive {
   0% { opacity: 0; transform: translate(-50%, -50%) scale(.5); }
   60% { opacity: 1; transform: translate(-50%, -50%) scale(1.06); }
   100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
-.fw-receive { animation-name: fw-receive; animation-duration: 900ms; }
+.fw-receive { animation-name: fw-receive; animation-duration: 800ms; }
 
 @keyframes fw-halo { 0% { opacity: .8; transform: scale(1); } 100% { opacity: 0; transform: scale(3.4); } }
 .fw-halo { animation-name: fw-halo; animation-duration: 2200ms; animation-iteration-count: infinite; animation-timing-function: ease-out; }
