@@ -509,11 +509,9 @@ export function HowItWorksInline({
       <style>{KEYFRAMES}</style>
 
       <div className="rounded-[20px] bg-[#0b0b0d] p-3">
-        <Stage
-          scene={scene}
-          ended={ended}
-          className="h-[214px]"
-        />
+        {/* The orbit in step two spans 2 × (radius + half an avatar) — 248px —
+            so anything shorter clips the top and bottom faces. */}
+        <Stage scene={scene} ended={ended} className="h-[300px]" />
         <div className="px-1 pt-3">
           <Scrubber scene={scene} progress={progress} playing={playing} onJump={goTo} />
         </div>
