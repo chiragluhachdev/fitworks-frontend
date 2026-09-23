@@ -84,7 +84,7 @@ function MembershipCard({
       className={`relative overflow-hidden rounded-[20px] sm:rounded-[24px] p-4 sm:p-5 transition-all ${
         active
           ? "bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 text-white shadow-[0_20px_50px_-16px_rgba(16,24,40,0.5)]"
-          : "bg-white ring-1 ring-gray-200/70 shadow-sm hover:shadow-md"
+          : "bg-gradient-to-br from-white to-gray-50/80 ring-1 ring-gray-200/80 shadow-[0_2px_12px_-4px_rgba(16,24,40,0.06)] hover:shadow-md"
       }`}
     >
       {active && (
@@ -104,7 +104,7 @@ function MembershipCard({
         <div className="flex items-center gap-3.5 min-w-0">
           <span
             className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 ${
-              active ? "bg-white/10 text-amber-300 ring-1 ring-white/20 backdrop-blur-md" : "bg-gray-50 text-gray-400 ring-1 ring-gray-200/50"
+              active ? "bg-white/10 text-amber-300 ring-1 ring-white/20 backdrop-blur-md" : "bg-gradient-to-b from-gray-50 to-gray-100 text-gray-400 ring-1 ring-gray-200/80 shadow-inner"
             }`}
           >
             {active ? <Crown className="w-5 h-5 sm:w-6 sm:h-6" /> : <Lock className="w-5 h-5 sm:w-6 sm:h-6" />}
@@ -132,8 +132,8 @@ function MembershipCard({
             active
               ? "bg-emerald-500/15 text-emerald-300 ring-emerald-400/30"
               : expired
-              ? "bg-amber-50 text-amber-700 ring-amber-200/70"
-              : "bg-gray-100 text-gray-500 ring-gray-200"
+              ? "bg-amber-50 text-amber-700 ring-amber-200/70 shadow-sm"
+              : "bg-white text-gray-500 ring-gray-200 shadow-sm"
           }`}
         >
           <span
