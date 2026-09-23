@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { LayoutDashboard, Briefcase, Plus, CreditCard, Building2, MapPin } from "lucide-react";
-import DashboardShell from "@/components/dashboard/DashboardShell";
+import DashboardShell, { type AttentionItem } from "@/components/dashboard/DashboardShell";
 import { loginPathFor, readStoredUser } from "@/lib/session";
 import { api } from "@/lib/api";
 
@@ -13,6 +13,8 @@ export default function GymDashboardLayout({ children }: { children: React.React
   const gymSlug = (params?.gymSlug as string) || "";
 
   const [gym, setGym] = useState({ gymName: "", gymLogo: "", city: "", locations: 1 });
+  const [subscriptionActive, setSubscriptionActive] = useState<boolean | null>(null);
+  const [completion, setCompletion] = useState<number | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -45,7 +47,7 @@ export default function GymDashboardLayout({ children }: { children: React.React
     }
 
     (async () => {
-      const res = await api<{ data?: any }>(`/gyms/${gymSlug}`);
+      const res = await api<{ data?: any; subscription?: any; completion?: any }>(`/gyms/${gymSlug}`);
       if (res.ok && res.data?.data) {
         const g = res.data.data;
         setGym({
@@ -54,6 +56,10 @@ export default function GymDashboardLayout({ children }: { children: React.React
           city: g.address?.city || "",
           locations: g.numberOfLocations || 1,
         });
+        setSubscriptionActive(res.data.subscription?.isActive ?? false);
+        setCompletion(
+          typeof res.data.completion?.percent === "number" ? res.data.completion.percent : null
+        );
       }
     })();
   }, [router, gymSlug]);
@@ -74,18 +80,61 @@ export default function GymDashboardLayout({ children }: { children: React.React
     { name: "Profile & Settings", shortName: "Profile", href: `/gym/${gymSlug}/profile`, icon: Building2 },
   ];
 
+  /**
+   * What the bell reports.
+   *
+   * Only things that are genuinely waiting on this gym, so the badge count is
+   * never a decoration. No items, no badge.
+   */
+  const attention = useMemo<AttentionItem[]>(() => {
+    const items: AttentionItem[] = [];
+    if (subscriptionActive === false) {
+      items.push({
+        label: "Your plan isn't active",
+        detail: "Choose a plan to keep hiring with FitWorks.",
+        href: `/gym/${gymSlug}/subscription`,
+      });
+    }
+    if (completion !== null && completion < 100) {
+      items.push({
+        label: `Your gym profile is ${completion}% complete`,
+        detail: "A fuller profile is easier for our team to place trainers into.",
+        href: `/gym/${gymSlug}/profile?tab=profile`,
+      });
+    }
+    return items;
+  }, [subscriptionActive, completion, gymSlug]);
+
   return (
     <DashboardShell
       menuLabel="Gym Menu"
       onLogout={handleLogout}
       navLinks={navLinks}
+      roleLabel="Gym Owner"
+      attention={attention}
+      // Searching runs on the vacancies screen, which already filters on
+      // exactly these fields — so the bar hands the query over rather than
+      // re-implementing it.
+      search={{
+        placeholder: "Search your vacancies by role, city or specialization…",
+        onSubmit: (query) => {
+          const q = query.trim();
+          router.push(`/gym/${gymSlug}/vacancies${q ? `?q=${encodeURIComponent(q)}` : ""}`);
+        },
+      }}
+      promo={{
+        title: "Build a stronger team",
+        body: "Find verified fitness professionals with FitWorks.",
+        href: `/gym/${gymSlug}/vacancies/new`,
+        image: "/images/gym_team.jpg",
+      }}
       profile={{
         name: gym.gymName || "Your Gym",
         initial: gym.gymName?.charAt(0)?.toUpperCase() || "G",
         image: gym.gymLogo || undefined,
         href: `/gym/${gymSlug}/profile`,
         subtitle: (
-          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-gray-500">
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-gray-500">
             <MapPin className="w-3 h-3 text-gray-400 shrink-0" />
             {gym.city || "India"} • {gym.locations} Branch{gym.locations > 1 ? "es" : ""}
           </span>

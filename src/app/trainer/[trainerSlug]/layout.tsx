@@ -177,6 +177,7 @@ export default function TrainerDashboardLayout({ children }: { children: React.R
   return (
     <DashboardShell
       menuLabel="Trainer Menu"
+      roleLabel="Trainer"
       onLogout={handleLogout}
       navLinks={navLinks}
       profile={{

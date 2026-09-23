@@ -30,6 +30,17 @@ export default function GymVacanciesPage() {
   const [tab, setTab] = useState<"all" | GymVacancyStatus>("all");
   const [query, setQuery] = useState("");
 
+  /**
+   * Pick up a query handed over from the top bar's search.
+   *
+   * Read from the URL rather than through useSearchParams, which would put
+   * this whole screen behind a Suspense boundary for one string.
+   */
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) setQuery(q);
+  }, []);
+
   const load = useCallback(async () => {
     setLoading(true);
     const res = await api<{ data?: VacancyRow[] }>(`/jobs/gym/slug/${gymSlug}`);
