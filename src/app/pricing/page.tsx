@@ -2,22 +2,29 @@ import type { Metadata } from "next";
 import React from "react";
 import Link from "next/link";
 import { Check, ShieldCheck, Building2, User, ArrowRight, Sparkles, Handshake } from "lucide-react";
-import { GYM_PLANS, PLAN_FEATURES, rupees } from "@/lib/hiring";
+import { PLAN_FEATURES, rupees, type GymPlan } from "@/lib/hiring";
+import { fetchGymPlans } from "@/lib/serverApi";
 
-export const metadata: Metadata = {
-  title: "Pricing Plans for Gyms & Fitness Trainers",
-  description:
-    "Transparent FitWorks pricing. Completely free for trainers. Gyms start at ₹199 a month for unlimited vacancies and hands-on hiring support.",
-  alternates: {
-    canonical: "/pricing",
-  },
-  openGraph: {
-    title: "Pricing Plans for Gyms & Fitness Trainers | FitWorks",
-    description:
-      "Free for trainers. Gym plans from ₹199/month with unlimited vacancies and FitWorks-assisted hiring.",
-    url: "https://fitworks.in/pricing",
-  },
-};
+/**
+ * Prices are set by an admin, so the copy quotes the live cheapest plan rather
+ * than a number baked into the page.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const plans = await fetchGymPlans();
+  const cheapest = plans.reduce((low, p) => (p.perMonth < low.perMonth ? p : low), plans[0]);
+  const from = `${rupees(cheapest.perMonth)} a month`;
+
+  return {
+    title: "Pricing Plans for Gyms & Fitness Trainers",
+    description: `Transparent FitWorks pricing. Completely free for trainers. Gyms start at ${from} for unlimited vacancies and hands-on hiring support.`,
+    alternates: { canonical: "/pricing" },
+    openGraph: {
+      title: "Pricing Plans for Gyms & Fitness Trainers | FitWorks",
+      description: `Free for trainers. Gym plans from ${from} with unlimited vacancies and FitWorks-assisted hiring.`,
+      url: "https://fitworks.in/pricing",
+    },
+  };
+}
 
 const TRAINER_FEATURES = [
   "Free profile creation and verification",
@@ -27,7 +34,9 @@ const TRAINER_FEATURES = [
   "No fees, ever",
 ];
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const plans: GymPlan[] = await fetchGymPlans();
+
   return (
     <div className="min-h-screen bg-[#fafafa] pt-20 pb-16 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
@@ -60,7 +69,7 @@ export default function PricingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {GYM_PLANS.map((plan) => (
+            {plans.map((plan) => (
               <div
                 key={plan.id}
                 className={`relative flex flex-col rounded-3xl bg-white p-7 border ${

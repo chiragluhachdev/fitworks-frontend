@@ -23,7 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 import StatusPill from "@/components/workspace/StatusPill";
-import { GYM_PLANS, findPlan, shortDate } from "@/lib/hiring";
+import { FALLBACK_PLANS, findPlan, normalizeGymPlans, shortDate, type GymPlan } from "@/lib/hiring";
 import { api } from "@/lib/api";
 
 const PRESET_GYM_LOGOS = [
@@ -51,6 +51,9 @@ export default function AdminGyms() {
   // Which gym's plan is mid-save, so only that row's control disables.
   const [planBusy, setPlanBusy] = useState<string | null>(null);
 
+  // Prices are configurable, so the override menu reads them from the server.
+  const [plans, setPlans] = useState<GymPlan[]>(FALLBACK_PLANS);
+
   const fetchGyms = async () => {
     try {
       const token = localStorage.getItem("fitworks_token") || localStorage.getItem("token");
@@ -71,6 +74,10 @@ export default function AdminGyms() {
 
   useEffect(() => {
     fetchGyms();
+    // Prices come from Settings; the override menu should quote the real ones.
+    api<{ data?: GymPlan[] }>("/gyms/plans").then((res) => {
+      if (res.ok && res.data?.data?.length) setPlans(normalizeGymPlans(res.data.data));
+    });
   }, []);
 
   const openGymModal = (gym: any) => {
@@ -386,7 +393,7 @@ export default function AdminGyms() {
                               className="h-8 text-[11px] font-semibold border border-gray-200 rounded-lg px-2 bg-white text-gray-600 cursor-pointer outline-none focus:border-[#d91a24] disabled:opacity-50"
                             >
                               <option value="">{planBusy === gym._id ? "Saving…" : "Override…"}</option>
-                              {GYM_PLANS.map((p) => (
+                              {plans.map((p) => (
                                 <option key={p.id} value={p.id}>
                                   Grant {p.name.replace("FitWorks ", "")}
                                 </option>

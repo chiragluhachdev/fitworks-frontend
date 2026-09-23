@@ -9,8 +9,10 @@
 
 /* ───────────────────────────── Plans ───────────────────────────── */
 
+export type GymPlanId = "monthly" | "quarterly" | "annual";
+
 export interface GymPlan {
-  id: "monthly" | "quarterly" | "annual";
+  id: GymPlanId;
   name: string;
   /** Rupees for the whole term. */
   price: number;
@@ -22,31 +24,62 @@ export interface GymPlan {
   best?: boolean;
 }
 
-const MONTHLY_RATE = 199;
+export type GymPrices = Record<GymPlanId, number>;
 
-const plan = (
-  id: GymPlan["id"],
-  name: string,
-  price: number,
-  months: number,
-  cadence: string,
-  best = false
-): GymPlan => ({
-  id,
-  name,
-  price,
-  months,
-  cadence,
-  perMonth: Math.round(price / months),
-  savingsPercent: Math.round((1 - price / months / MONTHLY_RATE) * 100),
-  best,
-});
-
-export const GYM_PLANS: GymPlan[] = [
-  plan("monthly", "FitWorks Monthly", 199, 1, "per month"),
-  plan("quarterly", "FitWorks 3 Months", 499, 3, "per 3 months"),
-  plan("annual", "FitWorks Annual", 999, 12, "per year", true),
+/**
+ * The shape of what we sell. Prices are set by an admin in Settings, so the
+ * numbers here are only what a screen shows before the API answers — never
+ * what anyone is charged. The server prices every order itself.
+ */
+const PLAN_SHAPE: { id: GymPlanId; name: string; months: number; cadence: string; best?: boolean }[] = [
+  { id: "monthly", name: "FitWorks Monthly", months: 1, cadence: "per month" },
+  { id: "quarterly", name: "FitWorks 3 Months", months: 3, cadence: "per 3 months" },
+  { id: "annual", name: "FitWorks Annual", months: 12, cadence: "per year", best: true },
 ];
+
+export const DEFAULT_GYM_PRICES: GymPrices = { monthly: 199, quarterly: 499, annual: 999 };
+
+/** Applies prices to the fixed shape. Mirrors the server's own derivation. */
+export const buildGymPlans = (prices: Partial<GymPrices> = {}): GymPlan[] => {
+  const monthlyRate = prices.monthly || DEFAULT_GYM_PRICES.monthly;
+  return PLAN_SHAPE.map((shape) => {
+    const price = prices[shape.id] ?? DEFAULT_GYM_PRICES[shape.id];
+    return {
+      ...shape,
+      price,
+      perMonth: Math.round(price / shape.months),
+      savingsPercent: Math.max(0, Math.round((1 - price / shape.months / monthlyRate) * 100)),
+    };
+  });
+};
+
+/** Launch prices, for rendering before the live ones arrive. */
+export const FALLBACK_PLANS: GymPlan[] = buildGymPlans();
+
+/**
+ * Turns whatever the API returned into plans this app can render.
+ *
+ * Only the id and the price are taken from the response; everything shown —
+ * the per-month figure, the saving — is derived here from the same function
+ * every screen uses. So a backend on an older or newer shape can never produce
+ * a half-filled card, and two screens can never disagree about the maths.
+ *
+ * Returns the launch prices when the payload is unusable.
+ */
+export const normalizeGymPlans = (raw: unknown): GymPlan[] => {
+  if (!Array.isArray(raw) || raw.length === 0) return FALLBACK_PLANS;
+
+  const prices: Partial<GymPrices> = {};
+  for (const item of raw) {
+    const id = (item as { id?: string })?.id as GymPlanId | undefined;
+    const price = Number((item as { price?: unknown })?.price);
+    if (id && id in DEFAULT_GYM_PRICES && Number.isFinite(price) && price > 0) {
+      prices[id] = price;
+    }
+  }
+
+  return Object.keys(prices).length ? buildGymPlans(prices) : FALLBACK_PLANS;
+};
 
 /**
  * What every plan includes.
@@ -66,7 +99,9 @@ export const PLAN_FEATURES = [
   "Hiring support",
 ];
 
-export const findPlan = (id?: string | null) => GYM_PLANS.find((p) => p.id === id) || null;
+/** Looks a plan up in a priced list, or in the fallback when none is given. */
+export const findPlan = (id?: string | null, plans: GymPlan[] = FALLBACK_PLANS) =>
+  plans.find((p) => p.id === id) || null;
 
 export const rupees = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 

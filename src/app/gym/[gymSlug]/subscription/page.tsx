@@ -21,7 +21,15 @@ import Callout from "@/components/workspace/Callout";
 import { PageSkeleton, ErrorState } from "@/components/workspace/States";
 import { api } from "@/lib/api";
 import { openCheckout, type RazorpayResult } from "@/lib/razorpay";
-import { GYM_PLANS, PLAN_FEATURES, findPlan, rupees, shortDate, type GymPlan } from "@/lib/hiring";
+import {
+  FALLBACK_PLANS,
+  PLAN_FEATURES,
+  findPlan,
+  normalizeGymPlans,
+  rupees,
+  shortDate,
+  type GymPlan,
+} from "@/lib/hiring";
 import { supportWhatsAppUrl } from "@/lib/whatsapp";
 
 interface Membership {
@@ -136,6 +144,9 @@ export default function GymSubscriptionPage() {
   const gymSlug = (params?.gymSlug as string) || "";
 
   const [sub, setSub] = useState<Membership | null>(null);
+  // Prices are set by an admin, so they arrive with the membership rather
+  // than being compiled in. The launch prices only fill the first paint.
+  const [plans, setPlans] = useState<GymPlan[]>(FALLBACK_PLANS);
   const [history, setHistory] = useState<PaymentRecord[]>([]);
   const [paymentsEnabled, setPaymentsEnabled] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -144,11 +155,15 @@ export default function GymSubscriptionPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const res = await api<{ subscription?: Membership; history?: PaymentRecord[]; paymentsEnabled?: boolean }>(
-      `/gyms/${gymSlug}/membership`
-    );
+    const res = await api<{
+      subscription?: Membership;
+      plans?: GymPlan[];
+      history?: PaymentRecord[];
+      paymentsEnabled?: boolean;
+    }>(`/gyms/${gymSlug}/membership`);
     if (res.ok && res.data?.subscription) {
       setSub(res.data.subscription);
+      if (res.data.plans?.length) setPlans(normalizeGymPlans(res.data.plans));
       setHistory(res.data.history || []);
       setPaymentsEnabled(res.data.paymentsEnabled !== false);
       setError("");
@@ -237,7 +252,7 @@ export default function GymSubscriptionPage() {
   if (!sub) return <ErrorState message={error} onRetry={load} />;
 
   const active = sub.isActive;
-  const currentPlan = findPlan(sub.plan);
+  const currentPlan = findPlan(sub.plan, plans);
   const expiringSoon = active && sub.daysLeft != null && sub.daysLeft <= 7;
 
   return (
@@ -342,7 +357,7 @@ export default function GymSubscriptionPage() {
 
       {/* ── The three plans ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 md:mt-8">
-        {GYM_PLANS.map((plan) => (
+        {plans.map((plan) => (
           <PlanCard
             key={plan.id}
             plan={plan}
