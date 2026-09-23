@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { LayoutDashboard, Briefcase, Plus, CreditCard, Building2, MapPin } from "lucide-react";
-import DashboardShell, { type AttentionItem } from "@/components/dashboard/DashboardShell";
+import DashboardShell from "@/components/dashboard/DashboardShell";
 import { loginPathFor, readStoredUser } from "@/lib/session";
 import { api } from "@/lib/api";
 
@@ -13,8 +13,6 @@ export default function GymDashboardLayout({ children }: { children: React.React
   const gymSlug = (params?.gymSlug as string) || "";
 
   const [gym, setGym] = useState({ gymName: "", gymLogo: "", city: "", locations: 1 });
-  const [subscriptionActive, setSubscriptionActive] = useState<boolean | null>(null);
-  const [completion, setCompletion] = useState<number | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -47,7 +45,7 @@ export default function GymDashboardLayout({ children }: { children: React.React
     }
 
     (async () => {
-      const res = await api<{ data?: any; subscription?: any; completion?: any }>(`/gyms/${gymSlug}`);
+      const res = await api<{ data?: any }>(`/gyms/${gymSlug}`);
       if (res.ok && res.data?.data) {
         const g = res.data.data;
         setGym({
@@ -56,10 +54,6 @@ export default function GymDashboardLayout({ children }: { children: React.React
           city: g.address?.city || "",
           locations: g.numberOfLocations || 1,
         });
-        setSubscriptionActive(res.data.subscription?.isActive ?? false);
-        setCompletion(
-          typeof res.data.completion?.percent === "number" ? res.data.completion.percent : null
-        );
       }
     })();
   }, [router, gymSlug]);
@@ -80,38 +74,12 @@ export default function GymDashboardLayout({ children }: { children: React.React
     { name: "Profile & Settings", shortName: "Profile", href: `/gym/${gymSlug}/profile`, icon: Building2 },
   ];
 
-  /**
-   * What the bell reports.
-   *
-   * Only things that are genuinely waiting on this gym, so the badge count is
-   * never a decoration. No items, no badge.
-   */
-  const attention = useMemo<AttentionItem[]>(() => {
-    const items: AttentionItem[] = [];
-    if (subscriptionActive === false) {
-      items.push({
-        label: "Your plan isn't active",
-        detail: "Choose a plan to keep hiring with FitWorks.",
-        href: `/gym/${gymSlug}/subscription`,
-      });
-    }
-    if (completion !== null && completion < 100) {
-      items.push({
-        label: `Your gym profile is ${completion}% complete`,
-        detail: "A fuller profile is easier for our team to place trainers into.",
-        href: `/gym/${gymSlug}/profile?tab=profile`,
-      });
-    }
-    return items;
-  }, [subscriptionActive, completion, gymSlug]);
-
   return (
     <DashboardShell
       menuLabel="Gym Menu"
       onLogout={handleLogout}
       navLinks={navLinks}
       roleLabel="Gym Owner"
-      attention={attention}
       // Searching runs on the vacancies screen, which already filters on
       // exactly these fields — so the bar hands the query over rather than
       // re-implementing it.

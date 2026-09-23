@@ -9,7 +9,6 @@ import {
   MoreHorizontal,
   X,
   Search,
-  Bell,
   ChevronDown,
   ArrowRight,
   UserCircle,
@@ -29,13 +28,6 @@ export interface DashboardProfile {
   subtitle?: React.ReactNode;
   image?: string;
   initial: string;
-  href: string;
-}
-
-/** Something the account needs to deal with. Drives the bell. */
-export interface AttentionItem {
-  label: string;
-  detail?: string;
   href: string;
 }
 
@@ -66,7 +58,6 @@ export default function DashboardShell({
   onLogout,
   roleLabel,
   search,
-  attention = [],
   promo,
   children,
 }: {
@@ -78,17 +69,14 @@ export default function DashboardShell({
   roleLabel?: string;
   /** Omitted when the dashboard has nothing worth searching. */
   search?: { placeholder: string; onSubmit: (query: string) => void };
-  attention?: AttentionItem[];
   promo?: SidebarPromo;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
-  const [bellOpen, setBellOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
 
   const searchRef = useRef<HTMLInputElement>(null);
-  const bellRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
 
   // The longest nav href the current path sits under wins. Without this,
@@ -118,20 +106,15 @@ export default function DashboardShell({
     };
   }, [moreOpen]);
 
-  /** Close either menu on an outside click or Escape. */
+  /** Close the account menu on an outside click or Escape. */
   useEffect(() => {
-    if (!bellOpen && !accountOpen) return;
+    if (!accountOpen) return;
 
     const onDown = (e: MouseEvent) => {
-      const t = e.target as Node;
-      if (bellOpen && bellRef.current && !bellRef.current.contains(t)) setBellOpen(false);
-      if (accountOpen && accountRef.current && !accountRef.current.contains(t)) setAccountOpen(false);
+      if (accountRef.current && !accountRef.current.contains(e.target as Node)) setAccountOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setBellOpen(false);
-        setAccountOpen(false);
-      }
+      if (e.key === "Escape") setAccountOpen(false);
     };
 
     document.addEventListener("mousedown", onDown);
@@ -140,7 +123,7 @@ export default function DashboardShell({
       document.removeEventListener("mousedown", onDown);
       window.removeEventListener("keydown", onKey);
     };
-  }, [bellOpen, accountOpen]);
+  }, [accountOpen]);
 
   /** ⌘K / Ctrl+K focuses the search, as the hint in it promises. */
   useEffect(() => {
@@ -295,57 +278,6 @@ export default function DashboardShell({
           )}
 
           <div className="flex items-center gap-2.5 shrink-0">
-            {/* The bell only exists when something actually needs doing. */}
-            <div ref={bellRef} className="relative">
-              <button
-                onClick={() => setBellOpen((o) => !o)}
-                aria-label={
-                  attention.length ? `${attention.length} things need attention` : "Nothing needs attention"
-                }
-                aria-expanded={bellOpen}
-                className="relative w-11 h-11 rounded-full bg-white ring-1 ring-gray-200/80 text-gray-500 flex items-center justify-center hover:text-gray-900 hover:ring-gray-300 transition-colors cursor-pointer"
-              >
-                <Bell className="w-[18px] h-[18px]" />
-                {attention.length > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#E92E3D] text-white text-[10px] font-extrabold flex items-center justify-center ring-2 ring-[#f7f8fa]">
-                    {attention.length}
-                  </span>
-                )}
-              </button>
-
-              {bellOpen && (
-                <div className="absolute right-0 top-[52px] w-[292px] bg-white rounded-2xl ring-1 ring-gray-200/80 shadow-[0_20px_50px_-16px_rgba(16,24,40,0.28)] overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
-                  <p className="px-4 pt-4 pb-2 text-[11px] font-bold uppercase tracking-[0.1em] text-gray-400">
-                    Needs attention
-                  </p>
-                  {attention.length === 0 ? (
-                    <p className="px-4 pb-4 text-[13px] text-gray-500">
-                      You're all set — nothing waiting on you.
-                    </p>
-                  ) : (
-                    <ul className="pb-2">
-                      {attention.map((item) => (
-                        <li key={item.label}>
-                          <Link
-                            href={item.href}
-                            onClick={() => setBellOpen(false)}
-                            className="block px-4 py-3 hover:bg-gray-50 transition-colors"
-                          >
-                            <span className="block text-[13.5px] font-bold text-gray-900">
-                              {item.label}
-                            </span>
-                            {item.detail && (
-                              <span className="block text-[12px] text-gray-500 mt-0.5">{item.detail}</span>
-                            )}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
-            </div>
-
             {/* Account menu — the only way out on desktop now the sidebar
                 foot belongs to the promo card. */}
             <div ref={accountRef} className="relative">
