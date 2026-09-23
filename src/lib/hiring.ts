@@ -33,8 +33,11 @@ export type GymPrices = Record<GymPlanId, number>;
  */
 const PLAN_SHAPE: { id: GymPlanId; name: string; months: number; cadence: string; best?: boolean }[] = [
   { id: "monthly", name: "FitWorks Monthly", months: 1, cadence: "per month" },
-  { id: "quarterly", name: "FitWorks 3 Months", months: 3, cadence: "per 3 months" },
-  { id: "annual", name: "FitWorks Annual", months: 12, cadence: "per year", best: true },
+  // The one we point people at. Annual still shows the larger saving, which
+  // is why this is flagged "Recommended" and not "Best value" — the cheaper
+  // per-month plan is the annual one and the badge must not claim otherwise.
+  { id: "quarterly", name: "FitWorks 3 Months", months: 3, cadence: "per 3 months", best: true },
+  { id: "annual", name: "FitWorks Annual", months: 12, cadence: "per year" },
 ];
 
 export const DEFAULT_GYM_PRICES: GymPrices = { monthly: 199, quarterly: 499, annual: 999 };

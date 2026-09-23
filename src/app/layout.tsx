@@ -116,7 +116,7 @@ export default function RootLayout({
   const pixelId = rawPixelId === "604943784468462" ? "1604943784468462" : rawPixelId;
 
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <head>
         <StructuredData />
       </head>
