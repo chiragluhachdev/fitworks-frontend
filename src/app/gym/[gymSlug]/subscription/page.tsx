@@ -100,7 +100,7 @@ function MembershipCard({
         </>
       )}
 
-      <div className="relative flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+      <div className="relative flex items-center justify-between gap-3">
         <div className="flex items-center gap-4 min-w-0">
           <span
             className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${
@@ -118,7 +118,7 @@ function MembershipCard({
               Your membership
             </p>
             <p
-              className={`text-[19px] sm:text-[22px] font-extrabold tracking-[-0.02em] mt-1 truncate ${
+              className={`text-[17px] sm:text-[20px] font-extrabold tracking-[-0.02em] mt-0.5 truncate ${
                 active ? "text-white" : "text-gray-900"
               }`}
             >
@@ -128,7 +128,7 @@ function MembershipCard({
         </div>
 
         <span
-          className={`inline-flex items-center gap-2 shrink-0 text-[12px] font-bold px-3.5 py-1.5 rounded-full ring-1 ${
+          className={`inline-flex items-center gap-1.5 shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full ring-1 ${
             active
               ? "bg-emerald-500/15 text-emerald-300 ring-emerald-400/30"
               : expired
@@ -192,13 +192,13 @@ function MembershipCard({
           </dl>
         </div>
       ) : (
-        <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-          <p className="text-[14px] text-gray-500 leading-relaxed max-w-sm">
+        <div className="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <p className="text-[13px] text-gray-500 leading-relaxed max-w-sm hidden sm:block">
             {expired
               ? "Renew to keep posting vacancies and having our team find trainers for you."
-              : "Post vacancies and let the FitWorks team find suitable trainers for you. Every plan includes the same features."}
+              : "Let the FitWorks team find suitable trainers for you."}
           </p>
-          <Button size="lg" onClick={onChoose} className="w-full sm:w-auto shrink-0 shadow-sm">
+          <Button size="md" onClick={onChoose} className="w-full sm:w-auto shrink-0 shadow-sm mt-1 sm:mt-0">
             {expired ? "Renew Plan" : "View Plans"} <ArrowDown className="w-4 h-4 ml-1 opacity-70" />
           </Button>
         </div>
@@ -468,13 +468,10 @@ export default function GymSubscriptionPage() {
 
   return (
     <div className="max-w-5xl mx-auto animate-in fade-in duration-500 pb-12">
-      <div className="mb-10 text-center max-w-2xl mx-auto px-4 mt-4">
-        <h1 className="text-[32px] sm:text-[44px] font-extrabold text-gray-900 tracking-[-0.03em] leading-tight mb-3">
+      <div className="mb-6 mt-4">
+        <h1 className="text-[28px] sm:text-[36px] font-extrabold text-gray-900 tracking-[-0.02em] leading-tight">
           Manage your <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-500">Subscription</span>
         </h1>
-        <p className="text-[14px] sm:text-[16px] text-gray-500 leading-relaxed">
-          Every plan includes the exact same features. Longer terms simply cost less per month.
-        </p>
       </div>
 
       {!paymentsEnabled && (
