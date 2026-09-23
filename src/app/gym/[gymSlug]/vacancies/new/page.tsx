@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Check, ArrowLeft, ArrowRight, CheckCircle2, AlertCircle, Sparkles } from "lucide-react";
 import PageHeader from "@/components/workspace/PageHeader";
 import Button from "@/components/workspace/Button";
-import { Field, Input, Select, Textarea } from "@/components/workspace/Field";
+import { Field, Input, Select } from "@/components/workspace/Field";
 import { api } from "@/lib/api";
 import { toast } from "react-hot-toast";
 
@@ -24,16 +24,7 @@ const SPECIALIZATIONS = [
   "Rehabilitation",
 ];
 
-const TRAINER_TYPES = [
-  "Personal Trainer",
-  "Floor Trainer",
-  "Group Class Instructor",
-  "Yoga Instructor",
-  "Zumba Instructor",
-  "Strength Coach",
-  "Head Trainer",
-  "Physiotherapist",
-];
+
 
 const EXPERIENCE = ["Fresher (under 1 year)", "1-3 Years", "3-5 Years", "5+ Years", "Any experience"];
 const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Freelance"];
@@ -48,7 +39,6 @@ const HOURS = [
 const STEPS = [
   { id: 1, name: "The role", short: "Role" },
   { id: 2, name: "Location & pay", short: "Pay" },
-  { id: 3, name: "Details", short: "Details" },
 ];
 
 type Form = {
@@ -128,17 +118,13 @@ export default function PostVacancyPage() {
       if (!form.location.trim()) next.location = "Where is this role based?";
       if (!form.salaryRange.trim()) next.salaryRange = "Trainers need to know what you're paying.";
     }
-    if (which === 3) {
-      if (form.description.trim().length < 20)
-        next.description = "A line or two about the job helps us find the right person.";
-    }
     setErrors(next);
     return Object.keys(next).length === 0;
   };
 
   const next = () => {
     if (!validate(step)) return;
-    setStep((s) => Math.min(3, s + 1));
+    setStep((s) => Math.min(2, s + 1));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -149,7 +135,7 @@ export default function PostVacancyPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate(3)) return;
+    if (!validate(2)) return;
 
     setSubmitting(true);
     setSubmitError("");
@@ -159,7 +145,6 @@ export default function PostVacancyPage() {
       body: JSON.stringify({
         gymSlug,
         position: form.position.trim(),
-        description: form.description.trim(),
         requirements: {
           experience: form.experience,
           specialization: form.specialization,
@@ -331,14 +316,6 @@ export default function PostVacancyPage() {
             </Field>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-              <Field label="Trainer type / role" htmlFor="trainerType">
-                <Select id="trainerType" value={form.trainerType} onChange={set("trainerType")}>
-                  {TRAINER_TYPES.map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
-                </Select>
-              </Field>
-
               <Field label="Specialization" htmlFor="specialization">
                 <Select id="specialization" value={form.specialization} onChange={set("specialization")}>
                   {SPECIALIZATIONS.map((s) => (
@@ -440,62 +417,6 @@ export default function PostVacancyPage() {
           </div>
         )}
 
-        {step === 3 && (
-          <div className="space-y-4 sm:space-y-5 animate-in fade-in slide-in-from-right-2 duration-200">
-            <Field
-              label="What the job involves"
-              required
-              htmlFor="description"
-              error={errors.description}
-              hint="Daily duties, class formats, how many clients — whatever helps us picture the role."
-            >
-              <Textarea
-                id="description"
-                rows={5}
-                value={form.description}
-                onChange={set("description")}
-                placeholder="e.g. Running personal training sessions for 6-8 clients a day, plus two group classes a week…"
-                autoFocus
-              />
-            </Field>
-
-            <Field
-              label="Requirements"
-              htmlFor="requirementsText"
-              hint="Certifications, languages, anything a candidate must have."
-            >
-              <Textarea
-                id="requirementsText"
-                rows={3}
-                value={form.requirementsText}
-                onChange={set("requirementsText")}
-                placeholder="e.g. Certified trainer, comfortable speaking Kannada and English"
-              />
-            </Field>
-
-            <Field
-              label="Additional information"
-              htmlFor="additionalInfo"
-              hint="Incentives, accommodation, meals, anything else worth knowing."
-            >
-              <Textarea
-                id="additionalInfo"
-                rows={3}
-                value={form.additionalInfo}
-                onChange={set("additionalInfo")}
-                placeholder="e.g. Performance incentives on personal training packages"
-              />
-            </Field>
-
-            {submitError && (
-              <div className="flex items-start gap-2.5 p-4 rounded-xl bg-red-50 border border-red-200/70">
-                <AlertCircle className="w-4 h-4 text-brand shrink-0 mt-0.5" />
-                <p className="text-[13px] font-semibold text-brand">{submitError}</p>
-              </div>
-            )}
-          </div>
-        )}
-
         {/* ── Navigation ── */}
         <div className="flex items-center gap-2 mt-6 sm:mt-7 pt-5 sm:pt-6 border-t border-gray-100">
           {step > 1 ? (
@@ -513,7 +434,14 @@ export default function PostVacancyPage() {
 
           <div className="flex-1" />
 
-          {step < 3 ? (
+          {submitError && step === 2 && (
+            <div className="flex items-start gap-2.5 p-2 mr-3 rounded-xl bg-red-50 border border-red-200/70">
+              <AlertCircle className="w-4 h-4 text-brand shrink-0 mt-0.5" />
+              <p className="text-[12px] font-semibold text-brand">{submitError}</p>
+            </div>
+          )}
+
+          {step < 2 ? (
             <Button type="button" onClick={next}>
               Continue <ArrowRight className="w-4 h-4" />
             </Button>
