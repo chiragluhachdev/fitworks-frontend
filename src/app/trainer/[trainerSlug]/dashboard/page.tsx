@@ -93,17 +93,14 @@ export default function TrainerOverviewPage() {
     <div className="max-w-[1000px] mx-auto animate-in fade-in duration-300 pb-10">
 
       {/* ── Hero header ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 rounded-[20px] sm:rounded-[24px] px-5 py-8 sm:px-10 sm:py-12 mb-4 sm:mb-6 shadow-[0_20px_50px_-16px_rgba(16,24,40,0.5)]">
-        <span
-          aria-hidden
-          className="absolute -top-24 -right-16 w-72 h-72 rounded-full bg-brand opacity-20 blur-[80px] pointer-events-none"
-        />
-        <span
-          aria-hidden
-          className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-emerald-500 opacity-10 blur-[60px] pointer-events-none"
+      <section className="relative overflow-hidden bg-[#0a0a0a] rounded-[20px] sm:rounded-[24px] px-5 py-8 sm:px-10 sm:py-12 mb-4 sm:mb-6 shadow-sm flex flex-col justify-center min-h-[240px] sm:min-h-[300px]">
+        {/* Background Image Masked to the right — same technique as gym dashboard */}
+        <div 
+          className="absolute inset-y-0 right-0 w-[80%] sm:w-[60%] bg-[url('https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-60 mix-blend-lighten pointer-events-none"
+          style={{ maskImage: 'linear-gradient(to right, transparent, black 60%)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 60%)' }}
         />
 
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-5">
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-5 max-w-xl">
           {trainer?.personal?.profilePhoto ? (
             <span className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden relative shrink-0 ring-2 ring-white/20">
               <Image src={trainer.personal.profilePhoto} alt="" fill className="object-cover" />
