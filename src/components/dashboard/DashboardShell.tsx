@@ -175,9 +175,9 @@ export default function DashboardShell({
       {/* ───────── Desktop sidebar ───────── */}
       <aside className="hidden md:flex sticky top-0 h-screen w-[268px] shrink-0 bg-white border-r border-gray-200/70 flex-col">
         <div className="px-6 pt-6 pb-5">
-          <Link href="/" aria-label="FitWorks home" className="relative block w-[132px] h-[38px]">
+          <span className="relative block w-[132px] h-[38px]">
             <Image src="/images/logo.png" alt="FitWorks" fill className="object-contain object-left" priority />
-          </Link>
+          </span>
         </div>
 
         <nav aria-label={menuLabel} className="px-3 flex-1 overflow-y-auto">
