@@ -5,9 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { Spinner } from "@/components/workspace/States";
 
 /**
- * Gyms no longer manage an applicant list — FitWorks puts trainers forward, and
- * that lives under /trainers. Kept as a redirect so old links and bookmarks
- * still land somewhere useful.
+ * Gyms don't manage candidates on FitWorks — our team runs the search and
+ * contacts them directly. Kept as a redirect so old links still land somewhere.
  */
 export default function ShortlistedRedirect() {
   const router = useRouter();
@@ -15,8 +14,8 @@ export default function ShortlistedRedirect() {
   const gymSlug = (params?.gymSlug as string) || "";
 
   useEffect(() => {
-    router.replace(`/gym/${gymSlug}/trainers`);
+    router.replace(`/gym/${gymSlug}/dashboard`);
   }, [router, gymSlug]);
 
-  return <Spinner label="Taking you to your trainer recommendations…" />;
+  return <Spinner label="Taking you to your dashboard…" />;
 }

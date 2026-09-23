@@ -3,23 +3,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import {
-  Plus,
-  Briefcase,
-  Users,
-  CreditCard,
-  ArrowRight,
-  Building2,
-  Sparkles,
-  ShieldCheck,
-} from "lucide-react";
+import { Plus, Briefcase, Users, CreditCard, ArrowRight, CheckCircle2 } from "lucide-react";
 import Button from "@/components/workspace/Button";
 import Stat from "@/components/workspace/Stat";
 import Panel from "@/components/workspace/Panel";
 import Empty from "@/components/workspace/Empty";
 import Callout from "@/components/workspace/Callout";
 import HiringSteps from "@/components/workspace/HiringSteps";
-import { ProgressRing } from "@/components/workspace/Progress";
 import { PageSkeleton, ErrorState } from "@/components/workspace/States";
 import { VacancyRowItem } from "@/components/gym/VacancyCard";
 import { api } from "@/lib/api";
@@ -52,7 +42,7 @@ export default function GymOverviewPage() {
   if (loading) return <PageSkeleton />;
   if (!data) return <ErrorState message={error} onRetry={load} />;
 
-  const { gym, stats, subscription, completion, activeVacancies = [] } = data;
+  const { gym, stats, subscription, activeVacancies = [] } = data;
   const firstName = (gym?.contactPerson?.name || "").split(" ")[0];
   const hasVacancies = (stats?.totalVacancies ?? 0) > 0;
   const plan = findPlan(subscription?.plan);
@@ -95,7 +85,7 @@ export default function GymOverviewPage() {
         </div>
       </section>
 
-      {/* ── The four numbers ── */}
+      {/* ── The numbers that change ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
         <Stat
           label="Active vacancies"
@@ -109,15 +99,15 @@ export default function GymOverviewPage() {
           value={stats?.trainersInReview ?? 0}
           icon={Users}
           accent={(stats?.trainersInReview ?? 0) > 0}
-          href={`/gym/${gymSlug}/trainers`}
+          href={`/gym/${gymSlug}/vacancies`}
           hint="Trainers our team is working on for you"
         />
         <Stat
-          label="Shared with you"
-          value={stats?.trainersShared ?? 0}
-          icon={Sparkles}
-          href={`/gym/${gymSlug}/trainers`}
-          hint="Recommendations ready to review"
+          label="Roles filled"
+          value={stats?.filled ?? 0}
+          icon={CheckCircle2}
+          href={`/gym/${gymSlug}/vacancies`}
+          hint="Hired through FitWorks"
         />
         <Stat
           label="Subscription"
@@ -132,9 +122,8 @@ export default function GymOverviewPage() {
         />
       </div>
 
-      {/* ── Anything asking for a decision, at most one at a time ── */}
-      <div className="space-y-3 mb-5 sm:mb-6">
-        {!subscription?.isActive && (
+      {!subscription?.isActive && (
+        <div className="mb-5 sm:mb-6">
           <Callout
             icon={CreditCard}
             tone="warning"
@@ -149,92 +138,42 @@ export default function GymOverviewPage() {
               </Button>
             }
           >
-            Plans start at ₹199 a month and include unlimited vacancies and full hiring support from our
-            team.
+            Unlimited vacancies and full hiring support from our team.
           </Callout>
-        )}
+        </div>
+      )}
 
-        {(stats?.trainersShared ?? 0) > 0 && (
-          <Callout
-            icon={Sparkles}
-            tone="success"
-            title={`${stats.trainersShared} trainer${stats.trainersShared === 1 ? "" : "s"} ready for you to review`}
-            action={
-              <Button href={`/gym/${gymSlug}/trainers`} size="sm">
-                Review now
-              </Button>
+      <Panel
+        title="Your active vacancies"
+        description={
+          hasVacancies
+            ? "Where each of your open roles has got to."
+            : "Your open roles will be listed here."
+        }
+        action={hasVacancies ? { label: "See all", href: `/gym/${gymSlug}/vacancies` } : undefined}
+        bodyClassName={activeVacancies.length ? "p-2 sm:p-2.5" : ""}
+      >
+        {activeVacancies.length === 0 ? (
+          <Empty
+            icon={Briefcase}
+            title={hasVacancies ? "No open vacancies right now" : "You haven't posted a vacancy yet"}
+            description={
+              hasVacancies
+                ? "All your roles are closed or filled. Post a new one whenever you're hiring again."
+                : "Tell us what you're hiring for and our team will start finding suitable trainers for you."
             }
-          >
-            Our team has shortlisted these profiles for your open roles.
-          </Callout>
+            action={{ label: "Post a Vacancy", href: `/gym/${gymSlug}/vacancies/new` }}
+          />
+        ) : (
+          <ul className="divide-y divide-gray-100">
+            {activeVacancies.map((v: any) => (
+              <li key={v._id}>
+                <VacancyRowItem vacancy={v} href={`/gym/${gymSlug}/vacancies/${v._id}`} />
+              </li>
+            ))}
+          </ul>
         )}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
-        {/* ── Active vacancies ── */}
-        <Panel
-          className="lg:col-span-2"
-          title="Your active vacancies"
-          description={
-            hasVacancies
-              ? "Where each of your open roles has got to."
-              : "Your open roles will be listed here."
-          }
-          action={hasVacancies ? { label: "See all", href: `/gym/${gymSlug}/vacancies` } : undefined}
-          bodyClassName={activeVacancies.length ? "p-2 sm:p-2.5" : ""}
-        >
-          {activeVacancies.length === 0 ? (
-            <Empty
-              icon={Briefcase}
-              title={hasVacancies ? "No open vacancies right now" : "You haven't posted a vacancy yet"}
-              description={
-                hasVacancies
-                  ? "All your roles are closed or filled. Post a new one whenever you're hiring again."
-                  : "Tell us what you're hiring for and our team will start finding suitable trainers for you."
-              }
-              action={{ label: "Post a Vacancy", href: `/gym/${gymSlug}/vacancies/new` }}
-            />
-          ) : (
-            <ul className="divide-y divide-gray-100">
-              {activeVacancies.map((v: any) => (
-                <li key={v._id}>
-                  <VacancyRowItem vacancy={v} href={`/gym/${gymSlug}/vacancies/${v._id}`} />
-                </li>
-              ))}
-            </ul>
-          )}
-        </Panel>
-
-        {/* ── Profile completeness ── */}
-        <Panel title="Your gym profile" description="A fuller profile helps trainers say yes.">
-          <div className="flex items-center gap-4">
-            <ProgressRing percent={completion?.percent ?? 0} size={62} />
-            <div className="min-w-0">
-              <p className="text-[14px] font-bold text-gray-900">
-                {completion?.percent >= 100 ? "All done" : `${completion?.percent ?? 0}% complete`}
-              </p>
-              <p className="text-[12.5px] text-gray-500 mt-0.5 leading-snug">
-                {completion?.missing?.length
-                  ? `Still missing: ${completion.missing.slice(0, 2).join(", ")}`
-                  : "Everything a trainer wants to know is here."}
-              </p>
-            </div>
-          </div>
-
-          <Button href={`/gym/${gymSlug}/profile`} variant="secondary" size="md" block className="mt-5">
-            <Building2 className="w-4 h-4" />
-            {completion?.percent >= 100 ? "Edit profile" : "Complete profile"}
-          </Button>
-
-          <div className="mt-5 pt-5 border-t border-gray-100 flex items-start gap-2.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            <p className="text-[12px] text-gray-500 leading-relaxed">
-              Every trainer we put forward has had their certificates and government ID checked by our
-              team.
-            </p>
-          </div>
-        </Panel>
-      </div>
+      </Panel>
 
       <HiringSteps className="mt-4 sm:mt-5" />
     </div>

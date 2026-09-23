@@ -1,10 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { KeyRound, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { KeyRound, CheckCircle2, AlertCircle, Loader2, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Panel from "@/components/workspace/Panel";
+import WorkspaceButton from "@/components/workspace/Button";
 
 export default function TrainerSettingsPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -165,6 +169,21 @@ export default function TrainerSettingsPage() {
           </div>
         </form>
       </div>
+
+      <Panel title="Session">
+        <WorkspaceButton
+          variant="danger"
+          block
+          className="sm:w-auto"
+          onClick={() => {
+            localStorage.removeItem("fitworks_token");
+            localStorage.removeItem("fitworks_user");
+            router.push("/auth");
+          }}
+        >
+          <LogOut className="w-4 h-4" /> Log out
+        </WorkspaceButton>
+      </Panel>
 
     </div>
   );

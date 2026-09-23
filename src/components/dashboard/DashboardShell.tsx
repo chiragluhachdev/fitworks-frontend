@@ -56,9 +56,13 @@ export default function DashboardShell({
 
   const isActive = (href: string) => href === bestMatch;
 
-  // Four primary destinations sit in the tab bar; the rest live under "More".
-  const primary = navLinks.slice(0, 4);
-  const secondary = navLinks.slice(4);
+  // Five tabs fit across a phone. Up to five destinations therefore all get
+  // one, and "More" only appears when there is genuinely something it has to
+  // hold — a sheet in front of a single link is a tap for nothing.
+  const FITS = 5;
+  const needsMore = navLinks.length > FITS;
+  const primary = needsMore ? navLinks.slice(0, FITS - 1) : navLinks;
+  const secondary = needsMore ? navLinks.slice(FITS - 1) : [];
   const secondaryActive = secondary.some((l) => isActive(l.href));
 
   // Lock background scroll while the sheet is open.
@@ -167,7 +171,7 @@ export default function DashboardShell({
         aria-label="Dashboard"
         className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200/80 pb-[env(safe-area-inset-bottom)]"
       >
-        <div className="grid grid-cols-5">
+        <div className="grid" style={{ gridTemplateColumns: `repeat(${primary.length + (needsMore ? 1 : 0)}, minmax(0, 1fr))` }}>
           {primary.map(({ name, shortName, href, icon: Icon }) => {
             const active = isActive(href);
             return (
@@ -185,21 +189,23 @@ export default function DashboardShell({
             );
           })}
 
-          <button
-            onClick={() => setMoreOpen(true)}
-            aria-label="More menu"
-            className={`flex flex-col items-center justify-center gap-1 py-2.5 min-h-[58px] transition-colors ${
-              secondaryActive ? "text-[#d91a24]" : "text-gray-400 active:text-gray-600"
-            }`}
-          >
-            <MoreHorizontal className="w-[22px] h-[22px]" />
-            <span className="text-[10px] font-bold leading-none tracking-tight">More</span>
-          </button>
+          {needsMore && (
+            <button
+              onClick={() => setMoreOpen(true)}
+              aria-label="More menu"
+              className={`flex flex-col items-center justify-center gap-1 py-2.5 min-h-[58px] transition-colors ${
+                secondaryActive ? "text-[#d91a24]" : "text-gray-400 active:text-gray-600"
+              }`}
+            >
+              <MoreHorizontal className="w-[22px] h-[22px]" />
+              <span className="text-[10px] font-bold leading-none tracking-tight">More</span>
+            </button>
+          )}
         </div>
       </nav>
 
       {/* ───────── Mobile "More" sheet ───────── */}
-      {moreOpen && (
+      {moreOpen && needsMore && (
         <div className="md:hidden fixed inset-0 z-50">
           <div
             onClick={() => setMoreOpen(false)}

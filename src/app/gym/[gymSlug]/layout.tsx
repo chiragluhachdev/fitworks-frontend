@@ -2,16 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import {
-  LayoutDashboard,
-  Briefcase,
-  Plus,
-  Users,
-  CreditCard,
-  Building2,
-  LifeBuoy,
-  MapPin,
-} from "lucide-react";
+import { LayoutDashboard, Briefcase, Plus, CreditCard, Building2, MapPin } from "lucide-react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { loginPathFor, readStoredUser } from "@/lib/session";
 import { api } from "@/lib/api";
@@ -73,16 +64,14 @@ export default function GymDashboardLayout({ children }: { children: React.React
     router.push("/auth");
   };
 
-  // The first four reach the mobile tab bar; the rest sit under "More".
-  // Ordered by how often a gym owner needs them, not by importance on paper.
+  // Five destinations, which is exactly what fits across a phone — so every
+  // one of them gets a tab and nothing hides behind a "More" sheet.
   const navLinks = [
     { name: "Overview", shortName: "Home", href: `/gym/${gymSlug}/dashboard`, icon: LayoutDashboard },
     { name: "My Vacancies", shortName: "Vacancies", href: `/gym/${gymSlug}/vacancies`, icon: Briefcase },
     { name: "Post a Vacancy", shortName: "Post", href: `/gym/${gymSlug}/vacancies/new`, icon: Plus },
-    { name: "Trainers", shortName: "Trainers", href: `/gym/${gymSlug}/trainers`, icon: Users },
-    { name: "Subscription", href: `/gym/${gymSlug}/subscription`, icon: CreditCard },
-    { name: "Gym Profile", href: `/gym/${gymSlug}/profile`, icon: Building2 },
-    { name: "Help & Support", href: `/gym/${gymSlug}/help`, icon: LifeBuoy },
+    { name: "Subscription", shortName: "Plan", href: `/gym/${gymSlug}/subscription`, icon: CreditCard },
+    { name: "Profile & Settings", shortName: "Profile", href: `/gym/${gymSlug}/profile`, icon: Building2 },
   ];
 
   return (

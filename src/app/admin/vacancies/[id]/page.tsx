@@ -399,17 +399,6 @@ export default function AdminVacancyWorkspace() {
                               <BadgeCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                             )}
                             <StatusPill label={stage.label} chip={stage.chip} size="sm" />
-                            {row.gymInterest !== "none" && (
-                              <StatusPill
-                                label={
-                                  row.gymInterest === "contact_requested"
-                                    ? "Gym asked for contact"
-                                    : "Gym interested"
-                                }
-                                chip="text-[#d91a24] bg-red-50 border-red-200/70"
-                                size="sm"
-                              />
-                            )}
                           </div>
 
                           <p className="text-[12.5px] text-gray-500 mt-1">

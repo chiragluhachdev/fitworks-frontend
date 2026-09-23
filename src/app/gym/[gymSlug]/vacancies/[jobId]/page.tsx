@@ -102,7 +102,6 @@ export default function GymVacancyDetailPage() {
 
   const status = VACANCY_STATUS[(vacancy.gymStatus as GymVacancyStatus) || "under_review"];
   const inReview = vacancy.candidatesInReview ?? 0;
-  const shared = vacancy.candidatesShared ?? 0;
   const closed = vacancy.status === "closed";
 
   return (
@@ -132,29 +131,20 @@ export default function GymVacancyDetailPage() {
 
       {/* ── Where the search has got to ── */}
       <div className="mb-4 sm:mb-5">
-        {shared > 0 ? (
-          <Callout
-            icon={Sparkles}
-            tone="success"
-            title={`${shared} trainer${shared === 1 ? "" : "s"} shared with you`}
-            action={
-              <Button href={`/gym/${gymSlug}/trainers`} size="sm">
-                Review
-              </Button>
-            }
-          >
-            Our team has put these profiles forward for this role.
-          </Callout>
-        ) : inReview > 0 ? (
-          <Callout icon={Search} tone="info" title={`FitWorks is working on this requirement`}>
-            {inReview} trainer{inReview === 1 ? " is" : "s are"} being reviewed for this role. We'll share
-            the ones worth meeting as soon as we've spoken to them.
-          </Callout>
-        ) : (
-          <Callout icon={Search} tone="neutral" title="FitWorks is working on this requirement">
-            {status.note} We'll let you know the moment we have someone suitable.
-          </Callout>
-        )}
+        <Callout
+          icon={Search}
+          tone={inReview > 0 ? "info" : "neutral"}
+          title="FitWorks is working on this requirement"
+        >
+          {inReview > 0 ? (
+            <>
+              {inReview} trainer{inReview === 1 ? " is" : "s are"} being reviewed for this role. We'll
+              call you as soon as we have someone worth meeting.
+            </>
+          ) : (
+            <>{status.note} We'll get in touch the moment we have someone suitable.</>
+          )}
+        </Callout>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -214,25 +204,16 @@ export default function GymVacancyDetailPage() {
         {/* ── Progress at a glance ── */}
         <div className="space-y-4 sm:space-y-5">
           <Panel title="Trainers for this role">
-            <div className="space-y-4">
-              <div className="flex items-baseline justify-between">
-                <span className="text-[13px] font-semibold text-gray-600">Being reviewed</span>
-                <span className="text-[24px] font-extrabold text-gray-900 tabular-nums">{inReview}</span>
-              </div>
-              <div className="h-px bg-gray-100" />
-              <div className="flex items-baseline justify-between">
-                <span className="text-[13px] font-semibold text-gray-600">Shared with you</span>
-                <span className="text-[24px] font-extrabold text-gray-900 tabular-nums">{shared}</span>
-              </div>
+            <div className="flex items-baseline justify-between">
+              <span className="text-[13px] font-semibold text-gray-600">Being reviewed</span>
+              <span className="text-[28px] font-extrabold text-gray-900 tabular-nums leading-none">
+                {inReview}
+              </span>
             </div>
 
-            <Button href={`/gym/${gymSlug}/trainers`} variant="secondary" block className="mt-5">
-              <Users className="w-4 h-4" /> View recommendations
-            </Button>
-
             <p className="text-[12px] text-gray-400 leading-relaxed mt-4">
-              Trainers don't apply directly. Our team searches the network, checks each profile and
-              introduces the ones who fit.
+              Trainers don't apply directly. Our team searches the network, checks every profile and
+              contacts you with the ones who fit.
             </p>
           </Panel>
         </div>
