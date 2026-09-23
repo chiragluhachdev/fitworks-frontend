@@ -14,8 +14,8 @@ import {
   Crown,
   Lock,
   ArrowDown,
+  ArrowRight,
 } from "lucide-react";
-import PageHeader from "@/components/workspace/PageHeader";
 import Button from "@/components/workspace/Button";
 import Panel from "@/components/workspace/Panel";
 import Callout from "@/components/workspace/Callout";
@@ -54,13 +54,6 @@ interface PaymentRecord {
 
 /* ─────────────────────────── Membership ─────────────────────────── */
 
-/**
- * Where this gym stands.
- *
- * Two genuinely different states rather than one table: an inactive gym has
- * nothing to report, so showing it four fields of em-dashes said nothing and
- * looked broken. It gets the reason and the way out instead.
- */
 function MembershipCard({
   sub,
   plan,
@@ -69,14 +62,12 @@ function MembershipCard({
 }: {
   sub: Membership;
   plan: { name: string } | null;
-  /** The term currently paid for, for the progress bar. */
   term?: { periodStart: string; periodEnd: string };
   onChoose: () => void;
 }) {
   const active = sub.isActive;
   const expired = !active && sub.status === "expired";
 
-  // How far through the paid term we are. Only meaningful with both ends.
   let elapsed: number | null = null;
   if (active && term) {
     const start = new Date(term.periodStart).getTime();
@@ -90,10 +81,10 @@ function MembershipCard({
 
   return (
     <section
-      className={`relative overflow-hidden rounded-[24px] p-5 sm:p-7 ${
+      className={`relative overflow-hidden rounded-[28px] p-5 sm:p-7 transition-all ${
         active
           ? "bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 text-white shadow-[0_20px_50px_-16px_rgba(16,24,40,0.5)]"
-          : "bg-white ring-1 ring-gray-200/70 shadow-[0_1px_3px_rgba(16,24,40,0.06)]"
+          : "bg-white ring-1 ring-gray-200/70 shadow-sm hover:shadow-md"
       }`}
     >
       {active && (
@@ -104,42 +95,42 @@ function MembershipCard({
           />
           <span
             aria-hidden
-            className="absolute -bottom-20 -left-20 w-56 h-56 rounded-full bg-amber-500 opacity-10 blur-[60px] pointer-events-none"
+            className="absolute -bottom-20 -left-20 w-56 h-56 rounded-full bg-amber-500 opacity-15 blur-[60px] pointer-events-none"
           />
         </>
       )}
 
-      <div className="relative flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-        <div className="flex items-center gap-3.5 min-w-0">
+      <div className="relative flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div className="flex items-center gap-4 min-w-0">
           <span
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
-              active ? "bg-white/10 text-amber-300 ring-1 ring-white/15 backdrop-blur-sm" : "bg-gray-100 text-gray-500"
+            className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${
+              active ? "bg-white/10 text-amber-300 ring-1 ring-white/20 backdrop-blur-md" : "bg-gray-50 text-gray-400 ring-1 ring-gray-200/50"
             }`}
           >
-            {active ? <Crown className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+            {active ? <Crown className="w-6 h-6" /> : <Lock className="w-6 h-6" />}
           </span>
           <div className="min-w-0">
             <p
-              className={`text-[10.5px] font-bold uppercase tracking-[0.14em] ${
-                active ? "text-white/40" : "text-gray-400"
+              className={`text-[11px] font-bold uppercase tracking-[0.15em] ${
+                active ? "text-white/50" : "text-gray-400"
               }`}
             >
               Your membership
             </p>
             <p
-              className={`text-[17px] sm:text-[20px] font-extrabold tracking-[-0.02em] mt-0.5 truncate ${
+              className={`text-[19px] sm:text-[22px] font-extrabold tracking-[-0.02em] mt-1 truncate ${
                 active ? "text-white" : "text-gray-900"
               }`}
             >
-              {active && plan ? plan.name : expired ? "Your plan has expired" : "No active plan"}
+              {active && plan ? plan.name : expired ? "Plan Expired" : "No Active Plan"}
             </p>
           </div>
         </div>
 
         <span
-          className={`inline-flex items-center gap-1.5 shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-full ring-1 ${
+          className={`inline-flex items-center gap-2 shrink-0 text-[12px] font-bold px-3.5 py-1.5 rounded-full ring-1 ${
             active
-              ? "bg-emerald-500/15 text-emerald-300 ring-emerald-400/40"
+              ? "bg-emerald-500/15 text-emerald-300 ring-emerald-400/30"
               : expired
               ? "bg-amber-50 text-amber-700 ring-amber-200/70"
               : "bg-gray-100 text-gray-500 ring-gray-200"
@@ -155,58 +146,60 @@ function MembershipCard({
       </div>
 
       {active ? (
-        <div className="relative mt-6">
+        <div className="relative mt-8">
           <div className="flex items-end justify-between gap-3">
-            <p className="text-[30px] sm:text-[36px] font-extrabold leading-none tracking-[-0.03em] tabular-nums">
+            <p className="text-[36px] sm:text-[42px] font-extrabold leading-none tracking-[-0.03em] tabular-nums">
               {sub.daysLeft ?? "—"}
-              <span className="text-[14px] font-bold text-white/45 ml-2">
+              <span className="text-[15px] font-bold text-white/50 ml-2.5">
                 day{sub.daysLeft === 1 ? "" : "s"} left
               </span>
             </p>
             {soon && (
-              <span className="text-[11px] font-bold text-amber-300 bg-amber-500/15 px-2.5 py-1 rounded-full ring-1 ring-amber-400/30 mb-1">
+              <span className="text-[12px] font-bold text-amber-900 bg-amber-400 px-3 py-1 rounded-full shadow-sm mb-1.5 animate-pulse">
                 Renew soon
               </span>
             )}
           </div>
 
           {elapsed !== null && (
-            <div className="mt-4 h-2 w-full rounded-full bg-white/10 overflow-hidden">
+            <div className="mt-5 h-2.5 w-full rounded-full bg-white/10 overflow-hidden shadow-inner">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-white/50 to-white/80 transition-[width] duration-700"
+                className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-300 transition-[width] duration-700 relative"
                 style={{ width: `${elapsed}%` }}
-              />
+              >
+                 <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]" />
+              </div>
             </div>
           )}
 
-          <dl className="flex flex-wrap gap-x-8 gap-y-3 mt-6 pt-6 border-t border-white/10">
+          <dl className="flex flex-wrap gap-x-10 gap-y-4 mt-8 pt-6 border-t border-white/10">
             <div>
-              <dt className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-white/35 flex items-center gap-1.5">
-                <CalendarDays className="w-3 h-3" /> Member since
+              <dt className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/40 flex items-center gap-1.5">
+                <CalendarDays className="w-3.5 h-3.5" /> Member since
               </dt>
-              <dd className="text-[14px] font-bold mt-1.5">
+              <dd className="text-[15px] font-semibold mt-1.5">
                 {sub.startedAt ? shortDate(sub.startedAt) : "—"}
               </dd>
             </div>
             <div>
-              <dt className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-white/35 flex items-center gap-1.5">
-                <Clock className="w-3 h-3" /> Renews on
+              <dt className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/40 flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" /> Renews on
               </dt>
-              <dd className="text-[14px] font-bold mt-1.5">
+              <dd className="text-[15px] font-semibold mt-1.5">
                 {sub.expiresAt ? shortDate(sub.expiresAt) : "—"}
               </dd>
             </div>
           </dl>
         </div>
       ) : (
-        <div className="mt-5">
-          <p className="text-[13.5px] text-gray-500 leading-relaxed">
+        <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+          <p className="text-[14px] text-gray-500 leading-relaxed max-w-sm">
             {expired
               ? "Renew to keep posting vacancies and having our team find trainers for you."
               : "Post vacancies and let the FitWorks team find suitable trainers for you. Every plan includes the same features."}
           </p>
-          <Button size="md" onClick={onChoose} className="mt-5 w-full sm:w-auto">
-            <ArrowDown className="w-4 h-4" /> {expired ? "Renew your plan" : "Choose a plan"}
+          <Button size="lg" onClick={onChoose} className="w-full sm:w-auto shrink-0 shadow-sm">
+            {expired ? "Renew Plan" : "View Plans"} <ArrowDown className="w-4 h-4 ml-1 opacity-70" />
           </Button>
         </div>
       )}
@@ -216,14 +209,6 @@ function MembershipCard({
 
 /* ─────────────────────────── Plan card ─────────────────────────── */
 
-/**
- * One term, priced.
- *
- * The feature list used to be repeated inside all three cards. Every plan
- * carries the same features, so nine identical ticks three times was nine
- * lines of noise that pushed the actual decision — how long, how much — off
- * the bottom of a phone. The list now appears once, below.
- */
 function PlanCard({
   plan,
   current,
@@ -241,69 +226,80 @@ function PlanCard({
 }) {
   return (
     <div
-      className={`relative flex flex-col rounded-[20px] bg-white p-5 transition-all ${
+      className={`relative flex flex-col justify-between rounded-[24px] bg-white p-5 sm:p-6 transition-all duration-300 ${
         plan.best
-          ? "ring-2 ring-gray-900 shadow-[0_18px_44px_-20px_rgba(16,24,40,0.35)]"
-          : "ring-1 ring-gray-200/70 shadow-[0_1px_2px_rgba(16,24,40,0.04)]"
+          ? "ring-2 ring-gray-900 shadow-[0_20px_50px_-12px_rgba(16,24,40,0.18)] hover:shadow-[0_25px_60px_-12px_rgba(16,24,40,0.25)] hover:-translate-y-1.5 z-10"
+          : "ring-1 ring-gray-200/80 shadow-sm hover:shadow-xl hover:ring-gray-300 hover:-translate-y-1"
       }`}
     >
-      <div className="flex items-start justify-between gap-2 min-h-[26px]">
-        {plan.best ? (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-900 text-white text-[10px] font-extrabold uppercase tracking-[0.1em]">
-            <Sparkles className="w-3 h-3" /> Recommended
+      <div className="flex-1">
+        <div className="flex items-start justify-between gap-2 min-h-[28px]">
+          {plan.best ? (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-900 text-white text-[10px] font-extrabold uppercase tracking-[0.1em] shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" /> Recommended
+            </span>
+          ) : (
+            <span />
+          )}
+          {plan.savingsPercent > 0 && (
+            <span className="inline-flex items-center shrink-0 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 text-[11px] font-extrabold">
+              Save {plan.savingsPercent}%
+            </span>
+          )}
+        </div>
+
+        <h3 className="text-[16px] font-bold text-gray-500 mt-5">{plan.name.replace("FitWorks ", "")}</h3>
+
+        <div className="flex items-baseline gap-1.5 mt-2">
+          <span className="text-[36px] sm:text-[40px] font-extrabold text-gray-900 tracking-[-0.035em] leading-none">
+            {rupees(plan.price)}
           </span>
-        ) : (
-          <span />
-        )}
-        {plan.savingsPercent > 0 && (
-          <span className="inline-flex items-center shrink-0 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/70 text-[10.5px] font-extrabold">
-            Save {plan.savingsPercent}%
-          </span>
-        )}
+          <span className="text-[13px] font-semibold text-gray-400">{plan.cadence}</span>
+        </div>
+
+        <p className="text-[13px] text-gray-500 mt-4 leading-relaxed pr-2">
+          {plan.months === 1 ? (
+            <>Billed every month. Cancel by simply not renewing.</>
+          ) : (
+            <>
+              Works out to <span className="font-bold text-gray-900 bg-gray-100 px-1.5 py-0.5 rounded-md">{rupees(plan.perMonth)}</span> a month, paid once upfront.
+            </>
+          )}
+        </p>
+
+        <ul className="mt-5 space-y-2.5">
+          {PLAN_FEATURES.slice(0, 3).map((f) => (
+            <li key={f} className="flex items-start gap-2.5 text-[12.5px] text-gray-600 leading-snug">
+              <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-px" />
+              {f}
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <h3 className="text-[14px] font-bold text-gray-500 mt-4">{plan.name.replace("FitWorks ", "")}</h3>
-
-      <div className="flex items-baseline gap-1.5 mt-1.5">
-        <span className="text-[32px] font-extrabold text-gray-900 tracking-[-0.035em] leading-none">
-          {rupees(plan.price)}
-        </span>
-        <span className="text-[12.5px] font-semibold text-gray-400">{plan.cadence}</span>
-      </div>
-
-      <p className="text-[12px] text-gray-500 mt-2.5 leading-relaxed">
-        {plan.months === 1 ? (
-          <>Billed every month. Cancel by simply not renewing.</>
-        ) : (
-          <>
-            Works out to{" "}
-            <span className="font-bold text-gray-900">{rupees(plan.perMonth)}</span> a month, paid
-            once.
-          </>
-        )}
-      </p>
-
-      <div className="mt-5">
+      <div className="mt-6 pt-6 border-t border-gray-100/80">
         {current ? (
           <>
-            <div className="h-11 rounded-xl bg-emerald-50 ring-1 ring-emerald-200/70 text-emerald-700 text-[13.5px] font-bold flex items-center justify-center gap-2">
-              <Check className="w-4 h-4" /> Current plan
+            <div className="h-12 rounded-xl bg-emerald-50 ring-1 ring-emerald-200 text-emerald-700 text-[14px] font-bold flex items-center justify-center gap-2">
+              <Check className="w-4.5 h-4.5" /> Current Plan
             </div>
             <button
               onClick={onChoose}
               disabled={busy || disabled}
-              className="w-full text-[12.5px] font-bold text-gray-500 hover:text-brand mt-2.5 transition-colors cursor-pointer disabled:opacity-50"
+              className="w-full text-[13px] font-bold text-gray-500 hover:text-brand mt-3 transition-colors cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
             >
-              {busy ? "Opening…" : "Extend this plan"}
+              {busy ? "Opening…" : "Extend this plan"} <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </>
         ) : (
           <Button
             block
+            size="lg"
             variant={plan.best ? "primary" : "secondary"}
             loading={busy}
             disabled={disabled}
             onClick={onChoose}
+            className="w-full text-[14px] shadow-sm"
           >
             {renewing ? "Switch to this" : "Choose plan"}
           </Button>
@@ -320,8 +316,6 @@ export default function GymSubscriptionPage() {
   const gymSlug = (params?.gymSlug as string) || "";
 
   const [sub, setSub] = useState<Membership | null>(null);
-  // Prices are set by an admin, so they arrive with the membership rather
-  // than being compiled in. The launch prices only fill the first paint.
   const [plans, setPlans] = useState<GymPlan[]>(FALLBACK_PLANS);
   const [history, setHistory] = useState<PaymentRecord[]>([]);
   const [paymentsEnabled, setPaymentsEnabled] = useState(true);
@@ -358,12 +352,6 @@ export default function GymSubscriptionPage() {
     load();
   }, [load]);
 
-  /**
-   * Open the carousel on the recommended plan.
-   *
-   * Instant rather than smooth: the page sets scroll-behavior globally, and a
-   * carousel that slides itself sideways on load looks like a glitch.
-   */
   const recommended = Math.max(0, plans.findIndex((p) => p.best));
 
   useEffect(() => {
@@ -371,7 +359,6 @@ export default function GymSubscriptionPage() {
     const track = trackRef.current;
     const card = cardRefs.current[recommended];
     if (!track || !card) return;
-    // Only when it actually scrolls — on desktop this is a grid.
     if (track.scrollWidth <= track.clientWidth) return;
 
     track.scrollTo({
@@ -381,7 +368,6 @@ export default function GymSubscriptionPage() {
     setVisibleCard(recommended);
   }, [loading, recommended, plans.length]);
 
-  /** Which card is centred, for the dots. */
   const onTrackScroll = () => {
     const track = trackRef.current;
     if (!track) return;
@@ -409,11 +395,6 @@ export default function GymSubscriptionPage() {
     });
   };
 
-  /**
-   * Raise the order on our server, hand it to Razorpay, then verify the result
-   * on our server. The browser never decides what was bought — it only carries
-   * the signature back.
-   */
   const pay = async (plan: GymPlan) => {
     setBusy(plan.id);
 
@@ -448,9 +429,8 @@ export default function GymSubscriptionPage() {
           contact: d.contactPhone || undefined,
         },
         notes: { gym: d.gymName || gymSlug },
-        theme: { color: "#E92E3D" },
+        theme: { color: "#111827" }, // Updated to match sleek dark styling
         modal: {
-          // Closing the window is not a failure — just stop the spinner.
           ondismiss: () => setBusy(null),
         },
         handler: async (result: RazorpayResult) => {
@@ -465,7 +445,6 @@ export default function GymSubscriptionPage() {
             toast.success(verify.data.message || "Payment received — your membership is active.");
             load();
           } else {
-            // The money may well have left their account; never imply it didn't.
             toast.error(
               verify.error ||
                 "We couldn't confirm the payment yet. If it was debited, it'll appear here shortly."
@@ -488,14 +467,18 @@ export default function GymSubscriptionPage() {
   const expiringSoon = active && sub.daysLeft != null && sub.daysLeft <= 7;
 
   return (
-    <div className="max-w-5xl mx-auto animate-in fade-in duration-300">
-      <PageHeader
-        title="Subscription"
-        description="Every plan includes the same features. Longer terms simply cost less per month."
-      />
+    <div className="max-w-5xl mx-auto animate-in fade-in duration-500 pb-12">
+      <div className="mb-10 text-center max-w-2xl mx-auto px-4 mt-4">
+        <h1 className="text-[32px] sm:text-[44px] font-extrabold text-gray-900 tracking-[-0.03em] leading-tight mb-3">
+          Manage your <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-500">Subscription</span>
+        </h1>
+        <p className="text-[14px] sm:text-[16px] text-gray-500 leading-relaxed">
+          Every plan includes the exact same features. Longer terms simply cost less per month.
+        </p>
+      </div>
 
       {!paymentsEnabled && (
-        <div className="mb-4">
+        <div className="mb-6">
           <Callout
             icon={MessageCircle}
             tone="warning"
@@ -505,7 +488,7 @@ export default function GymSubscriptionPage() {
                 href={supportWhatsAppUrl("Hi FitWorks! 👋\n\nI'd like to set up a plan for my gym.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center h-9 px-3.5 rounded-lg bg-white ring-1 ring-gray-200 text-[13px] font-bold text-gray-800 hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center justify-center h-10 px-4 rounded-xl bg-white ring-1 ring-gray-200 shadow-sm text-[13px] font-bold text-gray-800 hover:bg-gray-50 transition-colors"
               >
                 Message us
               </a>
@@ -517,7 +500,7 @@ export default function GymSubscriptionPage() {
       )}
 
       {expiringSoon && (
-        <div className="mb-4">
+        <div className="mb-6">
           <Callout
             icon={Clock}
             tone="warning"
@@ -537,22 +520,20 @@ export default function GymSubscriptionPage() {
       />
 
       {/* ── Plans ── */}
-      <div ref={plansRef} className="mt-6 sm:mt-8 scroll-mt-24">
-        <h2 className="text-[15px] sm:text-[16px] font-bold text-gray-900 px-1">
-          {active ? "Change or extend your plan" : "Choose a plan"}
-        </h2>
+      <div ref={plansRef} className="mt-10 sm:mt-14 scroll-mt-24">
+        <div className="flex flex-col items-center mb-6">
+          <h2 className="text-[20px] sm:text-[24px] font-extrabold text-gray-900 tracking-tight">
+            {active ? "Change or extend your plan" : "Choose your plan"}
+          </h2>
+          <p className="text-gray-500 mt-1.5 text-sm">Select the billing cycle that works best for you.</p>
+        </div>
 
-        {/*
-          One track, two behaviours: a snapping carousel on a phone, where three
-          cards side by side would be 110px each, and a plain grid from md up.
-          The cards sit at 78% so the next and previous ones peek in — that edge
-          is the only thing that tells a thumb there is more to see.
-        */}
+        {/* Added py-4 -my-4 to prevent hover shadows from being clipped inside the hidden overflow wrapper */}
         <div
           ref={trackRef}
           onScroll={onTrackScroll}
-          className="mt-3.5 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none -mx-3 px-3
-            md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible"
+          className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-none -mx-4 px-4 py-4 -my-4
+            md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible items-stretch"
         >
           {plans.map((plan, i) => (
             <div
@@ -560,7 +541,7 @@ export default function GymSubscriptionPage() {
               ref={(el) => {
                 cardRefs.current[i] = el;
               }}
-              className="snap-center shrink-0 w-[78%] sm:w-[52%] md:w-auto py-1"
+              className="snap-center shrink-0 w-[82%] sm:w-[55%] md:w-auto h-auto"
             >
               <PlanCard
                 plan={plan}
@@ -574,32 +555,33 @@ export default function GymSubscriptionPage() {
           ))}
         </div>
 
-        {/* Dots, mobile only — they say how many there are and where you are. */}
-        <div className="flex md:hidden items-center justify-center gap-2 mt-4">
+        <div className="flex md:hidden items-center justify-center gap-2 mt-6">
           {plans.map((plan, i) => (
             <button
               key={plan.id}
               onClick={() => scrollToCard(i)}
               aria-label={`Show ${plan.name}`}
               aria-current={visibleCard === i}
-              className={`h-1.5 rounded-full transition-all ${
-                visibleCard === i ? "w-6 bg-gray-900" : "w-1.5 bg-gray-300"
+              className={`h-2 rounded-full transition-all duration-300 ${
+                visibleCard === i ? "w-8 bg-gray-900" : "w-2 bg-gray-300"
               }`}
             />
           ))}
         </div>
       </div>
 
-      {/* ── Features, once ── */}
+      {/* ── Features ── */}
       <Panel
-        className="mt-5 sm:mt-6"
+        className="mt-10 sm:mt-12 bg-gray-50 border-none ring-1 ring-gray-200/50"
         title="Every plan includes"
-        description="Nothing is held back from the shorter terms."
+        description="Full access to FitWorks platform. Nothing is held back from the shorter terms."
       >
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
           {PLAN_FEATURES.map((f) => (
-            <li key={f} className="flex items-start gap-2.5 text-[12.5px] sm:text-[13px] text-gray-600 leading-snug">
-              <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-px" />
+            <li key={f} className="flex items-start gap-3 text-[14px] text-gray-700 leading-snug">
+              <span className="bg-emerald-100 rounded-full p-0.5 mt-0.5 shrink-0">
+                <Check className="w-3.5 h-3.5 text-emerald-600" />
+              </span>
               {f}
             </li>
           ))}
@@ -609,27 +591,27 @@ export default function GymSubscriptionPage() {
       {/* ── Receipts ── */}
       {history.length > 0 && (
         <Panel
-          className="mt-5"
-          title="Payments"
-          description="Every term you've paid for."
+          className="mt-8 shadow-sm ring-1 ring-gray-200/70"
+          title="Payment History"
+          description="A record of every term you've paid for."
           bodyClassName="p-0"
         >
           <ul className="divide-y divide-gray-100">
             {history.map((h) => (
-              <li key={h.paymentId} className="flex items-center gap-3.5 px-4 sm:px-5 py-4">
-                <span className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                  <Receipt className="w-[18px] h-[18px]" />
+              <li key={h.paymentId} className="flex items-center gap-4 px-5 sm:px-6 py-4.5 hover:bg-gray-50/50 transition-colors">
+                <span className="w-12 h-12 rounded-[14px] bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <Receipt className="w-5 h-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13.5px] sm:text-[14px] font-bold text-gray-900">
+                  <p className="text-[14px] sm:text-[15px] font-bold text-gray-900">
                     {findPlan(h.plan, plans)?.name || h.plan}
                   </p>
-                  <p className="text-[11.5px] sm:text-[12px] text-gray-500 mt-0.5">
+                  <p className="text-[12px] sm:text-[13px] text-gray-500 mt-1">
                     {shortDate(h.periodStart)} – {shortDate(h.periodEnd)}
                   </p>
-                  <p className="text-[10.5px] text-gray-400 mt-0.5 font-mono truncate">{h.paymentId}</p>
+                  <p className="text-[11px] text-gray-400 mt-1 font-mono truncate">{h.paymentId}</p>
                 </div>
-                <span className="text-[14px] sm:text-[15px] font-extrabold text-gray-900 tabular-nums shrink-0">
+                <span className="text-[15px] sm:text-[16px] font-extrabold text-gray-900 tabular-nums shrink-0">
                   {rupees(h.amount)}
                 </span>
               </li>
@@ -638,11 +620,11 @@ export default function GymSubscriptionPage() {
         </Panel>
       )}
 
-      <div className="mt-5 sm:mt-6 flex items-start sm:items-center gap-3 p-4 sm:p-5 rounded-[20px] bg-white ring-1 ring-gray-200/70">
-        <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5 sm:mt-0" />
-        <p className="text-[12.5px] sm:text-[13px] text-gray-600 leading-relaxed">
-          Payments are handled by Razorpay. FitWorks never sees or stores your card details, and
-          there is no auto-renewal — your plan simply ends unless you renew it.
+      <div className="mt-8 flex items-start sm:items-center gap-4 p-5 rounded-[24px] bg-gray-50 ring-1 ring-gray-200/70">
+        <ShieldCheck className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5 sm:mt-0" />
+        <p className="text-[13px] sm:text-[14px] text-gray-600 leading-relaxed">
+          Payments are securely handled by Razorpay. FitWorks never sees or stores your card details, and
+          there is no auto-renewal — your plan simply ends unless you renew it manually.
         </p>
       </div>
     </div>
