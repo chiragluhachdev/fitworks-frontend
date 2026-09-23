@@ -98,7 +98,6 @@ export default function AdminApplications() {
             { id: "all", label: `All (${applications.length})` },
             { id: "shortlisted", label: `Shortlisted (${shortlistedCount})` },
             { id: "contacted", label: "Contacted" },
-            { id: "shared", label: "Shared" },
             { id: "connected", label: "Connected" },
             { id: "hired", label: `Hired (${hiredCount})` },
           ].map((tab) => (

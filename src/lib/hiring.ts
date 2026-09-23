@@ -173,7 +173,6 @@ export type CandidateStage =
   | "contacted"
   | "interested"
   | "not_interested"
-  | "shared"
   | "connected"
   | "hired"
   | "rejected";
@@ -185,7 +184,6 @@ export const CANDIDATE_STAGE: Record<CandidateStage, { label: string; chip: stri
   contacted: { label: "Contacted", chip: "text-sky-700 bg-sky-50 border-sky-200/70" },
   interested: { label: "Interested", chip: "text-teal-700 bg-teal-50 border-teal-200/70" },
   not_interested: { label: "Not interested", chip: "text-gray-500 bg-gray-100 border-gray-200" },
-  shared: { label: "Shared with gym", chip: "text-indigo-700 bg-indigo-50 border-indigo-200/70" },
   connected: { label: "Connected", chip: "text-amber-700 bg-amber-50 border-amber-200/70" },
   hired: { label: "Hired", chip: "text-emerald-700 bg-emerald-50 border-emerald-200/70" },
   rejected: { label: "Not a fit", chip: "text-gray-500 bg-gray-100 border-gray-200" },

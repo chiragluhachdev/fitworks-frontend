@@ -16,7 +16,6 @@ export interface VacancyRow {
   requirements?: { experience?: string; specialization?: string; trainerType?: string };
   gymStatus?: GymVacancyStatus;
   candidatesInReview?: number;
-  candidatesShared?: number;
   createdAt?: string;
 }
 
@@ -30,7 +29,6 @@ export interface VacancyRow {
 export default function VacancyCard({ vacancy, href }: { vacancy: VacancyRow; href: string }) {
   const status = VACANCY_STATUS[vacancy.gymStatus || "under_review"];
   const inReview = vacancy.candidatesInReview ?? 0;
-  const shared = vacancy.candidatesShared ?? 0;
 
   return (
     <Link
@@ -79,11 +77,9 @@ export default function VacancyCard({ vacancy, href }: { vacancy: VacancyRow; hr
         {/* Candidate count — the one figure worth a glance. */}
         <div className="shrink-0 text-right pl-3 border-l border-gray-100 self-stretch flex flex-col justify-center min-w-[92px]">
           <p className="text-[26px] font-extrabold text-gray-900 leading-none tabular-nums">
-            {shared || inReview}
+            {inReview}
           </p>
-          <p className="text-[11px] font-semibold text-gray-400 mt-1.5 leading-tight">
-            {shared > 0 ? "shared with you" : "being reviewed"}
-          </p>
+          <p className="text-[11px] font-semibold text-gray-400 mt-1.5 leading-tight">being reviewed</p>
           <span className="inline-flex items-center justify-end gap-1 text-[11.5px] font-bold text-[#d91a24] mt-2.5 opacity-0 group-hover:opacity-100 transition-opacity">
             Details <ArrowUpRight className="w-3.5 h-3.5" />
           </span>
@@ -96,7 +92,7 @@ export default function VacancyCard({ vacancy, href }: { vacancy: VacancyRow; hr
 /** Compact row for the overview list — the same data, less of it. */
 export function VacancyRowItem({ vacancy, href }: { vacancy: VacancyRow; href: string }) {
   const status = VACANCY_STATUS[vacancy.gymStatus || "under_review"];
-  const count = (vacancy.candidatesShared ?? 0) || (vacancy.candidatesInReview ?? 0);
+  const count = vacancy.candidatesInReview ?? 0;
 
   return (
     <Link

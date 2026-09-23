@@ -44,7 +44,6 @@ const CANDIDATE_FLOW: CandidateStage[] = [
   "contacted",
   "interested",
   "not_interested",
-  "shared",
   "connected",
   "hired",
   "rejected",
@@ -364,7 +363,7 @@ export default function AdminVacancyWorkspace() {
         <div className="lg:col-span-2 space-y-4 sm:space-y-5">
           <Panel
             title={`Shortlist (${shortlist.length})`}
-            description="Trainers being worked on for this role. Moving someone to “Shared” makes them visible to the gym."
+            description="Trainers being worked on for this role. Mark someone Connected once you've put them and the gym in touch."
             bodyClassName={shortlist.length ? "p-0" : ""}
           >
             {shortlist.length === 0 ? (
