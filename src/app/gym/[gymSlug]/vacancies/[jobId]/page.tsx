@@ -149,6 +149,40 @@ export default function GymVacancyDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
         <div className="lg:col-span-2 space-y-4 sm:space-y-5">
+          {vacancy.finalizedCandidates && vacancy.finalizedCandidates.length > 0 && (
+            <Panel title="Finalized Trainers">
+              <div className="space-y-3">
+                {vacancy.finalizedCandidates.map((t: any) => (
+                  <div key={t._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-xl ring-1 ring-gray-200/70 gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-bold shrink-0">
+                        {t.personal?.fullName?.charAt(0) || "T"}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[14px] font-bold text-gray-900 truncate">{t.personal?.fullName}</p>
+                        <p className="text-[13px] text-gray-500 font-medium">{t.personal?.phone}</p>
+                      </div>
+                    </div>
+                    {t.personal?.phone && (
+                      <a
+                        href={`https://wa.me/91${t.personal.phone.replace(/\D/g, "").slice(-10)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2 sm:px-3 sm:py-1.5 bg-[#25D366]/10 hover:bg-[#25D366]/20 transition-colors text-[#128C3E] rounded-lg text-[13px] font-bold w-full sm:w-auto"
+                      >
+                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                          <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.25-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.48s1.07 2.86 1.22 3.06c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35z" />
+                          <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.25 8.23z" />
+                        </svg>
+                        Message
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Panel>
+          )}
+
           <Panel title="Role details">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <Detail icon={MapPin} label="Location" value={vacancy.location} />
