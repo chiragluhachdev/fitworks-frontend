@@ -81,7 +81,7 @@ function MembershipCard({
 
   return (
     <section
-      className={`relative overflow-hidden rounded-[28px] p-5 sm:p-7 transition-all ${
+      className={`relative overflow-hidden rounded-[20px] sm:rounded-[24px] p-4 sm:p-5 transition-all ${
         active
           ? "bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 text-white shadow-[0_20px_50px_-16px_rgba(16,24,40,0.5)]"
           : "bg-white ring-1 ring-gray-200/70 shadow-sm hover:shadow-md"
@@ -100,18 +100,18 @@ function MembershipCard({
         </>
       )}
 
-      <div className="relative flex items-center justify-between gap-3">
-        <div className="flex items-center gap-4 min-w-0">
+      <div className="relative flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3.5 min-w-0">
           <span
-            className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${
+            className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 ${
               active ? "bg-white/10 text-amber-300 ring-1 ring-white/20 backdrop-blur-md" : "bg-gray-50 text-gray-400 ring-1 ring-gray-200/50"
             }`}
           >
-            {active ? <Crown className="w-6 h-6" /> : <Lock className="w-6 h-6" />}
+            {active ? <Crown className="w-5 h-5 sm:w-6 sm:h-6" /> : <Lock className="w-5 h-5 sm:w-6 sm:h-6" />}
           </span>
           <div className="min-w-0">
             <p
-              className={`text-[11px] font-bold uppercase tracking-[0.15em] ${
+              className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.15em] ${
                 active ? "text-white/50" : "text-gray-400"
               }`}
             >
@@ -128,7 +128,7 @@ function MembershipCard({
         </div>
 
         <span
-          className={`inline-flex items-center gap-1.5 shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full ring-1 ${
+          className={`inline-flex items-center gap-1.5 shrink-0 text-[11px] sm:text-[12px] font-bold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full ring-1 ${
             active
               ? "bg-emerald-500/15 text-emerald-300 ring-emerald-400/30"
               : expired
@@ -192,13 +192,13 @@ function MembershipCard({
           </dl>
         </div>
       ) : (
-        <div className="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="mt-4 sm:mt-5 pt-4 sm:pt-5 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <p className="text-[13px] text-gray-500 leading-relaxed max-w-sm hidden sm:block">
             {expired
               ? "Renew to keep posting vacancies and having our team find trainers for you."
-              : "Let the FitWorks team find suitable trainers for you."}
+              : "Post vacancies and let the FitWorks team find suitable trainers for you. Every plan includes the same features."}
           </p>
-          <Button size="md" onClick={onChoose} className="w-full sm:w-auto shrink-0 shadow-sm mt-1 sm:mt-0">
+          <Button size="md" onClick={onChoose} className="w-full sm:w-auto shrink-0 shadow-sm">
             {expired ? "Renew Plan" : "View Plans"} <ArrowDown className="w-4 h-4 ml-1 opacity-70" />
           </Button>
         </div>
@@ -468,10 +468,13 @@ export default function GymSubscriptionPage() {
 
   return (
     <div className="max-w-5xl mx-auto animate-in fade-in duration-500 pb-12">
-      <div className="mb-6 mt-4">
-        <h1 className="text-[28px] sm:text-[36px] font-extrabold text-gray-900 tracking-[-0.02em] leading-tight">
-          Manage your <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-500">Subscription</span>
+      <div className="mb-6 mt-2">
+        <h1 className="text-[24px] sm:text-[28px] font-extrabold text-gray-900 tracking-[-0.02em] leading-tight">
+          Subscription
         </h1>
+        <p className="text-[14px] text-gray-500 mt-1">
+          Every plan includes the exact same features. Longer terms simply cost less per month.
+        </p>
       </div>
 
       {!paymentsEnabled && (
