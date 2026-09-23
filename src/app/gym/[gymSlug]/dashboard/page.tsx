@@ -17,7 +17,7 @@ import {
 import Button from "@/components/workspace/Button";
 import { PageSkeleton, ErrorState } from "@/components/workspace/States";
 import { VacancyRowItem } from "@/components/gym/VacancyCard";
-import HowItWorksPlayer from "@/components/workspace/HowItWorksPlayer";
+import HowItWorksPlayer, { HowItWorksInline } from "@/components/workspace/HowItWorksPlayer";
 import { api } from "@/lib/api";
 import { findPlan, shortDate } from "@/lib/hiring";
 
@@ -203,7 +203,7 @@ export default function GymOverviewPage() {
                 }`}
               >
                 {completion.percent}
-                <span className="text-[14px] font-bold text-gray-400">%</span>
+                <span className="text-[14px] font-bold opacity-50">%</span>
               </span>
             ) : undefined
           }
@@ -318,46 +318,10 @@ export default function GymOverviewPage() {
           <div className="bg-white rounded-[24px] border border-gray-100 shadow-sm p-6 h-full flex flex-col min-h-[400px]">
             <h2 className="text-[16px] font-bold text-gray-900 mb-6">How FitWorks Works</h2>
             
-            {/* Manually structured vertical 1-2-3 list for clean sidebar formatting */}
-            <div className="flex-1 flex flex-col gap-7">
-              {/* Step 1 */}
-              <div className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-[#FFF5F6] text-[#E92E3D] flex items-center justify-center font-bold text-[14px] shrink-0">
-                  1
-                </div>
-                <div>
-                  <h4 className="text-[13px] font-bold text-gray-900">Post your vacancy</h4>
-                  <p className="text-[12px] text-gray-500 mt-1 leading-relaxed">
-                    Share your hiring requirements in a few minutes.
-                  </p>
-                </div>
-              </div>
-              
-              {/* Step 2 */}
-              <div className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-[#FFF5F6] text-[#E92E3D] flex items-center justify-center font-bold text-[14px] shrink-0">
-                  2
-                </div>
-                <div>
-                  <h4 className="text-[13px] font-bold text-gray-900">Our team finds suitable trainers</h4>
-                  <p className="text-[12px] text-gray-500 mt-1 leading-relaxed">
-                    We review your requirement and shortlist verified trainers.
-                  </p>
-                </div>
-              </div>
-              
-              {/* Step 3 */}
-              <div className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-[#FFF5F6] text-[#E92E3D] flex items-center justify-center font-bold text-[14px] shrink-0">
-                  3
-                </div>
-                <div>
-                  <h4 className="text-[13px] font-bold text-gray-900">Connect & hire</h4>
-                  <p className="text-[12px] text-gray-500 mt-1 leading-relaxed">
-                    We connect you with the right trainers and support you throughout the process.
-                  </p>
-                </div>
-              </div>
+            {/* The same three steps, playing. Nobody reads a 1-2-3 list twice;
+                the loop says it once and keeps saying it. */}
+            <div className="flex-1">
+              <HowItWorksInline onExpand={() => setExplainerOpen(true)} />
             </div>
 
             {/* Contact Support Footer */}
@@ -371,7 +335,7 @@ export default function GymOverviewPage() {
                   <p className="text-[11px] text-gray-500">Our team is here to support you.</p>
                 </div>
               </div>
-              <Link href="/support" className="text-[12px] font-bold text-[#E92E3D] bg-[#FFF5F6] px-3 py-2 rounded-lg hover:bg-red-50 transition-colors whitespace-nowrap">
+              <Link href={`/gym/${gymSlug}/profile?tab=support`} className="text-[12px] font-bold text-[#E92E3D] bg-[#FFF5F6] px-3 py-2 rounded-lg hover:bg-red-50 transition-colors whitespace-nowrap">
                 Contact Support
               </Link>
             </div>

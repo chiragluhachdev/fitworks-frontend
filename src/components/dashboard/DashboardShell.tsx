@@ -31,12 +31,14 @@ export interface DashboardProfile {
   href: string;
 }
 
-/** A card pinned to the foot of the desktop sidebar. */
+/** A quiet prompt pinned to the foot of the desktop sidebar. */
 export interface SidebarPromo {
   title: string;
   body: string;
+  /** The link's own wording, e.g. "Post a vacancy". */
+  action: string;
   href: string;
-  image: string;
+  icon: LucideIcon;
 }
 
 /**
@@ -206,30 +208,25 @@ export default function DashboardShell({
         </nav>
 
         {promo && (
-          <div className="p-4">
+          <div className="p-3">
+            {/* Calm on purpose. This used to be a dark card with a busy photo
+                behind the text, which pulled the eye away from the navigation
+                it sits under — and the copy had to fight the figures to stay
+                legible. */}
             <Link
               href={promo.href}
-              className="group relative block overflow-hidden rounded-2xl bg-gray-900 p-5 pb-16 min-h-[232px]"
+              className="group block rounded-2xl bg-[#FFF7F7] ring-1 ring-red-100/80 hover:ring-red-200 p-4 transition-colors"
             >
-              <Image
-                src={promo.image}
-                alt=""
-                fill
-                sizes="240px"
-                className="object-cover opacity-45 group-hover:opacity-55 group-hover:scale-105 transition-all duration-500"
-              />
-              <span
-                aria-hidden
-                className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/70 to-gray-950/10"
-              />
-              <span className="relative block">
-                <span className="block text-[17px] font-extrabold text-white leading-tight tracking-[-0.01em]">
-                  {promo.title}
+              <span className="flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-lg bg-white text-[#E92E3D] ring-1 ring-red-100 flex items-center justify-center shrink-0">
+                  <promo.icon className="w-4 h-4" />
                 </span>
-                <span className="block text-[12.5px] text-white/65 mt-2 leading-relaxed">{promo.body}</span>
+                <span className="text-[13.5px] font-bold text-gray-900 leading-tight">{promo.title}</span>
               </span>
-              <span className="absolute bottom-5 left-5 w-9 h-9 rounded-full bg-[#E92E3D] text-white flex items-center justify-center group-hover:scale-110 transition-transform">
-                <ArrowRight className="w-4 h-4" />
+              <span className="block text-[12px] text-gray-500 mt-2.5 leading-relaxed">{promo.body}</span>
+              <span className="inline-flex items-center gap-1.5 text-[12px] font-bold text-[#E92E3D] mt-3">
+                {promo.action}
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </span>
             </Link>
           </div>

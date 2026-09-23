@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { LayoutDashboard, Briefcase, Plus, CreditCard, Building2, MapPin } from "lucide-react";
+import { LayoutDashboard, Briefcase, Plus, CreditCard, Building2, MapPin, Users } from "lucide-react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { loginPathFor, readStoredUser } from "@/lib/session";
 import { api } from "@/lib/api";
@@ -92,9 +92,10 @@ export default function GymDashboardLayout({ children }: { children: React.React
       }}
       promo={{
         title: "Build a stronger team",
-        body: "Find verified fitness professionals with FitWorks.",
+        body: "Tell us what you're hiring for and our team finds verified trainers for you.",
+        action: "Post a vacancy",
         href: `/gym/${gymSlug}/vacancies/new`,
-        image: "/images/gym_team.jpg",
+        icon: Users,
       }}
       profile={{
         name: gym.gymName || "Your Gym",

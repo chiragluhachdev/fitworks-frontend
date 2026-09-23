@@ -2,7 +2,17 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { X, Play, Pause, ChevronLeft, ChevronRight, RotateCcw, Check, MapPin } from "lucide-react";
+import {
+  X,
+  Play,
+  Pause,
+  ChevronLeft,
+  ChevronRight,
+  RotateCcw,
+  Check,
+  MapPin,
+  Maximize2,
+} from "lucide-react";
 
 /**
  * A twenty-second explainer of how FitWorks hires for a gym.
@@ -306,31 +316,10 @@ const SCENES: Scene[] = [
   },
 ];
 
-/* ─────────────────────────── Player ─────────────────────────── */
+/* ─────────────────────── Shared clock & pieces ─────────────────────── */
 
-export default function HowItWorksPlayer({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
-  const [scene, setScene] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const [playing, setPlaying] = useState(true);
-  const [ended, setEnded] = useState(false);
+function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
-
-  // The bar renders from state; the clock resumes from the ref. One setter
-  // keeps them from drifting apart.
-  const progressRef = useRef(0);
-  const setProgressBoth = useCallback((p: number) => {
-    progressRef.current = p;
-    setProgress(p);
-  }, []);
-
-  // Someone who has asked their system not to animate things gets the scenes
-  // as stills, advanced by hand.
   useEffect(() => {
     if (typeof window === "undefined" || !window.matchMedia) return;
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -338,6 +327,29 @@ export default function HowItWorksPlayer({
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
+  }, []);
+  return reduced;
+}
+
+/**
+ * Drives the scene sequence.
+ *
+ * Shared by the modal and the inline card so there is one definition of how
+ * long a scene runs and what happens at the end of one.
+ */
+function useSceneClock({ active, loop }: { active: boolean; loop: boolean }) {
+  const [scene, setScene] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [playing, setPlaying] = useState(true);
+  const [ended, setEnded] = useState(false);
+  const reduced = useReducedMotion();
+
+  // The bar renders from state; the clock resumes from the ref. One setter
+  // keeps them from drifting apart.
+  const progressRef = useRef(0);
+  const setProgressBoth = useCallback((p: number) => {
+    progressRef.current = p;
+    setProgress(p);
   }, []);
 
   const goTo = useCallback(
@@ -349,17 +361,16 @@ export default function HowItWorksPlayer({
     [setProgressBoth]
   );
 
-  // Every opening starts from the beginning and plays.
+  // Every activation starts from the beginning and plays.
   useEffect(() => {
-    if (open) {
+    if (active) {
       goTo(0);
       setPlaying(true);
     }
-  }, [open, goTo]);
+  }, [active, goTo]);
 
-  /* ── The clock ── */
   useEffect(() => {
-    if (!open || !playing || ended || reduced) return;
+    if (!active || !playing || ended || reduced) return;
 
     const duration = SCENES[scene].ms;
     let frame = 0;
@@ -375,6 +386,8 @@ export default function HowItWorksPlayer({
         frame = requestAnimationFrame(tick);
       } else if (scene < SCENES.length - 1) {
         goTo(scene + 1);
+      } else if (loop) {
+        goTo(0);
       } else {
         setEnded(true);
         setPlaying(false);
@@ -383,7 +396,164 @@ export default function HowItWorksPlayer({
 
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [open, playing, scene, ended, reduced, goTo, setProgressBoth]);
+  }, [active, playing, scene, ended, reduced, loop, goTo, setProgressBoth]);
+
+  return { scene, progress, playing, setPlaying, ended, reduced, goTo };
+}
+
+/** Chapter segments. Clickable when the caller has somewhere to jump to. */
+function Scrubber({
+  scene,
+  progress,
+  playing,
+  onJump,
+}: {
+  scene: number;
+  progress: number;
+  playing: boolean;
+  onJump?: (index: number) => void;
+}) {
+  return (
+    <div className="flex gap-1.5">
+      {SCENES.map((s, i) => {
+        const fill = (
+          <span
+            className="block h-full bg-white rounded-full"
+            style={{
+              width: i < scene ? "100%" : i === scene ? `${progress * 100}%` : "0%",
+              transition: i === scene && !playing ? "width 150ms linear" : "none",
+            }}
+          />
+        );
+        const shell = "flex-1 h-[3px] rounded-full bg-white/15 overflow-hidden";
+
+        return onJump ? (
+          <button
+            key={s.id}
+            onClick={() => onJump(i)}
+            aria-label={`${s.chapter}: ${s.title}`}
+            className={`${shell} cursor-pointer`}
+          >
+            {fill}
+          </button>
+        ) : (
+          <span key={s.id} className={shell} aria-hidden>
+            {fill}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+/** The lit box the scenes play in. */
+function Stage({ scene, ended, className = "" }: { scene: number; ended: boolean; className?: string }) {
+  const current = SCENES[scene];
+  const Body = current.Body;
+
+  return (
+    <div
+      key={`${current.id}-${ended ? "end" : "run"}`}
+      className={`relative overflow-hidden rounded-[20px] bg-[#101014] ring-1 ring-white/[0.06] ${className}`}
+    >
+      {/* One warm light source behind everything. */}
+      <span
+        aria-hidden
+        className="absolute -top-24 left-1/2 -translate-x-1/2 w-[320px] h-[320px] rounded-full bg-[#E92E3D] opacity-[0.16] blur-[70px] pointer-events-none"
+      />
+      <span
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{ boxShadow: "inset 0 0 90px 20px rgba(0,0,0,0.55)" }}
+      />
+      <Body />
+    </div>
+  );
+}
+
+/* ─────────────────────────── Inline card ─────────────────────────── */
+
+/**
+ * The explainer playing in place, on loop.
+ *
+ * Meant for a panel that would otherwise hold the same three steps as text.
+ * It pauses itself when scrolled out of view — an animation nobody is looking
+ * at should not be spending their battery — and hands off to the modal for
+ * anyone who wants the transport controls.
+ */
+export function HowItWorksInline({
+  onExpand,
+  className = "",
+}: {
+  onExpand?: () => void;
+  className?: string;
+}) {
+  const [visible, setVisible] = useState(true);
+  const hostRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), {
+      threshold: 0.25,
+    });
+    io.observe(host);
+    return () => io.disconnect();
+  }, []);
+
+  const { scene, progress, playing, ended, goTo } = useSceneClock({ active: visible, loop: true });
+  const current = SCENES[scene];
+
+  return (
+    <div ref={hostRef} className={`flex flex-col ${className}`}>
+      <style>{KEYFRAMES}</style>
+
+      <div className="rounded-[20px] bg-[#0b0b0d] p-3">
+        <Stage
+          scene={scene}
+          ended={ended}
+          className="h-[214px]"
+        />
+        <div className="px-1 pt-3">
+          <Scrubber scene={scene} progress={progress} playing={playing} onJump={goTo} />
+        </div>
+
+        <div key={`inline-cap-${current.id}`} className="fw-anim fw-cap px-1 pt-3.5 pb-1.5 min-h-[92px]">
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#E92E3D]">
+            {current.chapter}
+          </p>
+          <h3 className="text-[15px] font-extrabold text-white tracking-[-0.01em] mt-1">
+            {current.title}
+          </h3>
+          <p className="text-[12px] text-white/55 leading-relaxed mt-1">{current.caption}</p>
+        </div>
+      </div>
+
+      {onExpand && (
+        <button
+          onClick={onExpand}
+          className="mt-3 inline-flex items-center justify-center gap-2 h-10 rounded-xl text-[12.5px] font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors cursor-pointer"
+        >
+          <Maximize2 className="w-3.5 h-3.5" /> Watch full size
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────── Modal player ─────────────────────────── */
+
+export default function HowItWorksPlayer({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  const { scene, progress, playing, setPlaying, ended, reduced, goTo } = useSceneClock({
+    active: open,
+    loop: false,
+  });
 
   /* ── Keyboard and scroll ── */
   useEffect(() => {
@@ -405,12 +575,11 @@ export default function HowItWorksPlayer({
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [open, onClose, scene, goTo]);
+  }, [open, onClose, scene, goTo, setPlaying]);
 
   if (!open) return null;
 
   const current = SCENES[scene];
-  const Body = current.Body;
 
   return (
     <div
@@ -428,24 +597,8 @@ export default function HowItWorksPlayer({
 
       {/* Dark, like a player. The stage is the brightest thing in the room. */}
       <div className="relative w-full sm:max-w-[480px] bg-[#0b0b0d] text-white rounded-t-[28px] sm:rounded-[28px] overflow-hidden ring-1 ring-white/10 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)] animate-in slide-in-from-bottom sm:zoom-in-95 duration-300">
-        {/* ── Chapter scrubber ── */}
-        <div className="flex gap-1.5 px-5 pt-5">
-          {SCENES.map((s, i) => (
-            <button
-              key={s.id}
-              onClick={() => goTo(i)}
-              aria-label={`${s.chapter}: ${s.title}`}
-              className="flex-1 h-[3px] rounded-full bg-white/15 overflow-hidden cursor-pointer"
-            >
-              <span
-                className="block h-full bg-white rounded-full"
-                style={{
-                  width: i < scene ? "100%" : i === scene ? `${progress * 100}%` : "0%",
-                  transition: i === scene && !playing ? "width 150ms linear" : "none",
-                }}
-              />
-            </button>
-          ))}
+        <div className="px-5 pt-5">
+          <Scrubber scene={scene} progress={progress} playing={playing} onJump={goTo} />
         </div>
 
         <div className="flex items-center justify-between px-5 pt-3.5">
@@ -461,25 +614,8 @@ export default function HowItWorksPlayer({
           </button>
         </div>
 
-        {/* ── Stage ── */}
-        <div
-          key={`${current.id}-${ended ? "end" : "run"}`}
-          className="relative h-[280px] sm:h-[300px] mx-4 mt-3 rounded-[20px] overflow-hidden bg-[#101014] ring-1 ring-white/[0.06]"
-        >
-          {/* One warm light source behind everything. */}
-          <span
-            aria-hidden
-            className="absolute -top-24 left-1/2 -translate-x-1/2 w-[320px] h-[320px] rounded-full bg-[#E92E3D] opacity-[0.16] blur-[70px] pointer-events-none"
-          />
-          <span
-            aria-hidden
-            className="absolute inset-0 pointer-events-none"
-            style={{ boxShadow: "inset 0 0 90px 20px rgba(0,0,0,0.55)" }}
-          />
-          <Body />
-        </div>
+        <Stage scene={scene} ended={ended} className="h-[280px] sm:h-[300px] mx-4 mt-3" />
 
-        {/* ── Caption ── */}
         <div key={`cap-${current.id}`} className="fw-anim fw-cap px-5 pt-5 pb-1 min-h-[108px]">
           <p className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-[#E92E3D]">
             {current.chapter}
@@ -488,7 +624,6 @@ export default function HowItWorksPlayer({
           <p className="text-[13px] text-white/55 leading-relaxed mt-1.5">{current.caption}</p>
         </div>
 
-        {/* ── Transport ── */}
         <div className="flex items-center gap-2 px-4 pb-5 pt-2">
           <button
             onClick={() => goTo(Math.max(0, scene - 1))}
