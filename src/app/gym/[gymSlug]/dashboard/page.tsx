@@ -155,7 +155,7 @@ export default function GymOverviewPage() {
 
           <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
             <Link 
-              href={`/gym/${gymSlug}/vacancies/new`} 
+              href={subscription?.isActive ? `/gym/${gymSlug}/vacancies/new` : `/gym/${gymSlug}/subscription`} 
               className="inline-flex items-center justify-center bg-brand hover:bg-brand-dark text-white text-[14.5px] sm:text-[15px] font-semibold rounded-xl px-5 sm:px-6 h-12 transition-colors shadow-[0_8px_24px_-10px_rgba(233,46,61,0.9)]"
             >
               <Plus className="w-4 h-4 mr-1.5" /> Post a Vacancy
