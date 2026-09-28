@@ -164,7 +164,10 @@ export default function ForGymsView() {
                   Find a Trainer for Your Gym <ArrowRight className="w-4 h-4 ml-1.5" />
                 </Button>
               </Link>
-              <Link href="/auth">
+              {/* Scrolls to the steps further down the page. It used to send
+                  people to the login screen, which answered a different
+                  question than the one they asked. */}
+              <a href="#how-it-works">
                 <Button
                   variant="outline"
                   className="h-[46px] px-[24px] rounded-xl text-[15px] font-semibold border-gray-200 text-gray-900 hover:bg-gray-50 active:scale-[0.97] transition-all duration-200 ease-out active:duration-0 shadow-xs w-full sm:w-auto"
@@ -172,7 +175,7 @@ export default function ForGymsView() {
                   <PlayCircle className="w-4 h-4 mr-1.5 text-gray-700" />
                   How It Works
                 </Button>
-              </Link>
+              </a>
             </div>
 
             {/* Feature 4-Item Row */}
@@ -275,7 +278,12 @@ export default function ForGymsView() {
       </section>
 
       {/* ── STEPS SECTION ── */}
-      <section className="max-w-[1360px] mx-auto px-6 pt-2 pb-8 md:pb-12">
+      {/* scroll-mt clears the sticky header, which would otherwise cover the
+          eyebrow and heading when the hero's "How It Works" jumps here. */}
+      <section
+        id="how-it-works"
+        className="max-w-[1360px] mx-auto px-6 pt-2 pb-8 md:pb-12 scroll-mt-24"
+      >
         <div className="text-center mb-6 md:mb-8">
           <p className="text-xs font-bold text-[#E92E3D] uppercase tracking-[0.16em] mb-2">
             How It Works
