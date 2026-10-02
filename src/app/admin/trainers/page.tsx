@@ -24,6 +24,10 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import LocationFilter, {
+  type LocationSelection,
+  type LocationState,
+} from "@/components/admin/LocationFilter";
 import WhatsAppButton from "@/components/admin/WhatsAppButton";
 
 const DATE_PRESETS = [
@@ -49,6 +53,10 @@ export default function AdminTrainers() {
   // Within Pending, split by whether documents are waiting to be reviewed —
   // those are the ones that can actually be approved right now.
   const [filterDocs, setFilterDocs] = useState<string>("all");
+  // The state/city tree comes from the API so the filter and the rows agree
+  // on what counts as one place — "banglore" and "Bengaluru" are not two.
+  const [locations, setLocations] = useState<LocationState[]>([]);
+  const [place, setPlace] = useState<LocationSelection>({ state: null, city: null });
   const [selectedTrainer, setSelectedTrainer] = useState<any | null>(null);
   // Full record (account, documents, activity) fetched on open.
   const [detail, setDetail] = useState<any | null>(null);
@@ -142,6 +150,7 @@ export default function AdminTrainers() {
       const data = await res.json();
       if (res.ok) {
         setTrainers(data.data);
+        setLocations(data.locations || []);
       }
     } catch (err) {
       toast.error("Failed to fetch trainers list");
@@ -185,12 +194,26 @@ export default function AdminTrainers() {
   const filteredTrainers = trainers.filter((t) => {
     const name = t.personal?.fullName?.toLowerCase() || "";
     const title = t.professional?.professionalTitle?.toLowerCase() || "";
+    const q = searchTerm.toLowerCase();
     const city = t.personal?.city?.toLowerCase() || "";
-    const matchesSearch = name.includes(searchTerm.toLowerCase()) || 
-                          title.includes(searchTerm.toLowerCase()) || 
-                          city.includes(searchTerm.toLowerCase());
+    const canonicalCity = (t.location?.city || "").toLowerCase();
+    const canonicalState = (t.location?.state || "").toLowerCase();
+    const matchesSearch =
+      name.includes(q) ||
+      title.includes(q) ||
+      city.includes(q) ||
+      canonicalCity.includes(q) ||
+      canonicalState.includes(q);
     
     const matchesStatus = filterStatus === "all" || t.verificationStatus === filterStatus;
+
+    // Matched on the canonical values the server resolved, never on the raw
+    // string — that is the whole point of resolving them.
+    const resolvedState = t.location?.state || "Unknown";
+    const resolvedCity = t.location?.city || "Not specified";
+    const matchesPlace =
+      (!place.state || resolvedState === place.state) &&
+      (!place.city || resolvedCity === place.city);
     const matchesDocs =
       filterStatus !== "pending" || filterDocs === "all"
         ? true
@@ -210,7 +233,7 @@ export default function AdminTrainers() {
       }
     }
 
-    return matchesSearch && matchesStatus && matchesDocs && matchesDate;
+    return matchesSearch && matchesStatus && matchesDocs && matchesDate && matchesPlace;
   });
 
   const pendingTrainers = trainers.filter(t => t.verificationStatus === "pending");
@@ -241,7 +264,8 @@ export default function AdminTrainers() {
       </div>
 
       {/* Filters & Search */}
-      <div className="bg-white rounded-2xl border border-gray-200/80 p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-gray-200/80 p-4 shadow-xs space-y-3">
+       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="relative w-full md:w-80">
           <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -302,6 +326,23 @@ export default function AdminTrainers() {
             </div>
           )}
         </div>
+       </div>
+
+        {/* Place. Sits on its own row because it narrows every tab above it
+            rather than replacing any of them. */}
+        {locations.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-gray-100">
+            <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-gray-400 mr-0.5">
+              Location
+            </span>
+            <LocationFilter locations={locations} value={place} onChange={setPlace} />
+            {(place.state || place.city) && (
+              <span className="text-[12px] font-semibold text-gray-500 ml-auto">
+                {filteredTrainers.length} of {trainers.length} trainers
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Date Filter */}
@@ -400,9 +441,18 @@ export default function AdminTrainers() {
                     {/* Location & Exp */}
                     <td className="px-6 py-4">
                       <div className="space-y-1">
-                        <div className="flex items-center gap-1 text-xs text-gray-700 font-medium">
+                        {/* The resolved place, with what they actually typed
+                            on hover — so a filtered list explains itself
+                            without hiding the original. */}
+                        <div
+                          className="flex items-center gap-1 text-xs text-gray-700 font-medium"
+                          title={trainer.personal?.city ? `Entered as "${trainer.personal.city}"` : undefined}
+                        >
                           <MapPin className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                          {trainer.personal?.city || "India"}
+                          {trainer.location?.city || trainer.personal?.city || "—"}
+                          {trainer.location?.state && (
+                            <span className="text-gray-400 font-normal">, {trainer.location.state}</span>
+                          )}
                         </div>
                         <div className="flex items-center gap-1 text-xs text-gray-500">
                           <Briefcase className="w-3.5 h-3.5 text-gray-400 shrink-0" />
