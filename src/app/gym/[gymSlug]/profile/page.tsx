@@ -80,8 +80,8 @@ const FAQ = [
     a: "Yes. Every trainer we put forward has had their fitness certificates and a government ID checked by our team.",
   },
   {
-    q: "What does a FitWorks plan include?",
-    a: "All three plans include exactly the same thing: unlimited vacancies, unlimited hiring requirements and hands-on hiring support. Longer terms simply cost less per month.",
+    q: "What does FitWorks access include?",
+    a: "Unlimited vacancies, unlimited hiring requirements and hands-on hiring support from our team. It is a single payment — there is no subscription, no renewal and no expiry date.",
   },
   {
     q: "What happens when I fill a role?",

@@ -19,7 +19,7 @@ import { PageSkeleton, ErrorState } from "@/components/workspace/States";
 import { VacancyRowItem } from "@/components/gym/VacancyCard";
 import HowItWorksPlayer, { HowItWorksInline } from "@/components/workspace/HowItWorksPlayer";
 import { api } from "@/lib/api";
-import { findPlan, shortDate } from "@/lib/hiring";
+import { shortDate } from "@/lib/hiring";
 
 /**
  * The accents the tiles are built from.
@@ -124,7 +124,6 @@ export default function GymOverviewPage() {
   const { gym, stats, subscription, completion, activeVacancies = [] } = data;
   const firstName = (gym?.contactPerson?.name || "").split(" ")[0];
   const hasVacancies = (stats?.totalVacancies ?? 0) > 0;
-  const plan = findPlan(subscription?.plan);
 
   return (
     <div className="max-w-[1200px] w-full mx-auto animate-in fade-in duration-300 pb-10">
@@ -216,19 +215,19 @@ export default function GymOverviewPage() {
           label="Subscription"
           hint={
             subscription?.isActive
-              ? `Renews ${shortDate(subscription.expiresAt)}`
-              : "Choose a plan to keep hiring"
+              ? `Since ${shortDate(subscription.activatedAt)} · never expires`
+              : "One payment unlocks everything"
           }
           state={
             subscription?.isActive ? (
               <span className="inline-flex items-center gap-1.5 text-[11.5px] font-bold text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200/70 px-2.5 py-1 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                {plan?.name?.replace("FitWorks ", "") || "Active"}
+                Active
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 text-[11.5px] font-bold text-gray-500 bg-gray-100 ring-1 ring-gray-200 px-2.5 py-1 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                Inactive
+                Locked
               </span>
             )
           }
@@ -251,9 +250,9 @@ export default function GymOverviewPage() {
               <CreditCard className="text-brand w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-[15px] font-bold text-gray-900">Activate your FitWorks plan</h3>
+              <h3 className="text-[15px] font-bold text-gray-900">Unlock your FitWorks account</h3>
               <p className="text-[13px] text-gray-600 mt-0.5">
-                Get unlimited vacancies and full hiring support from our team. Plans start at just ₹199/month.
+                One payment unlocks unlimited vacancies and full hiring support from our team — no renewals.
               </p>
             </div>
           </div>
@@ -261,7 +260,7 @@ export default function GymOverviewPage() {
             href={`/gym/${gymSlug}/subscription`} 
             className="inline-flex items-center justify-center bg-brand hover:bg-red-600 text-white font-medium rounded-xl mt-4 sm:mt-0 px-6 whitespace-nowrap h-11 transition-colors"
           >
-            View Plans <ArrowRight className="w-4 h-4 ml-1.5" />
+            Unlock now <ArrowRight className="w-4 h-4 ml-1.5" />
           </Link>
         </div>
       )}

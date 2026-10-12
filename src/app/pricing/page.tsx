@@ -2,25 +2,24 @@ import type { Metadata } from "next";
 import React from "react";
 import Link from "next/link";
 import { Check, ShieldCheck, Building2, User, ArrowRight, Sparkles, Handshake } from "lucide-react";
-import { PLAN_FEATURES, rupees, type GymPlan } from "@/lib/hiring";
-import { fetchGymPlans } from "@/lib/serverApi";
+import { PLAN_FEATURES, rupees, type GymAccessPlan } from "@/lib/hiring";
+import { fetchGymPlan } from "@/lib/serverApi";
 
 /**
  * Prices are set by an admin, so the copy quotes the live cheapest plan rather
  * than a number baked into the page.
  */
 export async function generateMetadata(): Promise<Metadata> {
-  const plans = await fetchGymPlans();
-  const cheapest = plans.reduce((low, p) => (p.perMonth < low.perMonth ? p : low), plans[0]);
-  const from = `${rupees(cheapest.perMonth)} a month`;
+  const plan = await fetchGymPlan();
+  const from = `${rupees(plan.price)} once`;
 
   return {
-    title: "Pricing Plans for Gyms & Fitness Trainers",
-    description: `Transparent FitWorks pricing. Completely free for trainers. Gyms start at ${from} for unlimited vacancies and hands-on hiring support.`,
+    title: "Pricing for Gyms & Fitness Trainers",
+    description: `Transparent FitWorks pricing. Completely free for trainers. Gyms pay ${from} — no subscription, no renewal.`,
     alternates: { canonical: "/pricing" },
     openGraph: {
-      title: "Pricing Plans for Gyms & Fitness Trainers | FitWorks",
-      description: `Free for trainers. Gym plans from ${from} with unlimited vacancies and FitWorks-assisted hiring.`,
+      title: "Pricing for Gyms & Fitness Trainers | FitWorks",
+      description: `Free for trainers. Gyms pay ${from} for unlimited vacancies and hands-on hiring support.`,
       url: "https://fitworks.in/pricing",
     },
   };
@@ -35,7 +34,7 @@ const TRAINER_FEATURES = [
 ];
 
 export default async function PricingPage() {
-  const plans: GymPlan[] = await fetchGymPlans();
+  const plan: GymAccessPlan = await fetchGymPlan();
 
   return (
     <div className="min-h-screen bg-[#fafafa] pt-20 pb-16 px-4 md:px-8">
@@ -63,66 +62,44 @@ export default async function PricingPage() {
             <div>
               <h2 className="text-[19px] font-extrabold text-gray-900 tracking-[-0.01em]">For gyms</h2>
               <p className="text-[13px] text-gray-500">
-                Every plan includes the same features. Longer terms simply cost less per month.
+                One payment. No subscription, no renewal, no expiry.
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {plans.map((plan) => (
-              <div
-                key={plan.id}
-                className={`relative flex flex-col rounded-[20px] sm:rounded-3xl bg-white p-5 sm:p-7 ring-1 ${
-                  plan.best
-                    ? "ring-2 ring-gray-900 shadow-[0_16px_40px_-18px_rgba(16,24,40,0.28)]"
-                    : "ring-gray-200/70 shadow-[0_1px_2px_rgba(16,24,40,0.04)]"
-                }`}
-              >
-                {plan.best && (
-                  <span className="absolute -top-3 left-7 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-900 text-white text-[10.5px] font-extrabold uppercase tracking-[0.08em]">
-                    <Sparkles className="w-3 h-3" /> Best value
-                  </span>
-                )}
-
-                <h3 className="text-[15px] font-bold text-gray-900">{plan.name}</h3>
-                <div className="flex items-baseline gap-1.5 mt-2.5">
-                  <span className="text-[31px] sm:text-[38px] font-extrabold text-gray-900 tracking-[-0.03em] leading-none">
+          <div className="rounded-[20px] sm:rounded-3xl bg-white ring-2 ring-gray-900 shadow-[0_18px_44px_-20px_rgba(16,24,40,0.35)] overflow-hidden">
+            <div className="p-5 sm:p-9 flex flex-col md:flex-row md:items-center gap-7 sm:gap-10">
+              <div className="md:w-80 shrink-0">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-900 text-white text-[10px] font-extrabold uppercase tracking-[0.1em]">
+                  <Sparkles className="w-3 h-3" /> One-time payment
+                </span>
+                <div className="flex items-baseline gap-2 mt-4">
+                  <span className="text-[42px] sm:text-[52px] font-extrabold text-gray-900 tracking-[-0.04em] leading-none">
                     {rupees(plan.price)}
                   </span>
-                  <span className="text-[13px] font-semibold text-gray-400">{plan.cadence}</span>
+                  <span className="text-[13px] font-semibold text-gray-400">once</span>
                 </div>
-                <p className="text-[12.5px] text-gray-500 mt-2">
-                  {plan.months === 1 ? (
-                    "Billed monthly"
-                  ) : (
-                    <>
-                      Works out to {rupees(plan.perMonth)}/month —{" "}
-                      <span className="font-bold text-emerald-600">save {plan.savingsPercent}%</span>
-                    </>
-                  )}
+                <p className="text-[13px] text-gray-500 mt-3 leading-relaxed">
+                  Pay once and your gym keeps full access to FitWorks. Nothing renews and nothing
+                  runs out.
                 </p>
-
-                <ul className="space-y-2.5 mt-6 pt-6 border-t border-gray-100 flex-1">
-                  {PLAN_FEATURES.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-[12.5px] text-gray-600 leading-snug">
-                      <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-
                 <Link
                   href="/auth/gym-signup"
-                  className={`mt-7 h-12 rounded-xl text-sm font-bold flex items-center justify-center transition-all active:scale-[0.98] ${
-                    plan.best
-                      ? "bg-[#E92E3D] text-white hover:bg-[#d42936]"
-                      : "bg-white text-gray-800 border border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-                  }`}
+                  className="inline-flex items-center justify-center gap-2 mt-5 h-12 px-6 rounded-xl bg-brand text-white text-sm font-bold hover:bg-brand-dark active:scale-[0.98] transition-all"
                 >
-                  Choose plan
+                  Register your gym <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-            ))}
+
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 flex-1">
+                {PLAN_FEATURES.map((f) => (
+                  <li key={f} className="flex items-start gap-2.5 text-[13px] text-gray-600 leading-snug">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -186,8 +163,8 @@ export default async function PricingPage() {
             },
             {
               icon: Sparkles,
-              title: "No limits on any plan",
-              body: "Unlimited vacancies and unlimited hiring requirements, whichever term you pick.",
+              title: "No limits, ever",
+              body: "Unlimited vacancies and unlimited hiring requirements, forever, on the one payment.",
             },
           ].map(({ icon: Icon, title, body }) => (
             <div key={title} className="bg-white rounded-[20px] ring-1 ring-gray-200/70 p-5 sm:p-6">

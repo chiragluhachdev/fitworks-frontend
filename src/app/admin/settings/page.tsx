@@ -8,19 +8,7 @@ import Panel from "@/components/workspace/Panel";
 import { Field, Input } from "@/components/workspace/Field";
 import { PageSkeleton, ErrorState } from "@/components/workspace/States";
 import { api } from "@/lib/api";
-import {
-  DEFAULT_GYM_PRICES,
-  buildGymPlans,
-  rupees,
-  type GymPlanId,
-  type GymPrices,
-} from "@/lib/hiring";
-
-const PLAN_LABELS: { id: GymPlanId; label: string; hint: string }[] = [
-  { id: "monthly", label: "Monthly", hint: "1 month of membership" },
-  { id: "quarterly", label: "3 Months", hint: "3 months of membership" },
-  { id: "annual", label: "Annual", hint: "12 months of membership" },
-];
+import { DEFAULT_GYM_ACCESS_PRICE, rupees } from "@/lib/hiring";
 
 export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
@@ -28,13 +16,9 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
 
   const [otpEnabled, setOtpEnabled] = useState(true);
-  const [prices, setPrices] = useState<Record<GymPlanId, string>>({
-    monthly: String(DEFAULT_GYM_PRICES.monthly),
-    quarterly: String(DEFAULT_GYM_PRICES.quarterly),
-    annual: String(DEFAULT_GYM_PRICES.annual),
-  });
+  const [price, setPrice] = useState(String(DEFAULT_GYM_ACCESS_PRICE));
   /** What was last saved, so we can tell whether anything changed. */
-  const [saved, setSaved] = useState<Record<GymPlanId, string> | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -42,12 +26,8 @@ export default function AdminSettingsPage() {
     if (res.ok && res.data?.data) {
       const d = res.data.data;
       setOtpEnabled(d.otpEnabled !== false);
-      const next = {
-        monthly: String(d.gymPlanPrices?.monthly ?? DEFAULT_GYM_PRICES.monthly),
-        quarterly: String(d.gymPlanPrices?.quarterly ?? DEFAULT_GYM_PRICES.quarterly),
-        annual: String(d.gymPlanPrices?.annual ?? DEFAULT_GYM_PRICES.annual),
-      };
-      setPrices(next);
+      const next = String(d.gymAccessPrice ?? DEFAULT_GYM_ACCESS_PRICE);
+      setPrice(next);
       setSaved(next);
       setError("");
     } else {
@@ -60,53 +40,29 @@ export default function AdminSettingsPage() {
     load();
   }, [load]);
 
-  const numeric = (v: string) => {
-    const n = Number(v);
-    return Number.isFinite(n) && n > 0 ? Math.round(n) : 0;
-  };
-
-  const asPrices = (): GymPrices => ({
-    monthly: numeric(prices.monthly),
-    quarterly: numeric(prices.quarterly),
-    annual: numeric(prices.annual),
-  });
-
-  // Previewed with the same maths the gym and pricing pages use, so what an
-  // admin sees here is exactly what a customer will see.
-  const preview = buildGymPlans(asPrices());
-
-  const ordered =
-    numeric(prices.quarterly) >= numeric(prices.monthly) &&
-    numeric(prices.annual) >= numeric(prices.quarterly);
-  const allValid = PLAN_LABELS.every(({ id }) => numeric(prices[id]) >= 1);
-  const dirty =
-    !saved || PLAN_LABELS.some(({ id }) => prices[id] !== saved[id]);
+  const numeric = Math.round(Number(price));
+  const valid = Number.isFinite(numeric) && Number.isInteger(Number(price)) && numeric >= 1;
+  const dirty = saved !== null && price !== saved;
 
   const save = async () => {
-    if (!allValid) return toast.error("Every plan needs a price of at least ₹1.");
-    if (!ordered) return toast.error("Each longer term should cost more in total than the one before.");
+    if (!valid) return toast.error("Enter a whole number of rupees, at least ₹1.");
 
     setSaving(true);
     const res = await api<{ data?: any }>("/admin/settings", {
       method: "PUT",
-      body: JSON.stringify({ otpEnabled, gymPlanPrices: asPrices() }),
+      body: JSON.stringify({ otpEnabled, gymAccessPrice: numeric }),
     });
     setSaving(false);
 
     if (res.ok) {
-      setSaved({ ...prices });
-      toast.success("Settings saved — new prices are live.");
+      setSaved(price);
+      toast.success("Settings saved — the new price is live.");
     } else {
       toast.error(res.error || "Couldn't save the settings.");
     }
   };
 
-  const reset = () =>
-    setPrices({
-      monthly: String(DEFAULT_GYM_PRICES.monthly),
-      quarterly: String(DEFAULT_GYM_PRICES.quarterly),
-      annual: String(DEFAULT_GYM_PRICES.annual),
-    });
+  const reset = () => setPrice(String(DEFAULT_GYM_ACCESS_PRICE));
 
   if (loading) return <PageSkeleton stats={0} rows={3} />;
   if (error) return <ErrorState message={error} onRetry={load} />;
@@ -127,96 +83,64 @@ export default function AdminSettingsPage() {
         </Button>
       </header>
 
-      {/* ── Gym membership prices ── */}
+      {/* ── Gym access price ── */}
       <Panel
         className="mb-5"
-        title="Gym membership prices"
-        description="What a gym pays for each term. Every plan includes the same features."
+        title="Gym access price"
+        description="What a gym pays, once, for full access. There is no renewal."
         aside={
           <button
             onClick={reset}
             type="button"
-            className="inline-flex items-center gap-1.5 text-[12px] font-bold text-gray-500 hover:text-[#E92E3D] transition-colors cursor-pointer shrink-0"
+            className="inline-flex items-center gap-1.5 text-[12px] font-bold text-gray-500 hover:text-brand transition-colors cursor-pointer shrink-0"
           >
-            <RotateCcw className="w-3.5 h-3.5" /> Reset to defaults
+            <RotateCcw className="w-3.5 h-3.5" /> Reset
           </button>
         }
       >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          {PLAN_LABELS.map(({ id, label, hint }) => (
-            <Field
-              key={id}
-              label={label}
-              htmlFor={`price-${id}`}
-              hint={hint}
-              error={numeric(prices[id]) < 1 ? "Enter a price." : undefined}
-            >
-              <div className="relative">
-                <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                <Input
-                  id={`price-${id}`}
-                  type="number"
-                  min={1}
-                  step={1}
-                  inputMode="numeric"
-                  value={prices[id]}
-                  onChange={(e) => setPrices((p) => ({ ...p, [id]: e.target.value }))}
-                  className="pl-9 font-bold tabular-nums"
-                />
-              </div>
-            </Field>
-          ))}
-        </div>
+        <div className="flex flex-col sm:flex-row sm:items-end gap-5">
+          <Field
+            label="One-time price"
+            htmlFor="gymAccessPrice"
+            hint="Whole rupees."
+            error={!valid ? "Enter a whole number, at least ₹1." : undefined}
+            className="sm:w-56"
+          >
+            <div className="relative">
+              <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              <Input
+                id="gymAccessPrice"
+                type="number"
+                min={1}
+                step={1}
+                inputMode="numeric"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                className="pl-9 font-bold tabular-nums"
+              />
+            </div>
+          </Field>
 
-        {!ordered && allValid && (
-          <p className="mt-4 text-[12.5px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/70 rounded-xl px-3.5 py-2.5">
-            Each longer term should cost more in total than the one before it — otherwise the pricing
-            page reads as a mistake.
-          </p>
-        )}
-
-        {/* What a gym will actually see. */}
-        <div className="mt-6 pt-5 border-t border-gray-100">
-          <p className="text-[12px] font-bold uppercase tracking-[0.07em] text-gray-400 mb-3">
-            How this will read to a gym
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {preview.map((plan) => (
-              <div key={plan.id} className="rounded-xl border border-gray-200/80 bg-gray-50/60 p-4">
-                <p className="text-[12.5px] font-bold text-gray-500">
-                  {plan.name.replace("FitWorks ", "")}
-                </p>
-                <p className="text-[24px] font-extrabold text-gray-900 tracking-[-0.02em] leading-none mt-1.5 tabular-nums">
-                  {rupees(plan.price)}
-                </p>
-                <p className="text-[11.5px] text-gray-500 mt-1.5">{plan.cadence}</p>
-                <p className="text-[11.5px] text-gray-500 mt-1">
-                  {plan.months === 1 ? (
-                    "the benchmark rate"
-                  ) : (
-                    <>
-                      {rupees(plan.perMonth)}/month ·{" "}
-                      <span
-                        className={
-                          plan.savingsPercent > 0 ? "font-bold text-emerald-600" : "text-gray-400"
-                        }
-                      >
-                        {plan.savingsPercent > 0 ? `saves ${plan.savingsPercent}%` : "no saving"}
-                      </span>
-                    </>
-                  )}
-                </p>
-              </div>
-            ))}
+          {/* Rendered the way a gym will see it, so the preview cannot flatter
+              the reality. */}
+          <div className="flex-1 rounded-xl ring-1 ring-gray-200/70 bg-gray-50/60 p-4">
+            <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-gray-400">
+              How this reads to a gym
+            </p>
+            <p className="text-[26px] font-extrabold text-gray-900 tracking-[-0.03em] leading-none mt-2 tabular-nums">
+              {valid ? rupees(numeric) : "—"}
+              <span className="text-[13px] font-semibold text-gray-400 ml-1.5">once</span>
+            </p>
+            <p className="text-[11.5px] text-gray-500 mt-1.5">No renewal, no expiry.</p>
           </div>
         </div>
 
         <div className="mt-5 flex items-start gap-2.5 text-[12px] text-gray-500 leading-relaxed">
           <Info className="w-4 h-4 text-gray-400 shrink-0 mt-px" />
           <p>
-            A new price applies to the next payment only. Gyms already on a plan keep the term they
-            paid for, and their receipts keep the amount they were actually charged.
-            {dirty && <span className="font-bold text-[#E92E3D]"> You have unsaved changes.</span>}
+            A new price applies to the next payment only. Gyms that have already paid keep their
+            access, and their receipt keeps the amount they were actually charged.
+            {dirty && <span className="font-bold text-brand"> You have unsaved changes.</span>}
           </p>
         </div>
       </Panel>

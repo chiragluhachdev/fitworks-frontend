@@ -23,7 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 import StatusPill from "@/components/workspace/StatusPill";
-import { FALLBACK_PLANS, findPlan, normalizeGymPlans, shortDate, type GymPlan } from "@/lib/hiring";
+import { shortDate } from "@/lib/hiring";
 import { api } from "@/lib/api";
 
 const PRESET_GYM_LOGOS = [
@@ -51,8 +51,6 @@ export default function AdminGyms() {
   // Which gym's plan is mid-save, so only that row's control disables.
   const [planBusy, setPlanBusy] = useState<string | null>(null);
 
-  // Prices are configurable, so the override menu reads them from the server.
-  const [plans, setPlans] = useState<GymPlan[]>(FALLBACK_PLANS);
 
   const fetchGyms = async () => {
     try {
@@ -74,10 +72,6 @@ export default function AdminGyms() {
 
   useEffect(() => {
     fetchGyms();
-    // Prices come from Settings; the override menu should quote the real ones.
-    api<{ data?: GymPlan[] }>("/gyms/plans").then((res) => {
-      if (res.ok && res.data?.data?.length) setPlans(normalizeGymPlans(res.data.data));
-    });
   }, []);
 
   const openGymModal = (gym: any) => {
@@ -181,12 +175,18 @@ export default function AdminGyms() {
    * back, or cutting an account off. It records no payment, because none was
    * taken.
    */
-  const setPlan = async (gym: any, value: string) => {
+  /**
+   * Grants or revokes access by hand.
+   *
+   * Gyms buy access through Razorpay on their own screen. This is the support
+   * override — comping a partner, honouring a payment that never came back, or
+   * cutting an account off. It records no payment, because none was taken.
+   */
+  const setAccess = async (gym: any, action: "grant" | "revoke") => {
     setPlanBusy(gym._id);
-    const body = value === "deactivate" ? { action: "deactivate" } : { plan: value };
     const res = await api<{ data?: any; subscription?: any }>(`/admin/gyms/${gym._id}/subscription`, {
       method: "PUT",
-      body: JSON.stringify(body),
+      body: JSON.stringify({ action }),
     });
     setPlanBusy(null);
 
@@ -199,12 +199,12 @@ export default function AdminGyms() {
         )
       );
       toast.success(
-        value === "deactivate"
-          ? `${gym.gymName} set to inactive`
-          : `${gym.gymName} granted ${findPlan(value)?.name} — no payment taken`
+        action === "revoke"
+          ? `${gym.gymName} access revoked`
+          : `${gym.gymName} granted access — no payment taken`
       );
     } else {
-      toast.error(res.error || "Couldn't update the plan.");
+      toast.error(res.error || "Couldn't update access.");
     }
   };
 
@@ -263,7 +263,7 @@ export default function AdminGyms() {
                   <th className="px-6 py-4">City & Address</th>
                   <th className="px-6 py-4">Contact Representative</th>
                   <th className="px-6 py-4">Hiring Budget</th>
-                  <th className="px-6 py-4">Plan</th>
+                  <th className="px-6 py-4">Access</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -340,7 +340,7 @@ export default function AdminGyms() {
                       </div>
                     </td>
 
-                    {/* Membership */}
+                    {/* Access */}
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       {(() => {
                         const state = gym.subscriptionState;
@@ -352,54 +352,52 @@ export default function AdminGyms() {
                           <div className="space-y-1.5">
                             {state?.isActive ? (
                               <StatusPill
-                                label={findPlan(state.plan)?.name.replace("FitWorks ", "") || "Active"}
+                                label="Has access"
                                 chip="text-emerald-700 bg-emerald-50 border-emerald-200/70"
                                 dot="bg-emerald-500"
                                 size="sm"
                               />
-                            ) : state?.status === "expired" ? (
-                              <StatusPill
-                                label="Expired"
-                                chip="text-amber-700 bg-amber-50 border-amber-200/70"
-                                dot="bg-amber-500"
-                                size="sm"
-                              />
                             ) : (
                               <StatusPill
-                                label="No plan"
+                                label="No access"
                                 chip="text-gray-600 bg-gray-100 border-gray-200"
                                 dot="bg-gray-400"
                                 size="sm"
                               />
                             )}
 
-                            {state?.isActive && state.expiresAt && (
+                            {state?.activatedAt && (
                               <p className="text-[10.5px] text-gray-400 font-medium">
-                                until {shortDate(state.expiresAt)}
+                                since {shortDate(state.activatedAt)}
                               </p>
                             )}
 
-                            {paid > 0 && (
+                            {paid > 0 ? (
                               <p className="text-[10.5px] text-gray-400 font-medium">
                                 ₹{paid.toLocaleString("en-IN")} paid
                               </p>
+                            ) : (
+                              state?.isActive && (
+                                <p className="text-[10.5px] font-bold text-amber-600">comped</p>
+                              )
                             )}
 
-                            <select
-                              value=""
+                            <button
                               disabled={planBusy === gym._id}
-                              onChange={(e) => e.target.value && setPlan(gym, e.target.value)}
-                              title="Support override — grants a term without taking payment"
-                              className="h-8 text-[11px] font-semibold border border-gray-200 rounded-lg px-2 bg-white text-gray-600 cursor-pointer outline-none focus:border-[#E92E3D] disabled:opacity-50"
+                              onClick={() => setAccess(gym, state?.isActive ? "revoke" : "grant")}
+                              title="Support override — changes access without taking payment"
+                              className={`h-8 px-2.5 text-[11px] font-bold rounded-lg ring-1 transition-colors cursor-pointer disabled:opacity-50 ${
+                                state?.isActive
+                                  ? "text-gray-600 ring-gray-200 bg-white hover:bg-gray-50"
+                                  : "text-brand ring-red-200 bg-brand-tint hover:bg-red-100"
+                              }`}
                             >
-                              <option value="">{planBusy === gym._id ? "Saving…" : "Override…"}</option>
-                              {plans.map((p) => (
-                                <option key={p.id} value={p.id}>
-                                  Grant {p.name.replace("FitWorks ", "")}
-                                </option>
-                              ))}
-                              <option value="deactivate">Deactivate</option>
-                            </select>
+                              {planBusy === gym._id
+                                ? "Saving…"
+                                : state?.isActive
+                                ? "Revoke"
+                                : "Grant access"}
+                            </button>
                           </div>
                         );
                       })()}

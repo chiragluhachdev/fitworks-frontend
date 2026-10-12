@@ -7,88 +7,41 @@
  * describe the same record differently.
  */
 
-/* ───────────────────────────── Plans ───────────────────────────── */
+/* ───────────────────────── Gym access ───────────────────────── */
 
-export type GymPlanId = "monthly" | "quarterly" | "annual";
-
-export interface GymPlan {
-  id: GymPlanId;
+export interface GymAccessPlan {
+  id: "lifetime";
   name: string;
-  /** Rupees for the whole term. */
+  /** Rupees, charged once. */
   price: number;
-  months: number;
-  /** How the price reads per month, for comparing terms honestly. */
-  perMonth: number;
-  cadence: string;
-  savingsPercent: number;
-  best?: boolean;
 }
 
-export type GymPrices = Record<GymPlanId, number>;
+/** The price we launched at. Only fills the first paint before the API answers. */
+export const DEFAULT_GYM_ACCESS_PRICE = 499;
 
-/**
- * The shape of what we sell. Prices are set by an admin in Settings, so the
- * numbers here are only what a screen shows before the API answers — never
- * what anyone is charged. The server prices every order itself.
- */
-const PLAN_SHAPE: { id: GymPlanId; name: string; months: number; cadence: string; best?: boolean }[] = [
-  { id: "monthly", name: "FitWorks Monthly", months: 1, cadence: "per month" },
-  // The one we point people at. Annual still shows the larger saving, which
-  // is why this is flagged "Recommended" and not "Best value" — the cheaper
-  // per-month plan is the annual one and the badge must not claim otherwise.
-  { id: "quarterly", name: "FitWorks 3 Months", months: 3, cadence: "per 3 months", best: true },
-  { id: "annual", name: "FitWorks Annual", months: 12, cadence: "per year" },
-];
-
-export const DEFAULT_GYM_PRICES: GymPrices = { monthly: 199, quarterly: 499, annual: 999 };
-
-/** Applies prices to the fixed shape. Mirrors the server's own derivation. */
-export const buildGymPlans = (prices: Partial<GymPrices> = {}): GymPlan[] => {
-  const monthlyRate = prices.monthly || DEFAULT_GYM_PRICES.monthly;
-  return PLAN_SHAPE.map((shape) => {
-    const price = prices[shape.id] ?? DEFAULT_GYM_PRICES[shape.id];
-    return {
-      ...shape,
-      price,
-      perMonth: Math.round(price / shape.months),
-      savingsPercent: Math.max(0, Math.round((1 - price / shape.months / monthlyRate) * 100)),
-    };
-  });
-};
-
-/** Launch prices, for rendering before the live ones arrive. */
-export const FALLBACK_PLANS: GymPlan[] = buildGymPlans();
-
-/**
- * Turns whatever the API returned into plans this app can render.
- *
- * Only the id and the price are taken from the response; everything shown —
- * the per-month figure, the saving — is derived here from the same function
- * every screen uses. So a backend on an older or newer shape can never produce
- * a half-filled card, and two screens can never disagree about the maths.
- *
- * Returns the launch prices when the payload is unusable.
- */
-export const normalizeGymPlans = (raw: unknown): GymPlan[] => {
-  if (!Array.isArray(raw) || raw.length === 0) return FALLBACK_PLANS;
-
-  const prices: Partial<GymPrices> = {};
-  for (const item of raw) {
-    const id = (item as { id?: string })?.id as GymPlanId | undefined;
-    const price = Number((item as { price?: unknown })?.price);
-    if (id && id in DEFAULT_GYM_PRICES && Number.isFinite(price) && price > 0) {
-      prices[id] = price;
-    }
-  }
-
-  return Object.keys(prices).length ? buildGymPlans(prices) : FALLBACK_PLANS;
+export const FALLBACK_PLAN: GymAccessPlan = {
+  id: "lifetime",
+  name: "FitWorks Gym Access",
+  price: DEFAULT_GYM_ACCESS_PRICE,
 };
 
 /**
- * What every plan includes.
+ * Reads whatever the API returned into a plan this app can render.
  *
- * Deliberately identical across all three: the longer terms buy a lower rate,
- * not more product. Nothing is withheld from the cheapest plan.
+ * Only the price is taken from the payload; everything shown is derived here,
+ * so a backend on an older or newer shape can never produce a half-filled card.
+ */
+export const normalizeGymPlan = (raw: unknown): GymAccessPlan => {
+  const price = Number((raw as { price?: unknown })?.price);
+  if (!Number.isFinite(price) || price <= 0) return FALLBACK_PLAN;
+  return { ...FALLBACK_PLAN, price };
+};
+
+/**
+ * What access buys.
+ *
+ * Gyms pay once, so this is the whole offer — there is no cheaper tier holding
+ * anything back, and nothing to compare against.
  */
 export const PLAN_FEATURES = [
   "Unlimited vacancy posting",
@@ -101,10 +54,6 @@ export const PLAN_FEATURES = [
   "Gym profile",
   "Hiring support",
 ];
-
-/** Looks a plan up in a priced list, or in the fallback when none is given. */
-export const findPlan = (id?: string | null, plans: GymPlan[] = FALLBACK_PLANS) =>
-  plans.find((p) => p.id === id) || null;
 
 export const rupees = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 
