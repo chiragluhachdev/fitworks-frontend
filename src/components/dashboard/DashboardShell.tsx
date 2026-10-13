@@ -172,25 +172,25 @@ export default function DashboardShell({
           <Link href="/" aria-label="FitWorks home" className="relative w-[104px] h-[30px] shrink-0">
             <Image src="/images/logo.png" alt="FitWorks" fill sizes="132px" className="object-contain object-left" priority />
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
               type="button"
               onClick={() => setLogoutConfirmOpen(true)}
               aria-label="Sign out"
               title="Sign out"
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-gray-500 bg-gray-50 border border-gray-200/70 hover:text-[#E92E3D] hover:bg-red-50 hover:border-red-100 active:bg-red-100 transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 bg-gray-50/90 border border-gray-200/60 hover:text-[#E92E3D] hover:bg-red-50 hover:border-red-100 active:bg-red-100 transition-colors cursor-pointer shrink-0"
             >
-              <LogOut className="w-4 h-4 shrink-0" />
+              <LogOut className="w-3.5 h-3.5 shrink-0" />
             </button>
             <Link
               href={profile.href}
-              className="flex items-center gap-2 min-w-0 max-w-[50%] active:opacity-70 transition-opacity"
+              className="flex items-center gap-1.5 min-w-0 max-w-[140px] sm:max-w-[200px] active:opacity-70 transition-opacity"
             >
               <div className="min-w-0 text-right">
-                <p className="text-[13px] font-bold text-gray-900 truncate leading-tight">{profile.name}</p>
+                <p className="text-[12px] font-bold text-gray-900 truncate leading-tight">{profile.name}</p>
                 {profile.subtitle && <div className="flex justify-end mt-0.5">{profile.subtitle}</div>}
               </div>
-              {avatar("w-9 h-9", "rounded-xl")}
+              {avatar("w-8 h-8 text-xs", "rounded-lg")}
             </Link>
           </div>
         </div>
@@ -449,30 +449,30 @@ export default function DashboardShell({
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div
             onClick={() => setLogoutConfirmOpen(false)}
-            className="absolute inset-0 bg-black/40 backdrop-blur-[2px] animate-in fade-in duration-200"
+            className="absolute inset-0 bg-black/45 backdrop-blur-[2px] animate-in fade-in duration-150"
           />
-          <div className="relative bg-white rounded-3xl w-[min(90vw,340px)] p-6 shadow-2xl animate-in zoom-in-95 fade-in duration-200">
-            <div className="flex flex-col items-center text-center gap-3">
-              <div className="w-14 h-14 rounded-2xl bg-red-50 text-[#E92E3D] flex items-center justify-center">
-                <LogOut className="w-6 h-6" />
+          <div className="relative bg-white rounded-2xl w-[min(88vw,290px)] p-4 sm:p-5 shadow-2xl border border-gray-100 animate-in zoom-in-95 fade-in duration-150">
+            <div className="flex flex-col items-center text-center gap-2">
+              <div className="w-10 h-10 rounded-xl bg-red-50 text-[#E92E3D] flex items-center justify-center shrink-0">
+                <LogOut className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-extrabold text-gray-900">Sign out?</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <h3 className="text-[15px] font-extrabold text-gray-900 leading-snug">Sign out?</h3>
+              <p className="text-[11.5px] text-gray-500 leading-relaxed px-1">
                 Are you sure you want to log out of your FitWorks account?
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3 mt-6">
+            <div className="grid grid-cols-2 gap-2 mt-4">
               <button
                 type="button"
                 onClick={() => setLogoutConfirmOpen(false)}
-                className="h-11 rounded-xl text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 active:scale-[0.97] transition-all cursor-pointer"
+                className="h-9 rounded-lg text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 active:scale-[0.97] transition-all cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => { setLogoutConfirmOpen(false); onLogout(); }}
-                className="h-11 rounded-xl text-sm font-bold text-white bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.97] transition-all shadow-[0_4px_12px_rgba(233,46,61,0.25)] cursor-pointer"
+                className="h-9 rounded-lg text-xs font-bold text-white bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.97] transition-all shadow-sm shadow-red-500/20 cursor-pointer"
               >
                 Log out
               </button>
