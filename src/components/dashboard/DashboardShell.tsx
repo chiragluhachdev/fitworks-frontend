@@ -77,6 +77,7 @@ export default function DashboardShell({
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   const searchRef = useRef<HTMLInputElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
@@ -127,6 +128,16 @@ export default function DashboardShell({
     };
   }, [accountOpen]);
 
+  /** Close the logout confirm modal on Escape. */
+  useEffect(() => {
+    if (!logoutConfirmOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLogoutConfirmOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [logoutConfirmOpen]);
+
   /** ⌘K / Ctrl+K focuses the search, as the hint in it promises. */
   useEffect(() => {
     if (!search) return;
@@ -161,16 +172,27 @@ export default function DashboardShell({
           <Link href="/" aria-label="FitWorks home" className="relative w-[104px] h-[30px] shrink-0">
             <Image src="/images/logo.png" alt="FitWorks" fill sizes="132px" className="object-contain object-left" priority />
           </Link>
-          <Link
-            href={profile.href}
-            className="flex items-center gap-2.5 min-w-0 max-w-[55%] active:opacity-70 transition-opacity"
-          >
-            <div className="min-w-0 text-right">
-              <p className="text-[13px] font-bold text-gray-900 truncate leading-tight">{profile.name}</p>
-              {profile.subtitle && <div className="flex justify-end mt-0.5">{profile.subtitle}</div>}
-            </div>
-            {avatar("w-9 h-9", "rounded-xl")}
-          </Link>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setLogoutConfirmOpen(true)}
+              aria-label="Sign out"
+              title="Sign out"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-gray-500 bg-gray-50 border border-gray-200/70 hover:text-[#E92E3D] hover:bg-red-50 hover:border-red-100 active:bg-red-100 transition-colors cursor-pointer"
+            >
+              <LogOut className="w-4 h-4 shrink-0" />
+            </button>
+            <Link
+              href={profile.href}
+              className="flex items-center gap-2 min-w-0 max-w-[50%] active:opacity-70 transition-opacity"
+            >
+              <div className="min-w-0 text-right">
+                <p className="text-[13px] font-bold text-gray-900 truncate leading-tight">{profile.name}</p>
+                {profile.subtitle && <div className="flex justify-end mt-0.5">{profile.subtitle}</div>}
+              </div>
+              {avatar("w-9 h-9", "rounded-xl")}
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -307,7 +329,10 @@ export default function DashboardShell({
                   </Link>
                   <div className="h-px bg-gray-100 my-1.5 mx-2" />
                   <button
-                    onClick={onLogout}
+                    onClick={() => {
+                      setAccountOpen(false);
+                      setLogoutConfirmOpen(true);
+                    }}
                     className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-[13.5px] font-semibold text-[#E92E3D] hover:bg-[#FFF1F2] transition-colors cursor-pointer"
                   >
                     <LogOut className="w-4 h-4 shrink-0" />
@@ -405,11 +430,51 @@ export default function DashboardShell({
               })}
 
               <button
-                onClick={onLogout}
+                onClick={() => {
+                  setMoreOpen(false);
+                  setLogoutConfirmOpen(true);
+                }}
                 className="flex items-center gap-3.5 px-4 py-3.5 w-full rounded-2xl text-[15px] font-semibold text-[#E92E3D] active:bg-red-50 transition-colors"
               >
                 <LogOut className="w-5 h-5 shrink-0" />
                 Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ───────── Logout confirmation modal ───────── */}
+      {logoutConfirmOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div
+            onClick={() => setLogoutConfirmOpen(false)}
+            className="absolute inset-0 bg-black/40 backdrop-blur-[2px] animate-in fade-in duration-200"
+          />
+          <div className="relative bg-white rounded-3xl w-[min(90vw,340px)] p-6 shadow-2xl animate-in zoom-in-95 fade-in duration-200">
+            <div className="flex flex-col items-center text-center gap-3">
+              <div className="w-14 h-14 rounded-2xl bg-red-50 text-[#E92E3D] flex items-center justify-center">
+                <LogOut className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-extrabold text-gray-900">Sign out?</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                Are you sure you want to log out of your FitWorks account?
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mt-6">
+              <button
+                type="button"
+                onClick={() => setLogoutConfirmOpen(false)}
+                className="h-11 rounded-xl text-sm font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 active:scale-[0.97] transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => { setLogoutConfirmOpen(false); onLogout(); }}
+                className="h-11 rounded-xl text-sm font-bold text-white bg-[#E92E3D] hover:bg-[#d42936] active:scale-[0.97] transition-all shadow-[0_4px_12px_rgba(233,46,61,0.25)] cursor-pointer"
+              >
+                Log out
               </button>
             </div>
           </div>
