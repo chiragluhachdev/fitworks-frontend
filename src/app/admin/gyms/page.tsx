@@ -22,8 +22,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
-import StatusPill from "@/components/workspace/StatusPill";
-import { shortDate } from "@/lib/hiring";
 import { api } from "@/lib/api";
 
 const PRESET_GYM_LOGOS = [
@@ -48,8 +46,6 @@ export default function AdminGyms() {
   const [deletingGym, setDeletingGym] = useState<any | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Which gym's plan is mid-save, so only that row's control disables.
-  const [planBusy, setPlanBusy] = useState<string | null>(null);
 
 
   const fetchGyms = async () => {
@@ -170,44 +166,7 @@ export default function AdminGyms() {
   /**
    * Sets a gym's membership by hand.
    *
-   * Gyms pay through Razorpay on their own Subscription screen. This is the
-   * support override — comping a partner, honouring a payment that never came
-   * back, or cutting an account off. It records no payment, because none was
-   * taken.
    */
-  /**
-   * Grants or revokes access by hand.
-   *
-   * Gyms buy access through Razorpay on their own screen. This is the support
-   * override — comping a partner, honouring a payment that never came back, or
-   * cutting an account off. It records no payment, because none was taken.
-   */
-  const setAccess = async (gym: any, action: "grant" | "revoke") => {
-    setPlanBusy(gym._id);
-    const res = await api<{ data?: any; subscription?: any }>(`/admin/gyms/${gym._id}/subscription`, {
-      method: "PUT",
-      body: JSON.stringify({ action }),
-    });
-    setPlanBusy(null);
-
-    if (res.ok && res.data?.data) {
-      setGyms((prev) =>
-        prev.map((g) =>
-          g._id === gym._id
-            ? { ...g, subscription: res.data!.data.subscription, subscriptionState: res.data!.subscription }
-            : g
-        )
-      );
-      toast.success(
-        action === "revoke"
-          ? `${gym.gymName} access revoked`
-          : `${gym.gymName} granted access — no payment taken`
-      );
-    } else {
-      toast.error(res.error || "Couldn't update access.");
-    }
-  };
-
   const filteredGyms = gyms.filter((g) => {
     const name = g.gymName?.toLowerCase() || "";
     const city = g.address?.city?.toLowerCase() || "";
@@ -263,7 +222,6 @@ export default function AdminGyms() {
                   <th className="px-6 py-4">City & Address</th>
                   <th className="px-6 py-4">Contact Representative</th>
                   <th className="px-6 py-4">Hiring Budget</th>
-                  <th className="px-6 py-4">Access</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -340,69 +298,6 @@ export default function AdminGyms() {
                       </div>
                     </td>
 
-                    {/* Access */}
-                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
-                      {(() => {
-                        const state = gym.subscriptionState;
-                        const paid = (gym.subscription?.history || []).reduce(
-                          (sum: number, h: any) => sum + (h.amount || 0),
-                          0
-                        );
-                        return (
-                          <div className="space-y-1.5">
-                            {state?.isActive ? (
-                              <StatusPill
-                                label="Has access"
-                                chip="text-emerald-700 bg-emerald-50 border-emerald-200/70"
-                                dot="bg-emerald-500"
-                                size="sm"
-                              />
-                            ) : (
-                              <StatusPill
-                                label="No access"
-                                chip="text-gray-600 bg-gray-100 border-gray-200"
-                                dot="bg-gray-400"
-                                size="sm"
-                              />
-                            )}
-
-                            {state?.activatedAt && (
-                              <p className="text-[10.5px] text-gray-400 font-medium">
-                                since {shortDate(state.activatedAt)}
-                              </p>
-                            )}
-
-                            {paid > 0 ? (
-                              <p className="text-[10.5px] text-gray-400 font-medium">
-                                ₹{paid.toLocaleString("en-IN")} paid
-                              </p>
-                            ) : (
-                              state?.isActive && (
-                                <p className="text-[10.5px] font-bold text-amber-600">comped</p>
-                              )
-                            )}
-
-                            <button
-                              disabled={planBusy === gym._id}
-                              onClick={() => setAccess(gym, state?.isActive ? "revoke" : "grant")}
-                              title="Support override — changes access without taking payment"
-                              className={`h-8 px-2.5 text-[11px] font-bold rounded-lg ring-1 transition-colors cursor-pointer disabled:opacity-50 ${
-                                state?.isActive
-                                  ? "text-gray-600 ring-gray-200 bg-white hover:bg-gray-50"
-                                  : "text-brand ring-red-200 bg-brand-tint hover:bg-red-100"
-                              }`}
-                            >
-                              {planBusy === gym._id
-                                ? "Saving…"
-                                : state?.isActive
-                                ? "Revoke"
-                                : "Grant access"}
-                            </button>
-                          </div>
-                        );
-                      })()}
-                    </td>
-
                     {/* Action buttons */}
                     <td className="px-6 py-4 text-right space-x-1.5 whitespace-nowrap">
                       <button
@@ -432,7 +327,7 @@ export default function AdminGyms() {
 
                 {filteredGyms.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-16 text-center">
+                    <td colSpan={5} className="px-6 py-16 text-center">
                       <div className="max-w-xs mx-auto text-center space-y-2">
                         <p className="text-sm font-bold text-gray-700">No gyms match your query</p>
                         <p className="text-xs text-gray-400">Try searching for a different gym name or city.</p>

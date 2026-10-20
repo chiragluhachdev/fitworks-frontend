@@ -7,42 +7,8 @@
  * describe the same record differently.
  */
 
-/* ───────────────────────── Gym access ───────────────────────── */
+/* ───────────────────────── What FitWorks does ───────────────────────── */
 
-export interface GymAccessPlan {
-  id: "lifetime";
-  name: string;
-  /** Rupees, charged once. */
-  price: number;
-}
-
-/** The price we launched at. Only fills the first paint before the API answers. */
-export const DEFAULT_GYM_ACCESS_PRICE = 499;
-
-export const FALLBACK_PLAN: GymAccessPlan = {
-  id: "lifetime",
-  name: "FitWorks Gym Access",
-  price: DEFAULT_GYM_ACCESS_PRICE,
-};
-
-/**
- * Reads whatever the API returned into a plan this app can render.
- *
- * Only the price is taken from the payload; everything shown is derived here,
- * so a backend on an older or newer shape can never produce a half-filled card.
- */
-export const normalizeGymPlan = (raw: unknown): GymAccessPlan => {
-  const price = Number((raw as { price?: unknown })?.price);
-  if (!Number.isFinite(price) || price <= 0) return FALLBACK_PLAN;
-  return { ...FALLBACK_PLAN, price };
-};
-
-/**
- * What access buys.
- *
- * Gyms pay once, so this is the whole offer — there is no cheaper tier holding
- * anything back, and nothing to compare against.
- */
 export const PLAN_FEATURES = [
   "Unlimited vacancy posting",
   "Unlimited hiring requirements",

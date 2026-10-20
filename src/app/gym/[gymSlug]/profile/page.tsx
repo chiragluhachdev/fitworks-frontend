@@ -80,12 +80,12 @@ const FAQ = [
     a: "Yes. Every trainer we put forward has had their fitness certificates and a government ID checked by our team.",
   },
   {
-    q: "What does FitWorks access include?",
-    a: "Unlimited vacancies, unlimited hiring requirements and hands-on hiring support from our team. It is a single payment — there is no subscription, no renewal and no expiry date.",
+    q: "What does FitWorks cost?",
+    a: "Nothing. FitWorks is free for gyms and free for trainers — unlimited vacancies, unlimited hiring requirements and hands-on hiring support from our team, at no charge.",
   },
   {
     q: "What happens when I fill a role?",
-    a: "Let us know and we'll mark the vacancy as filled. You can reopen it or post a new one whenever you're hiring again — there's no limit on any plan.",
+    a: "Let us know and we'll mark the vacancy as filled. You can reopen it or post a new one whenever you're hiring again — there's no limit.",
   },
 ];
 

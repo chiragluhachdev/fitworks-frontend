@@ -32,8 +32,6 @@ interface Stats {
   inProgress: number;
   filledVacancies: number;
   trainersInReview: number;
-  payingGyms: number;
-  lapsedGyms: number;
   pendingConnections: number;
 }
 
@@ -169,7 +167,7 @@ export default function AdminDashboard() {
           value={stats.totalGyms || 0}
           icon={Building2}
           href="/admin/gyms"
-          hint={`${stats.payingGyms || 0} on a paid plan`}
+          hint="Registered on FitWorks"
         />
         <Stat
           label="Trainers"
@@ -178,14 +176,6 @@ export default function AdminDashboard() {
           icon={Dumbbell}
           href="/admin/trainers"
           hint={`${stats.verifiedTrainers || 0} verified`}
-        />
-        <Stat
-          label="Lapsed memberships"
-          value={stats.lapsedGyms || 0}
-          icon={CreditCard}
-          accent="amber"
-          href="/admin/gyms"
-          hint="Gyms whose plan has run out"
         />
         <Stat
           label="Pending invitations"

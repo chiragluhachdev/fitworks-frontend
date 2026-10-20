@@ -84,22 +84,6 @@ export default function PostVacancyPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [done, setDone] = useState(false);
-  const [verifying, setVerifying] = useState(true);
-
-  React.useEffect(() => {
-    api<{ data: any }>(`/gyms/${gymSlug}/dashboard`).then((res) => {
-      if (res.ok && res.data?.data) {
-        if (!res.data.data.subscription?.isActive) {
-          toast.error("You need an active subscription to post a vacancy.");
-          router.replace(`/gym/${gymSlug}/subscription`);
-        } else {
-          setVerifying(false);
-        }
-      } else {
-        setVerifying(false);
-      }
-    });
-  }, [gymSlug, router]);
 
   const set = (key: keyof Form) => (e: React.ChangeEvent<any>) => {
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -173,13 +157,6 @@ export default function PostVacancyPage() {
   const progress = useMemo(() => ((step - 1) / (STEPS.length - 1)) * 100, [step]);
 
   /* ─────────────────── Submitted ─────────────────── */
-  if (verifying) {
-    return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="w-6 h-6 border-2 border-brand border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   if (done) {
     return (

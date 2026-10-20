@@ -6,12 +6,11 @@ import Link from "next/link";
 import {
   Plus,
   Briefcase,
-  CreditCard,
   ArrowRight,
   PlayCircle,
   User,
   Settings,
-  Crown,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 import Button from "@/components/workspace/Button";
@@ -19,7 +18,6 @@ import { PageSkeleton, ErrorState } from "@/components/workspace/States";
 import { VacancyRowItem } from "@/components/gym/VacancyCard";
 import HowItWorksPlayer, { HowItWorksInline } from "@/components/workspace/HowItWorksPlayer";
 import { api } from "@/lib/api";
-import { shortDate } from "@/lib/hiring";
 
 /**
  * The accents the tiles are built from.
@@ -121,7 +119,7 @@ export default function GymOverviewPage() {
   if (loading) return <PageSkeleton />;
   if (!data) return <ErrorState message={error} onRetry={load} />;
 
-  const { gym, stats, subscription, completion, activeVacancies = [] } = data;
+  const { gym, stats, completion, activeVacancies = [] } = data;
   const firstName = (gym?.contactPerson?.name || "").split(" ")[0];
   const hasVacancies = (stats?.totalVacancies ?? 0) > 0;
 
@@ -154,7 +152,7 @@ export default function GymOverviewPage() {
 
           <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
             <Link 
-              href={subscription?.isActive ? `/gym/${gymSlug}/vacancies/new` : `/gym/${gymSlug}/subscription`} 
+              href={`/gym/${gymSlug}/vacancies/new`}
               className="inline-flex items-center justify-center bg-brand hover:bg-brand-dark text-white text-[14.5px] sm:text-[15px] font-semibold rounded-xl px-5 sm:px-6 h-12 transition-colors shadow-[0_8px_24px_-10px_rgba(233,46,61,0.9)]"
             >
               <Plus className="w-4 h-4 mr-1.5" /> Post a Vacancy
@@ -209,27 +207,16 @@ export default function GymOverviewPage() {
         />
 
         <Tile
-          href={`/gym/${gymSlug}/subscription`}
-          icon={Crown}
+          href={`/gym/${gymSlug}/vacancies/new`}
+          icon={Sparkles}
           accent="amber"
-          label="Subscription"
-          hint={
-            subscription?.isActive
-              ? `Since ${shortDate(subscription.activatedAt)} · never expires`
-              : "One payment unlocks everything"
-          }
+          label="Hiring support"
+          hint="Our team finds and checks trainers for you"
           state={
-            subscription?.isActive ? (
-              <span className="inline-flex items-center gap-1.5 text-[11.5px] font-bold text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200/70 px-2.5 py-1 rounded-full">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                Active
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 text-[11.5px] font-bold text-gray-500 bg-gray-100 ring-1 ring-gray-200 px-2.5 py-1 rounded-full">
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                Locked
-              </span>
-            )
+            <span className="inline-flex items-center gap-1.5 text-[11.5px] font-bold text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200/70 px-2.5 py-1 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Free
+            </span>
           }
         />
 
@@ -241,29 +228,6 @@ export default function GymOverviewPage() {
           hint="Password, email and sign out"
         />
       </div>
-
-      {/* ── Subscription Banner ── */}
-      {!subscription?.isActive && (
-        <div className="bg-brand-tint ring-1 ring-[#FFE2E5] rounded-[20px] p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 sm:mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0">
-              <CreditCard className="text-brand w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-[15px] font-bold text-gray-900">Unlock your FitWorks account</h3>
-              <p className="text-[13px] text-gray-600 mt-0.5">
-                One payment unlocks unlimited vacancies and full hiring support from our team — no renewals.
-              </p>
-            </div>
-          </div>
-          <Link 
-            href={`/gym/${gymSlug}/subscription`} 
-            className="inline-flex items-center justify-center bg-brand hover:bg-red-600 text-white font-medium rounded-xl mt-4 sm:mt-0 px-6 whitespace-nowrap h-11 transition-colors"
-          >
-            Unlock now <ArrowRight className="w-4 h-4 ml-1.5" />
-          </Link>
-        </div>
-      )}
 
       {/* ── Lower Split Section ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
